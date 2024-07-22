@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class SwaggerConfig {
 
+    //localhost:8080/swagger-ui/index.html
     private static final String TITLE = "API for mo-gether";
     private static final String DESCRIPTION = "API Docs for mo-gether";
     private static final String VERSION = "V1.0.0";

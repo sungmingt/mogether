@@ -1,10 +1,10 @@
-package moim.moim;
+package mogether.mogether;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class MoimApplicationTests {
+class MogetherApplicationTests {
 
 	@Test
 	void contextLoads() {
