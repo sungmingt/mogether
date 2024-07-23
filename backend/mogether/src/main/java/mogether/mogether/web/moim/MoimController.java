@@ -1,46 +1,50 @@
 package mogether.mogether.web.moim;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import mogether.mogether.application.bungae.BungaeService;
-import mogether.mogether.domain.bungae.Bungae;
 import mogether.mogether.domain.moim.Moim;
-import mogether.mogether.web.bungae.dto.*;
 import mogether.mogether.web.moim.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.springframework.http.HttpStatus.CREATED;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
+@Tag(name = "moim", description = "모임 API")
 @RestController
 @RequiredArgsConstructor
-@Slf4j
 @RequestMapping("/moim")
 public class MoimController {
 
-    @Operation(description = "모임 참여")
+    @Operation(summary = "모임 참여", description = "모임 id와 유저 id를 통해 유저가 모임에 가입한다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "유저의 모임 가입 성공"),
+            })
     @PostMapping("/{moimId}/join")
     public HttpStatus join(@PathVariable Long moimId,
                            @RequestBody MoimJoinRequest moimJoinRequest) {
         return HttpStatus.OK; /////
     }
 
-    @Operation(description = "모임 글 등록")
+    @Operation(summary = "모임 글 등록", description = "유저 id를 통해 유저가 모임 글을 등록한다.",
+            responses = {
+                    @ApiResponse(responseCode = "201", description = "유저의 모임 글 등록 성공"),
+            })
     @ResponseStatus(CREATED)
     @PostMapping("/")
     public MoimCreateResponse create(@RequestBody MoimCreateRequest moimCreateRequest) {
         return new MoimCreateResponse();
     }
 
-    @Operation(description = "모임 글 수정")
+    @Operation(summary = "모임 글 수정", description = "모임 id와 유저 id를 통해 모임 글을 수정한다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "유저의 모임 글 수정 성공"),
+            })
     @PatchMapping("/{moimId}")
     public MoimUpdateResponse update(@PathVariable Long moimId,
                                      @RequestBody MoimUpdateRequest moimUpdateRequest) {
@@ -48,20 +52,29 @@ public class MoimController {
         return new MoimUpdateResponse();
     }
 
-    @Operation(description = "모임 글 상세 조회")
+    @Operation(summary = "모임 글 상세 조회", description = "모임 id를 통해 특정 모임 글 상세 페이지를 조회한다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "모임 글 상세 페이지 조회 성공"),
+            })
     @GetMapping("/{moimId}")
     public MoimResponse read(@PathVariable Long moimId) {
         return new MoimResponse();
     }
 
-    @Operation(description = "모임 글 리스트 조회")
+    @Operation(summary = "모임 글 리스트 조회", description = "모임 글 리스트를 조회한다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "모임 글 리스트 조회 성공"),
+            })
     @GetMapping("/")
     public List<MoimListResponse> readAll() { //페이징 방식, dto 형식
         List<Moim> moimList = new ArrayList<>();
         return MoimListResponse.toMoimListResponse(moimList); ///
     }
 
-    @Operation(description = "모임 글 삭제")
+    @Operation(summary = "모임 글 삭제", description = "모임 id와 유저 id를 통해 유저가 모임 글을 삭제한다.",
+            responses = {
+                    @ApiResponse(responseCode = "204", description = "유저의 모임 글 삭제 성공"),
+            })
     @DeleteMapping("/{moimId}")
     public HttpStatus delete(@PathVariable Long moimId,
                              @RequestBody MoimDeleteRequest moimDeleteRequest) {
