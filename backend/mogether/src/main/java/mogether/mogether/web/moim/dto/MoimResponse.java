@@ -7,6 +7,7 @@ import lombok.Setter;
 import mogether.mogether.domain.Address;
 import mogether.mogether.domain.Keyword;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -29,8 +30,10 @@ public class MoimResponse {
     private String content;
     private Keyword keyword; ////
     private Long interestsCount;
-    private Date createdAt;
-    private Date expireAt;
+
     private Address address;
     private String description; //
+
+    private LocalDate createdAt;
+    private LocalDate expireAt;
 }

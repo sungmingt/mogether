@@ -9,6 +9,7 @@ import mogether.mogether.domain.Keyword;
 import mogether.mogether.domain.bungae.Bungae;
 import mogether.mogether.domain.moim.Moim;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -21,7 +22,8 @@ import java.util.stream.Collectors;
 public class MoimListResponse {
 
     private Long id;
-    private List<String> imageUrls;
+    private List<String> thumnailUrls;
+
     private Long hostId;
     private String hostName;
     private String hostProfileImageUrl;
@@ -34,8 +36,9 @@ public class MoimListResponse {
     private Keyword keyword; ////
     private Address address;
     private Long interestsCount;
-    private Date createdAt;
-    private Date expireAt;
+
+    private LocalDate createdAt;
+    private LocalDate expireAt;
 
     public static List<MoimListResponse> toMoimListResponse(List<Moim> moimList) {
         return moimList.stream()

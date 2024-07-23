@@ -5,8 +5,8 @@ import lombok.Getter;
 import mogether.mogether.domain.Address;
 import mogether.mogether.domain.Keyword;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -23,6 +23,6 @@ public class Moim {
     private Address address;
     private String descrpition;
     //interests
-    private Date createdAt;
-    private Date expireAt;
+    private LocalDate createdAt;
+    private LocalDate expireAt;
 }

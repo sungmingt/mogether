@@ -1,5 +1,6 @@
 package mogether.mogether.web.bungae.dto;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,6 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BungaeJoinRequest {
-
+    @NotEmpty
     private long userId;
 }
