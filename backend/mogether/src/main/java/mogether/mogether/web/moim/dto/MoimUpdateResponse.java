@@ -8,6 +8,7 @@ import lombok.Setter;
 import mogether.mogether.domain.Address;
 import mogether.mogether.domain.Keyword;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -27,6 +28,6 @@ public class MoimUpdateResponse {
     private Address address;
     private String description; //
 
-    private Date createdAt;
-    private Date expireAt;
+    private LocalDate createdAt;
+    private LocalDate expireAt;
 }

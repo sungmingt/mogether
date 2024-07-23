@@ -9,6 +9,7 @@ import mogether.mogether.domain.Address;
 import mogether.mogether.domain.Keyword;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.time.LocalDate;
 import java.util.Date;
 import java.util.List;
 
@@ -27,10 +28,16 @@ public class MoimCreateRequest {
     private String content;
     @NotEmpty
     private Keyword keyword; ////
-    @NotEmpty
-    private Date expireAt; ///
+
     @NotEmpty
     private Address address;
+
+    //모임시간
     private String description; //
+
+    @NotEmpty
+    private LocalDate createdAt;
+    @NotEmpty
+    private LocalDate expireAt; ///
 }
 

@@ -7,7 +7,7 @@ import lombok.Setter;
 import mogether.mogether.domain.Address;
 import mogether.mogether.domain.Keyword;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -26,6 +26,7 @@ public class BungaeCreateResponse {
     private Address address;
     private String description; //
 
-    private Date createdAt;
-    private Date expireAt;
+    private String gatherAt;
+    private LocalDate createdAt;
+    private LocalDate expireAt;
 }
