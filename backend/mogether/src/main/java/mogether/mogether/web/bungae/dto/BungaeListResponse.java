@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class BungaeListResponse {
 
     private Long id;
-    private List<String> thumbnailUrls;
+    private String thumbnailUrl;
 
     private Long hostId;
     private String hostName;
@@ -44,7 +44,7 @@ public class BungaeListResponse {
         return bunageList.stream()
                 .map(bungae -> new BungaeListResponse(
                         bungae.getId(),
-                        new ArrayList<>(),
+                        "imageUrl",
                         31L,
                         "hostName",
                         "hostPRofileImageUrl",

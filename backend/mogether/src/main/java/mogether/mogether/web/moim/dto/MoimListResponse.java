@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class MoimListResponse {
 
     private Long id;
-    private List<String> thumnailUrls;
+    private String thumbnailUrl;
 
     private Long hostId;
     private String hostName;
@@ -30,7 +30,6 @@ public class MoimListResponse {
     private List<String> participantsImageUrls;//
     private Long participantsCount;//
 
-    //private String thumbnail; //썸네일
     private String title;
     private String content;
     private Keyword keyword; ////
@@ -44,7 +43,7 @@ public class MoimListResponse {
         return moimList.stream()
                 .map(moim -> new MoimListResponse(
                         moim.getId(),
-                        new ArrayList<>(),
+                        "imageUrl",
                         31L,
                         "hostName",
                         "hostPRofileImageUrl",
