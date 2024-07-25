@@ -65,7 +65,7 @@ public class UserController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "유저의 관심 번개 리스트 조회 성공"),
             })
-    @GetMapping("/{userId}/interests/bungae")
+    @GetMapping("/{userId}/interest/bungae")
     public List<BungaeListResponse> getBungaeInterestList(@PathVariable Long userId) {
         List<Bungae> bungaeList = new ArrayList<>();
         return BungaeListResponse.toBungaeListResponse(bungaeList);
@@ -76,7 +76,7 @@ public class UserController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "유저의 관심 모임 리스트 조회 성공"),
             })
-    @GetMapping("/{userId}/interests/moim")
+    @GetMapping("/{userId}/interest/moim")
     public List<MoimListResponse> getMoimInterestList(@PathVariable Long userId) {
         List<Moim> moimList = new ArrayList<>();
         return MoimListResponse.toMoimListResponse(moimList);
@@ -86,7 +86,7 @@ public class UserController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "유저가 등록한 번개 리스트 조회 성공"),
             })
-    @GetMapping("/{userId}/hosts/bungae") /////
+    @GetMapping("/{userId}/host/bungae") /////
     public List<BungaeListResponse> getBungaeHostingList(@PathVariable Long userId) {
         List<Bungae> bungaeList = new ArrayList<>();
         return BungaeListResponse.toBungaeListResponse(bungaeList);
@@ -96,7 +96,7 @@ public class UserController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "유저가 등록한 모임 리스트 조회 성공"),
             })
-    @GetMapping("/{userId}/hosts/moim") /////
+    @GetMapping("/{userId}/host/moim") /////
     public List<MoimListResponse> getMoimHostingList(@PathVariable Long userId) {
         List<Moim> moimList = new ArrayList<>();
         return MoimListResponse.toMoimListResponse(moimList);
