@@ -6,6 +6,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import mogether.mogether.domain.bungae.Bungae;
 import mogether.mogether.domain.moim.Moim;
+import mogether.mogether.web.bungae.dto.BungaeListResponse;
+import mogether.mogether.web.moim.dto.MoimListResponse;
 import mogether.mogether.web.user.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -44,7 +46,8 @@ public class UserController {
                     @ApiResponse(responseCode = "200", description = "비밀번호 변경 성공"),
             })
     @PatchMapping("/{userId}/password") ////
-    public HttpStatus updatePassword(@PathVariable Long userId) {
+    public HttpStatus updatePassword(@PathVariable Long userId,
+                                     @RequestBody UserUpdatePasswordRequest userUpdatePasswordRequest) {
         return HttpStatus.OK;
     }
 
@@ -57,26 +60,45 @@ public class UserController {
         return new UserResponse();
     }
 
-    //관심 있는 글 목록
-    @Operation(summary = "유저의 관심 글 리스트 조회", description = "유저의 관심 글 리스트를 조회한다",
+    //관심 번개 목록
+    @Operation(summary = "유저의 관심 번개 리스트 조회", description = "유저의 관심 번개 리스트를 조회한다",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "유저의 관심 글 리스트 조회 성공"),
+                    @ApiResponse(responseCode = "200", description = "유저의 관심 번개 리스트 조회 성공"),
             })
-    @GetMapping("/{userId}/interests")
-    public List<GatheringListResponse> getInterestList(@PathVariable Long userId) {
+    @GetMapping("/{userId}/interests/bungae")
+    public List<BungaeListResponse> getBungaeInterestList(@PathVariable Long userId) {
         List<Bungae> bungaeList = new ArrayList<>();
-        List<Moim> moimList = new ArrayList<>();
-        return GatheringListResponse.toGatheringListResponse(bungaeList, moimList);
+        return BungaeListResponse.toBungaeListResponse(bungaeList);
     }
 
-    @Operation(summary = "유저가 등록한 글 리스트 조회", description = "유저가 등록한 글 리스트를 조회한다",
+    //관심 모임 목록
+    @Operation(summary = "유저의 관심 모임 리스트 조회", description = "유저의 관심 모임 리스트를 조회한다",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "유저의 등록 글 리스트 조회 성공"),
+                    @ApiResponse(responseCode = "200", description = "유저의 관심 모임 리스트 조회 성공"),
             })
-    @GetMapping("/{userId}/hosting") /////
-    public List<GatheringListResponse> getHostingList(@PathVariable Long userId) {
-        List<Bungae> bungaeList = new ArrayList<>();
+    @GetMapping("/{userId}/interests/moim")
+    public List<MoimListResponse> getMoimInterestList(@PathVariable Long userId) {
         List<Moim> moimList = new ArrayList<>();
-        return GatheringListResponse.toGatheringListResponse(bungaeList, moimList);
+        return MoimListResponse.toMoimListResponse(moimList);
+    }
+
+    @Operation(summary = "유저가 등록한 번개 리스트 조회", description = "유저가 등록한 번개 리스트를 조회한다",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "유저가 등록한 번개 리스트 조회 성공"),
+            })
+    @GetMapping("/{userId}/hosts/bungae") /////
+    public List<BungaeListResponse> getBungaeHostingList(@PathVariable Long userId) {
+        List<Bungae> bungaeList = new ArrayList<>();
+        return BungaeListResponse.toBungaeListResponse(bungaeList);
+    }
+
+    @Operation(summary = "유저가 등록한 모임 리스트 조회", description = "유저가 등록한 모임 리스트를 조회한다",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "유저가 등록한 모임 리스트 조회 성공"),
+            })
+    @GetMapping("/{userId}/hosts/moim") /////
+    public List<MoimListResponse> getMoimHostingList(@PathVariable Long userId) {
+        List<Moim> moimList = new ArrayList<>();
+        return MoimListResponse.toMoimListResponse(moimList);
     }
 }
