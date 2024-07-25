@@ -26,5 +26,4 @@ public class Bungae {
     //interests
     private LocalDate createdAt;
     private LocalDate expireAt;
-
 }

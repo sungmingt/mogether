@@ -47,7 +47,7 @@ public class BungaeListResponse {
                         "imageUrl",
                         31L,
                         "hostName",
-                        "hostPRofileImageUrl",
+                        "hostProfileImageUrl",
                         new ArrayList<String>(),
                         12L,
                         bungae.getTitle(),
