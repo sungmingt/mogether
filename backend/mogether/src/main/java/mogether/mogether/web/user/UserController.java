@@ -44,7 +44,8 @@ public class UserController {
                     @ApiResponse(responseCode = "200", description = "비밀번호 변경 성공"),
             })
     @PatchMapping("/{userId}/password") ////
-    public HttpStatus updatePassword(@PathVariable Long userId) {
+    public HttpStatus updatePassword(@PathVariable Long userId,
+                                     @RequestBody UserUpdatePasswordRequest userUpdatePasswordRequest) {
         return HttpStatus.OK;
     }
 
