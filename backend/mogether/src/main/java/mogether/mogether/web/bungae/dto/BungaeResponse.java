@@ -27,6 +27,7 @@ public class BungaeResponse {
     private String hostIntro;
     private List<String> participantsImageUrls;//
     private Long participantsCount;//
+    private boolean isInterested;//todo
 
     private String title;
     private String content;

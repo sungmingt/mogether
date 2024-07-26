@@ -29,6 +29,7 @@ public class MoimListResponse {
     private String hostProfileImageUrl;
     private List<String> participantsImageUrls;//
     private Long participantsCount;//
+    private boolean isInterested; //todo
 
     private String title;
     private String content;
@@ -49,6 +50,7 @@ public class MoimListResponse {
                         "hostPRofileImageUrl",
                         new ArrayList<String>(),
                         12L,
+                        false,
                         moim.getTitle(),
                         moim.getContent(),
                         moim.getKeyword(),
