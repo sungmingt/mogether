@@ -29,6 +29,7 @@ public class BungaeListResponse {
     private String hostProfileImageUrl;
     private List<String> participantsImageUrls;//
     private Long participantsCount;//
+    private boolean isInterested; //todo
 
     private String title;
     private String content;
@@ -50,6 +51,7 @@ public class BungaeListResponse {
                         "hostProfileImageUrl",
                         new ArrayList<String>(),
                         12L,
+                        false,
                         bungae.getTitle(),
                         bungae.getContent(),
                         bungae.getKeyword(),
