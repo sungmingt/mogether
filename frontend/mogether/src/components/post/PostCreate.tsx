@@ -5,7 +5,7 @@ import Swal from "sweetalert2";
 import { SingleDatePicker, DateRangePicker, FocusedInputShape } from "react-dates";
 import "react-dates/lib/css/_datepicker.css";
 import "react-dates/initialize";
-import { locations } from "../../utils/location";
+import {locations} from "../../utils/location";   //명명된 내보내기(export const)와 기본 내보내기(export default const)의 차이
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import Datetime from "react-datetime";
@@ -13,6 +13,7 @@ import "react-datetime/css/react-datetime.css";
 import { createPost } from '../../store/slices/userSlice';
 import { RootState, AppDispatch } from '../../store/store';
 import { fetchProfile } from '../../store/slices/userSlice';
+import { selectIsAuthenticated } from "../../store/slices/authSlice";
 import { useNavigate } from 'react-router-dom';
 import moment from "moment";
 
@@ -254,14 +255,15 @@ const PostCreate = () => {
     meetingPeriodEnd: "",
   });
   const [additionalFocusedInput, setAdditionalFocusedInput] = useState<FocusedInputShape | null>(null);
+  const isAuthenticated = useSelector(selectIsAuthenticated);
 
   useEffect(() => {
-    if (!userProfile) {
-      dispatch(fetchProfile());   //userProfile이 존재 x -> 가져옴
+    if (!isAuthenticated) {
+      navigate('/Login');   //userProfile이 존재 x -> 가져옴
     }
-  }, [dispatch, userProfile]);
+  }, [dispatch, isAuthenticated]);
 
-  const handleKeywordChange = useCallback((keyword: string) => {
+  const handleKeywordChange = useCallback((keyword: string) => {  //이전과 동일한 참조값이 반환될 경우 -> 리렌더 x
     setKeywords((prev) =>
       prev.includes(keyword)
         ? prev.filter((k) => k !== keyword)
@@ -309,7 +311,7 @@ const PostCreate = () => {
     }
 
     const postData = {
-      userId: userProfile?.id,
+      userId: userProfile?.userId,
       title: title,
       content: content,
       keyword: keywords,
@@ -324,14 +326,16 @@ const PostCreate = () => {
       expireAt: dateRange.endDate,
     };
 
-    const response = await dispatch(createPost(postData));
-
-    if (response.meta.requestStatus === 'fulfilled') {
+    const response = await dispatch(createPost(postData));   //useDispatch는 slice 파일의 액션 처리 함수에 접근하여 갱신함
+    //response는 thunk를 이용해 비동기 작업 처리시 반환된 액션 객체로, 반환된 액션 객체에 meta가 포함되어 있는데, 이 meta에 requestStatus 속성이 있다
+    if (response.meta.requestStatus === 'fulfilled') {   //response는 서버의 그 response와 연결짓지 말고, dispatch의 결과물인데 dispatch의 결과물로 meta, action, error가 잇음
       navigate('/PostList');
     } else {
       Swal.fire("Error", "게시글 생성에 실패했습니다.", "error");
       window.location.reload();
     }
+
+
   };
 
   useEffect(() => {
@@ -387,10 +391,10 @@ const PostCreate = () => {
               Meeting Start Time<RequiredIcon>*</RequiredIcon>
             </Label>
             <Datetime
-              value={meetingStartTime || ""}
+              value={meetingStartTime || ""}  //왼쪽값이 false인 경우 -> 오른쪽값 반환
               onChange={(date) => setMeetingStartTime(date ? date.toString() : null)}
               inputProps={{ placeholder: "Select Date and Time" }}
-              dateFormat="YYYY/MM/DD"
+              dateFormat="YYYY-MM-DD"
               timeFormat="HH:mm"
             />
           </div>
@@ -423,8 +427,8 @@ const PostCreate = () => {
             endDateId="end_date_id"
             onDatesChange={({ startDate, endDate }) =>
               setDateRange({
-                startDate: startDate ? startDate.format("YYYY/MM/DD") : null,
-                endDate: endDate ? endDate.format("YYYY/MM/DD") : null,
+                startDate: startDate ? startDate.format("YYYY-MM-DD") : null,
+                endDate: endDate ? endDate.format("YYYY-MM-DD") : null,
               })
             }
             focusedInput={recruitmentFocusedInput}
@@ -550,8 +554,8 @@ const PostCreate = () => {
               onDatesChange={({ startDate, endDate }) =>
                 setAdditionalInfo((prev) => ({
                   ...prev,
-                  meetingPeriodStart: startDate ? startDate.format("YYYY/MM/DD") : "",
-                  meetingPeriodEnd: endDate ? endDate.format("YYYY/MM/DD") : "",
+                  meetingPeriodStart: startDate ? startDate.format("YYYY-MM-DD") : "",
+                  meetingPeriodEnd: endDate ? endDate.format("YYYY-MM-DD") : "",
                 }))
               }
               focusedInput={additionalFocusedInput}
