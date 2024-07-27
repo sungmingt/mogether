@@ -15,6 +15,7 @@ import mogether.mogether.domain.user.SocialType;
 public class UserUpdateResponse {
 
     private long userId;
+    private String imageUrl;
     private String email;
     private SocialType socialType;
     private String providerId;
