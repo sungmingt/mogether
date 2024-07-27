@@ -25,7 +25,7 @@ jobs:
         java-version: '17'
         distribution: 'corretto'
     - name: gradlew에 실행 권한 부여
-      run: chmod +x /backend/mogether/gradlew
+      run: cd backend/mogether && chmod +x ./gradlew
     - name: Build with Gradle
       run: ./gradlew clean build
       
