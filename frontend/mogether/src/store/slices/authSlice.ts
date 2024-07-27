@@ -7,6 +7,7 @@ interface AuthState {
     user: { email: string, password: string } | null;
     error: string | null;
     loading: boolean;
+    userId: number;
 }
 
 const initialState: AuthState = {
@@ -14,14 +15,17 @@ const initialState: AuthState = {
     user: null,
     loading: false,
     error: null,
+    userId: 0,
 };
 
 export const login = createAsyncThunk(
     'auth/login',
     async ({ email, password }: { email: string; password: string }, thunkAPI) => {
         try {
-            const user = await loginApi(email, password);
-            return user;
+            const response = await loginApi(email, password);
+            if (response.status === 200) {
+                return response.data;
+            }
         } catch (error) {
             return thunkAPI.rejectWithValue('Login failed');
         }
@@ -32,8 +36,10 @@ export const register = createAsyncThunk(
     'auth/register',
     async ({ name, email, password }: { name: string; email: string; password: string }, thunkAPI) => {
         try {
-            const user = await registerApi(name, email, password);
-            return user;
+            const response = await registerApi(name, email, password);
+            if (response.status === 200) {
+                return response.data;
+            };
         } catch (error) {
             return thunkAPI.rejectWithValue('Registration failed');
         }
@@ -79,6 +85,7 @@ const authSlice = createSlice({
                 state.user = action.payload;
                 state.loading = false;
                 state.error = null;
+                state.userId = action.payload.userId;
             })
             .addCase(register.rejected, (state, action) => {
                 state.isAuthenticated = false;
@@ -93,5 +100,6 @@ export const { logout } = authSlice.actions;  //createSlice로 슬라이스를 �
 export const selectAuthLoading = (state: RootState) => state.auth.loading;
 export const selectAuthError = (state: RootState) => state.auth.error;
 export const selectIsAuthenticated = (state: RootState) => state.auth.isAuthenticated; //slice의 name을 통해 접근
+export const selectUserId = (state: RootState) => state.auth.userId;
 
 export default authSlice.reducer;

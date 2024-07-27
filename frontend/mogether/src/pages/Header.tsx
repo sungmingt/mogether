@@ -2,6 +2,10 @@ import React, { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import { FaBars, FaTimes } from "react-icons/fa";
+import axios from "axios";
+import {selectIsAuthenticated} from '../store/slices/authSlice';
+import { useSelector } from "react-redux";
+import { RootState } from "../store/store";
 
 const HeaderContainer = styled.header`
   top: 0;
@@ -157,6 +161,7 @@ const DropdownMenu = styled.div<{ isOpen: boolean }>`
 const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const isAuthenticated = useSelector((state: RootState) => selectIsAuthenticated(state));
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -179,6 +184,8 @@ const Header: React.FC = () => {
       window.removeEventListener("resize", handleResize);
     };
   }, [isOpen]);
+
+  
 
   return (
     <HeaderContainer>

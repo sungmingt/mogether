@@ -22,7 +22,7 @@ const LoginContainer = styled.div`
   margin: 20px;
   @media (max-width: 768px) {
     width: 90%;
-	padding: 15px;
+	  padding: 15px;
   }
 `;
 
