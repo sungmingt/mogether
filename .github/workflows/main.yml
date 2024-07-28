@@ -64,7 +64,7 @@ jobs:
       env:
         AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
         AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
-      run: aws deploy create-deployment --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }} --deployment-group-name ${{ env.AWS_CODE_DEPLOY_GROUP }} --file-exists-behavior OVERWRITE --s3-location bucket=${{ env.AWS_S3_BUCKET }},bundleType=zip,key=mogether.zip --region ap-northeast-2
+      run: aws deploy create-deployment --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }} --deployment-config-name CodeDeployDefault.AllAtOnce --deployment-group-name ${{ env.AWS_CODE_DEPLOY_GROUP }} --file-exists-behavior OVERWRITE --s3-location bucket=${{ env.AWS_S3_BUCKET }},bundleType=zip,key=mogether.zip --region ap-northeast-2
         
     #- name: S3에 업로드
       #run: aws deploy push --application-name ${{ env.AWS_CODE_DEPLOY_APPLICATION }} --ignore-hidden-files --s3-location s3://${{ env.AWS_S3_BUCKET }}/deploy/$GITHUB_SHA.zip --source .
