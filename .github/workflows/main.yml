@@ -39,11 +39,11 @@ jobs:
       
     # appspec.yml 파일 복사
     - name: Copy appspec.yml
-      run: cp appspec.yml ./deploy
+      run: cd backend/mogether && cp appspec.yml ./deploy
       
     # script files 복사
     - name: Copy script
-      run: cp ./scripts/*.sh ./deploy
+      run: cd backend/mogether && cp ./scripts/start.sh ./deploy
 
     - name: Make zip file
       run: zip -r ./mogether.zip ./deploy
