@@ -14,8 +14,8 @@ permissions:
 
 hooks:
   AfterInstall:
-    - location: scripts/stop.sh
+    - location: backend/mogether/scripts/stop.sh
       timeout: 60
   ApplicationStart:
-    - location: scrpits/start.sh
+    - location: backend/mogether/scrpits/start.sh
       timeout: 60

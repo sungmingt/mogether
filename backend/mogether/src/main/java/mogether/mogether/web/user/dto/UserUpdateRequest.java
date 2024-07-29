@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mogether.mogether.domain.Address;
 import mogether.mogether.domain.user.Gender;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -19,6 +20,7 @@ public class UserUpdateRequest {
     private String name;
     @NotEmpty
     private String nickname;
+    private MultipartFile image;
 
     private Address address;
     private int age;
