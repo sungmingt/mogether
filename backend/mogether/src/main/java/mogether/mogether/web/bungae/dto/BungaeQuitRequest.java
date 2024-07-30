@@ -1,5 +1,6 @@
-package mogether.mogether.web.moim.dto;
+package mogether.mogether.web.bungae.dto;
 
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,8 +10,10 @@ import lombok.Setter;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class MoimJoinRequest {
+public class BungaeQuitRequest {
 
-    private Long moimId;
+    @NotEmpty
+    private Long bungaeId;
+    @NotEmpty
     private Long userId;
 }

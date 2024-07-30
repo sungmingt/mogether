@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import mogether.mogether.application.bungae.BungaeService;
 import mogether.mogether.domain.bungae.Bungae;
 import mogether.mogether.web.bungae.dto.*;
+import mogether.mogether.web.moim.dto.MoimQuitRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,9 +29,17 @@ public class BungaeController {
             responses = {
             @ApiResponse(responseCode = "200", description = "유저의 번개 참여 성공"),
     })
-    @PostMapping("/{bungaeId}/join")
-    public HttpStatus join(@PathVariable Long bungaeId,
-                           @RequestBody BungaeJoinRequest bungaeJoinRequest) {
+    @PostMapping("/join")
+    public HttpStatus join(@RequestBody BungaeJoinRequest bungaeJoinRequest) {
+        return HttpStatus.OK; /////
+    }
+
+    @Operation(summary = "번개 참여 취소", description = "모임 id와 유저 id를 통해 유저가 번개 참여를 취소한다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "유저의 번개 참여 취소 성공"),
+            })
+    @DeleteMapping("/quit")
+    public HttpStatus quit(@RequestBody BungaeQuitRequest moimQuitRequest) {
         return HttpStatus.OK; /////
     }
 
