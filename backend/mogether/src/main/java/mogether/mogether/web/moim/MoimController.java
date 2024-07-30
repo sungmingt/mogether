@@ -25,9 +25,17 @@ public class MoimController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "유저의 모임 가입 성공"),
             })
-    @PostMapping("/{moimId}/join")
-    public HttpStatus join(@PathVariable Long moimId,
-                           @RequestBody MoimJoinRequest moimJoinRequest) {
+    @PostMapping("/join")
+    public HttpStatus join(@RequestBody MoimJoinRequest moimJoinRequest) {
+        return HttpStatus.OK; /////
+    }
+
+    @Operation(summary = "모임 탈퇴", description = "모임 id와 유저 id를 통해 유저가 가입한 모임에서 탈퇴한다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "유저의 모임 탈퇴 성공"),
+            })
+    @DeleteMapping("/quit")
+    public HttpStatus quit(@RequestBody MoimQuitRequest moimQuitRequest) {
         return HttpStatus.OK; /////
     }
 

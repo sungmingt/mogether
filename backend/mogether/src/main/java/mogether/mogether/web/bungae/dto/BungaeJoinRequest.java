@@ -11,6 +11,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BungaeJoinRequest {
+
     @NotEmpty
-    private long userId;
+    private Long bungaeId;
+    @NotEmpty
+    private Long userId;
 }
