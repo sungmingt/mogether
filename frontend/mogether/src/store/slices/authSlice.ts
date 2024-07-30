@@ -2,9 +2,27 @@ import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { loginApi, registerApi } from '../../utils/api';
 import { RootState } from '../store';
 
+interface User {
+    email: string;
+    password: string;
+    nickname: string;
+    name: string;
+    gender: string;
+    age: number;
+    phoneNumber: string;
+    address: {
+        city: string;
+        gu: string;
+        details: string;
+    };
+    intro: string;
+    image: string;
+    userId?: number;
+}
+
 interface AuthState {
     isAuthenticated: boolean;   // 토큰 존재 여부에 따른 접근 허용 및 차단
-    user: { email: string, password: string } | null;
+    user?: User | null;
     error: string | null;
     loading: boolean;
     userId: number;
@@ -24,7 +42,8 @@ export const login = createAsyncThunk(
         try {
             const response = await loginApi(email, password);
             if (response.status === 200) {
-                return response.data;
+                return response.data;  //아래 extrareducers에서 action.payload로 들어감
+
             }
         } catch (error) {
             return thunkAPI.rejectWithValue('Login failed');
@@ -34,9 +53,9 @@ export const login = createAsyncThunk(
 
 export const register = createAsyncThunk(
     'auth/register',
-    async ({ name, email, password }: { name: string; email: string; password: string }, thunkAPI) => {
+    async (registerFormData, thunkAPI) => {
         try {
-            const response = await registerApi(name, email, password);
+            const response = await registerApi(registerFormData);
             if (response.status === 200) {
                 return response.data;
             };
@@ -62,9 +81,10 @@ const authSlice = createSlice({
         builder
             .addCase(login.fulfilled, (state, action) => {
                 state.isAuthenticated = true;
-                state.user = action.payload;
+                // localStorage.setItem();
                 state.loading = false;
                 state.error = null;
+                state.userId = action.payload.userId;
             })
             .addCase(login.pending, (state) => {
                 state.loading = true;
@@ -80,13 +100,13 @@ const authSlice = createSlice({
                 state.loading = true;
                 state.error = null;
             })
-            .addCase(register.fulfilled, (state, action) => {
+            .addCase(register.fulfilled, (state, action: PayloadAction<User>) => {
                 state.isAuthenticated = true;
                 state.user = action.payload;
                 state.loading = false;
                 state.error = null;
-                state.userId = action.payload.userId;
-            })
+                state.user.userId = action.payload.userId;
+            })   //auth부분은 더 연구해야함
             .addCase(register.rejected, (state, action) => {
                 state.isAuthenticated = false;
                 state.user = null;

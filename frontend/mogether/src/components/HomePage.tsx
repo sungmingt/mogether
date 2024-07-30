@@ -2,6 +2,11 @@ import React, { useState, useEffect } from "react";
 import styled, { keyframes, css } from "styled-components";
 import { useNavigate } from "react-router-dom";
 // import { animateScroll as scroll } from "react-scroll";
+import { fetchProfile } from '../store/slices/userSlice';
+import { selectUserId } from "../store/slices/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from '../store/store';
+import Swal from "sweetalert2";
 
 const HomePageContainer = styled.div`
   display: flex;
@@ -140,6 +145,8 @@ const ButtonGroup = styled.div`
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
+  const userId = useSelector(selectUserId); 
+  const dispatch = useDispatch<AppDispatch>(); 
   const [visibleSections, setVisibleSections] = useState<{
     [key: string]: boolean;
   }>({});
@@ -163,6 +170,17 @@ const HomePage: React.FC = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  useEffect(() => {
+    if (userId > 0) {
+      try {
+        const response = dispatch(fetchProfile(userId));  //userSlice의 fetchProfile로 정보가 들어감
+      }
+      catch (error) {
+        console.error(error);
+      }
+    }
+  }, [userId])
 
   const handleImageClick = () => {
     navigate("/postCreate");

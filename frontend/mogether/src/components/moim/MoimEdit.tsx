@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
-import { createPost } from '../../store/slices/userSlice';
+import { createMoim, createBungae } from '../../store/slices/userSlice';
 import { RootState, AppDispatch } from '../../store/store';
 import { fetchProfile } from '../../store/slices/userSlice';
 import { selectIsAuthenticated } from "../../store/slices/authSlice";
@@ -227,13 +227,13 @@ const LocationWrapper = styled.div`
   gap: 15px;
 `;
 
-const PostCreate = () => {
+const MoimEdit = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const userProfile = useSelector((state: RootState) => state.user.profile);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [category, setCategory] = useState<string | null>("bungae");
+  const [category, setCategory] = useState<string | null>("moim");
   const [keywords, setKeywords] = useState<string[]>([]);
   const [location, setLocation] = useState("");
   const [subLocation, setSubLocation] = useState("");
@@ -310,7 +310,7 @@ const PostCreate = () => {
       return;
     }
 
-    const postData = {
+    const moimData = {
       userId: userProfile?.userId,
       title: title,
       content: content,
@@ -325,14 +325,48 @@ const PostCreate = () => {
       createdAt: dateRange.startDate,
       expireAt: dateRange.endDate,
     };
-
-    const response = await dispatch(createPost(postData));   //useDispatch는 slice 파일의 액션 처리 함수에 접근하여 갱신함
-    //response는 thunk를 이용해 비동기 작업 처리시 반환된 액션 객체로, 반환된 액션 객체에 meta가 포함되어 있는데, 이 meta에 requestStatus 속성이 있다
-    if (response.meta.requestStatus === 'fulfilled') {   //response는 서버의 그 response와 연결짓지 말고, dispatch의 결과물인데 dispatch의 결과물로 meta, action, error가 잇음
-      navigate('/PostList');
-    } else {
-      Swal.fire("Error", "게시글 생성에 실패했습니다.", "error");
-      window.location.reload();
+    const bungaeData = {
+      userId: userProfile?.userId,
+      title: title,
+      content: content,
+      keyword: keywords,
+      images: imageUrls,
+      address: {
+        city: location,
+        gu: subLocation,
+        details: additionalInfo.placeDetails,
+      },
+      description: content,
+      createdAt: dateRange.startDate,
+      expireAt: dateRange.endDate,
+      gatherAt: meetingStartTime
+    };
+    
+    if (category === "moim") {
+      try {
+        const response = await dispatch(createMoim(moimData)).unwrap();
+      }
+      catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: '게시글 생성 실패',
+          text: '생성 중 오류가 발생했습니다. 다시 시도하세요.',
+        });
+        window.location.reload();
+      }
+    }
+    else {
+      try {
+        const response = await dispatch(createBungae(bungaeData)).unwrap();
+      }
+      catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: '게시글 생성 실패',
+          text: '생성 중 오류가 발생했습니다. 다시 시도하세요.',
+        });
+        window.location.reload();
+      }
     }
 
 
@@ -574,4 +608,4 @@ const PostCreate = () => {
   );
 };
 
-export default PostCreate;
+export default MoimEdit;

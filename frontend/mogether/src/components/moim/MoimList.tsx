@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../store/store';
-import { fetchPosts, loadMorePosts, sortPostsByLatest, sortPostsByLikes, clickInterest } from '../../store/slices/postSlice';
+import { fetchPosts, loadMorePosts, sortPostsByLatest, sortPostsByLikes, clickInterest } from '../../store/slices/moimSlice';
 import styled from 'styled-components';
 import { FaHeart } from 'react-icons/fa';
 import Swal from 'sweetalert2';
 import { locations } from '../../utils/location';
-import { searchPosts } from '../../store/slices/postSlice';
+import { searchPosts } from '../../store/slices/moimSlice';
 import { selectUserProfile } from '../../store/slices/userSlice';
 
 
@@ -134,9 +134,9 @@ const Select = styled.select`
   margin-right: 10px;
 `;
 
-const PostList = () => {
+const MoimList = () => {
   const dispatch: AppDispatch = useDispatch();
-  const { visiblePosts, allPosts, loading, error } = useSelector((state: RootState) => state.post);
+  const { visiblePosts, allPosts, loading, error } = useSelector((state: RootState) => state.moim);
   const [sortOrder, setSortOrder] = useState('latest');
   const [searchTerm, setSearchTerm] = useState('');
   const [location, setLocation] = useState('');
@@ -160,7 +160,7 @@ const PostList = () => {
     dispatch(loadMorePosts());
   };
 
-  const handleToggleInterest = async (moimId: number, isInterested: boolean) => {
+  const handleToggleInterest = async (moimId: number, interested: boolean) => {
     try {
       await dispatch(clickInterest({ moimId, userId: userId })).unwrap();
       console.log(`Successfully toggled interest for post ${moimId}`);
@@ -246,8 +246,8 @@ const PostList = () => {
               <PostCard key={post.id}>
                 <PostImage src={post.thumbnailUrl || '/default-image.jpg'} alt={post.title} />
                 <HeartIcon 
-                  isInterested={post.isInterested || false} 
-                  onClick={() => handleToggleInterest(post.id, post.isInterested || false)}
+                  isInterested={post.interested || false} 
+                  onClick={() => handleToggleInterest(post.id, post.interested || false)}
                 />
                 <PostInfo>
                   <PostTitle>{post.title}</PostTitle>
@@ -283,4 +283,4 @@ const PostList = () => {
   );
 };
 
-export default PostList;
+export default MoimList;

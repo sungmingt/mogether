@@ -1,9 +1,9 @@
 import { createSlice, createAsyncThunk, PayloadAction, AsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { fetchPostsApi, PostCardApi, interestApi, searchPostApi } from '../../utils/api';
+import { fetchPostsApi, MoimCardApi, interestMoimApi, searchMoimApi, joinMoimApi, interestMoimDeleteApi, joinQuitMoimApi } from '../../utils/api';
 
-export interface Post {
-  id: number;
+export interface Post {  //여기서의 post는....moim의 형식을 의미한다....
+  id: number;   // 서버에서 id를 줄 때 -> id 이렇게 준다...
   title: string;
   content: string;
   imageUrls?: string[];
@@ -13,7 +13,7 @@ export interface Post {
   hostProfileImageUrl: string;
   hostIntro?: string;
   participantsImageUrls?: string[];
-  participantsCount?: number;
+  participantsCount: number;
   keyword: string;
   interestsCount: number;
   address: {
@@ -24,7 +24,8 @@ export interface Post {
   description?: string;
   createdAt: string;
   expireAt: string;
-  isInterested?: boolean;
+  interested?: boolean;
+  joined?: boolean;
 }
 
 interface PostState {
@@ -64,7 +65,7 @@ export const clickPosts = createAsyncThunk(
   'posts/clickPosts',
   async (moimId: number, thunkAPI) => {
     try {
-      const response = await PostCardApi(moimId);  //애초에 api.ts에서 response.data를 값으로 넘겨줌
+      const response = await MoimCardApi(moimId);  //애초에 api.ts에서 response.data를 값으로 넘겨줌
       if (response.status === 200) {
         return response.data;
       }
@@ -81,7 +82,7 @@ export const clickInterest = createAsyncThunk(
   'posts/clickInterest',
   async (interest: any, thunkAPI) => {
     try {
-      const response = await interestApi(interest);
+      const response = await interestMoimApi(interest);
       if (response.status === 200) {
         return {moimId: interest.moimId};
       }
@@ -95,12 +96,65 @@ export const clickInterest = createAsyncThunk(
   }
 )
 
+export const deleteInterest = createAsyncThunk(
+  'posts/deleteInterest',
+  async (interest: any, thunkAPI) => {
+    try {
+      const response = await interestMoimDeleteApi(interest);
+      if (response.status === 200) {
+        return {moimId: interest.moimId};
+      }
+      else {
+        return thunkAPI.rejectWithValue('Failed to delete');
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue('Failed to delete Interest');
+    }
+  }
+)
+
+export const clickJoin = createAsyncThunk(
+  'posts/clickJoin',
+  async (join: any, thunkAPI) => {
+    try {
+      const response = await joinMoimApi(join);
+      if (response.status === 200) {
+        return {moimId: join.moimId};
+      }
+      else {
+        return thunkAPI.rejectWithValue('Failed to fetch posts');
+      }
+    }
+    catch (error) {
+      return thunkAPI.rejectWithValue('Failed to toggle interest');
+    }
+  }
+)
+
+export const quitJoin = createAsyncThunk(
+  'posts/quitJoin',
+  async (join: any, thunkAPI) => {
+    try {
+      const response = await joinQuitMoimApi(join);  // {userId: userId, moimId: moimId}
+      if (response.status === 200) {
+        return {moimId: join.moimId};
+      }
+      else {
+        return thunkAPI.rejectWithValue('Failed to fetch posts');
+      }
+    }
+    catch (error) {
+      return thunkAPI.rejectWithValue('Failed to toggle interest');
+    }
+  }
+)
+ 
 export const searchPosts = createAsyncThunk(
   'posts/searchPosts',
   async ({ name, city, gu }: { name: string; city: string; gu: string }, thunkAPI) => {
     try {
       let searchData = {name: name, city:city, gu: gu};
-      const response = await searchPostApi(searchData);
+      const response = await searchMoimApi(searchData);
       if (response.status === 200 || response.status === 201) {
         return response.data;
       } else {
@@ -130,8 +184,11 @@ const postSlice = createSlice({   // 게시글 리스트의 상태와 액션을 
       state.visiblePosts = state.allPosts.slice(0, 12);
     },
     filterPostsByKeywords(state, action: PayloadAction<string[]>) {
-      state.visiblePosts = state.allPosts.filter(post => action.payload.some(keyword => post.keyword.includes(keyword)));
-    },
+      const filteredPosts = state.allPosts.filter(post => 
+        action.payload.some(keyword => post.keyword.includes(keyword))
+      );
+      state.visiblePosts = filteredPosts.slice(0, 12);
+    }
   },
   extraReducers: (builder) => {
     builder
@@ -148,13 +205,13 @@ const postSlice = createSlice({   // 게시글 리스트의 상태와 액션을 
         state.loading = false;
         state.error = action.payload as string;
       })
-      .addCase(clickPosts.pending, (state) => {
+      .addCase(clickPosts.pending, (state) => {  // 클릭 시 결과값?
         state.loading = true;
         state.error = null;
       })
       .addCase(clickPosts.fulfilled, (state, action) => {
         state.loading = false;
-        state.idPost = action.payload;
+        state.idPost = action.payload;   // Post 객체 하나 -> 저장하는 공간이 idPost라는 의미
       })
       .addCase(clickPosts.rejected, (state, action) => {
         state.loading = false;
@@ -164,13 +221,13 @@ const postSlice = createSlice({   // 게시글 리스트의 상태와 액션을 
         const { moimId } = action.payload;
         const post = state.allPosts.find(post => post.id === moimId);
         if (post) {
-          post.isInterested = !post.isInterested;
-          post.interestsCount += post.isInterested ? 1 : -1;
+          post.interested = !post.interested;
+          post.interestsCount += post.interested ? 1 : -1;
         }
         const visiblePost = state.visiblePosts.find(post => post.id === moimId);
         if (visiblePost) {
-          visiblePost.isInterested = !visiblePost.isInterested;
-          visiblePost.interestsCount += visiblePost.isInterested ? 1 : -1;
+          visiblePost.interested = !visiblePost.interested;
+          visiblePost.interestsCount += visiblePost.interested ? 1 : -1;
         }
       })
       .addCase(searchPosts.pending, (state) => {
@@ -185,12 +242,49 @@ const postSlice = createSlice({   // 게시글 리스트의 상태와 액션을 
       .addCase(searchPosts.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(clickJoin.fulfilled, (state, action) => {
+        const {moimId} = action.payload;
+        const post = state.allPosts.find(post => post.id === moimId);
+        if (post) {
+          post.joined = !post.joined;
+          post.interestsCount += post.interested ? 1 : -1;
+        }
+        const visiblePost = state.visiblePosts.find(post => post.id === moimId);
+        if (visiblePost) {
+          visiblePost.joined = !visiblePost.joined;
+          visiblePost.participantsCount += visiblePost.joined ? 1 : -1;
+        }
+        state.loading = false;
+      })
+      .addCase(clickJoin.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
+      })
+      .addCase(quitJoin.fulfilled, (state, action) => {
+        const {moimId} = action.payload;
+        const post = state.allPosts.find(post => post.id === moimId);
+        if (post) {
+          post.joined = !post.joined;
+          post.interestsCount += post.interested ? 1 : -1;
+        }
+        const visiblePost = state.visiblePosts.find(post => post.id === moimId);
+        if (visiblePost) {
+          visiblePost.joined = !visiblePost.joined;
+          visiblePost.participantsCount += visiblePost.joined ? 1 : -1;
+        }
+        state.loading = false;
+      })
+      .addCase(quitJoin.rejected, (state, action) => {
+        state.loading = false;
+        state.error = action.payload as string;
       });
+      
   },
 });
 
-export const selectMoimPost = (state: RootState) => state.post.idPost;   // postSlice는 store에 post라는 이름의 리듀서로 저장이 되어 있음
-export const selectAllPosts = (state: RootState) => state.post.allPosts;
-export const selectVisiblePosts = (state: RootState) => state.post.visiblePosts;
+export const selectMoimPost = (state: RootState) => state.moim.idPost;   // postSlice는 store에 post라는 이름의 리듀서로 저장이 되어 있음
+export const selectAllPosts = (state: RootState) => state.moim.allPosts;
+export const selectVisiblePosts = (state: RootState) => state.moim.visiblePosts;
 export const { loadMorePosts, sortPostsByLatest, sortPostsByLikes, filterPostsByKeywords } = postSlice.actions;
 export default postSlice.reducer;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import { fetchProfile, selectUserProfile } from "../../store/slices/userSlice";
+import { fetchProfile, selectUserProfile, PatchUserProfile } from "../../store/slices/userSlice";
 import { RootState, AppDispatch } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -85,7 +85,7 @@ const MyProfile: React.FC = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
         try {
-            const response = dispatch(fetchProfile(userId)).unwrap();
+            const response = dispatch(fetchProfile(userId)).unwrap();  //dispatch로 인해 profile 변경 -> useSelector로 변경값 갱신 -> 그걸 가져옴
             setFormData(userProfile);
             console.log(response);
         }
@@ -111,9 +111,16 @@ const MyProfile: React.FC = () => {
     });
   };
 
-  const handleToggleEdit = () => {
+  const handleToggleEdit = async () => {
     if (editMode) {  //editMode가 true인 경우
-      // Save changes to backend
+      try {
+        const response = await dispatch(PatchUserProfile(formData)).unwrap();
+        // window.location.reload();  //useEffect를 한번 더 실행?
+      }
+      catch (error) {
+        console.error(error);
+        Swal.fire('error', error as string, 'error');
+      }
     }
     setEditMode(!editMode);
   };

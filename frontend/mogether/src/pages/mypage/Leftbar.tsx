@@ -5,6 +5,7 @@ import Toggle from "react-toggle";
 import "react-toggle"; 
 import { useDispatch } from "react-redux";
 import { filterPostsByKeywords } from '../../store/slices/moimSlice';
+import { useNavigate } from "react-router-dom";
 
 const slideIn = keyframes`
   from {
@@ -101,33 +102,15 @@ const CheckButton = styled.button`
 
 const LeftBar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({
-    Art: true,
-    Music: true,
-    Travel: true,
-    Sports: true,
-  });
+  const navigate = useNavigate();
   const dispatch = useDispatch();
 
-  useEffect(() => {
-    handleKeywordChange();
-  }, [checkedItems]);
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
   };
 
-  const handleToggleChange = (key: string) => {
-    setCheckedItems((prev) => ({
-      ...prev,
-      [key]: !prev[key],  //true -> false, false -> true
-    }));
-  };
-
-  const handleKeywordChange = () => {
-    const selectedKeywords = Object.keys(checkedItems).filter((key) => checkedItems[key]);
-    dispatch(filterPostsByKeywords(selectedKeywords));
-  };
+  
 
   return (
     <>
@@ -136,18 +119,20 @@ const LeftBar = () => {
       </MenuIcon>
       <LeftBarContainer isOpen={isOpen}>
         <FilterContainer>
-          <FilterTitle>Filters</FilterTitle>
-          {Object.keys(checkedItems).map((key) => (
-            <FilterItem key={key}>
-              <StyledToggle
-                checked={checkedItems[key]}
-                onChange={() => handleToggleChange(key)}
-              />
-              <label>{key}</label>
-            </FilterItem>
-          ))}
+          <FilterTitle>마이 페이지</FilterTitle>
+          <FilterItem>
+            <a href="/mypage">내 정보</a>
+          </FilterItem>
+          <FilterItem>
+            <a href="/chattingList">채팅 내역</a>
+          </FilterItem>
+          <FilterItem>
+            <a href="/interest">관심글</a>
+          </FilterItem>
+          <FilterItem>
+            <a href="/created">등록글</a>
+          </FilterItem>
         </FilterContainer>
-        <CheckButton onClick={handleKeywordChange}>키워드 검색</CheckButton>
       </LeftBarContainer>
     </>
   );

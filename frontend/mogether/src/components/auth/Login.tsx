@@ -6,6 +6,9 @@ import { RootState, AppDispatch } from '../../store/store';
 import { useNavigate } from 'react-router-dom';
 import { GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
 import KakaoLogin from 'react-kakao-login';
+import { fetchProfile } from '../../store/slices/userSlice';
+import Swal from 'sweetalert2';
+
 
 const LoginContainer = styled.div`
   display: flex;
@@ -108,10 +111,17 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState<string>('');
   const error = useSelector((state: RootState) => selectAuthError(state));
   const isAuthenticated = useSelector((state: RootState) => selectIsAuthenticated(state));
+  
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     if (email !== '' && password !== '') {
-      dispatch(login({ email, password }));
+      try {
+        const response = dispatch(login({ email: email, password: password })).unwrap();
+        // response.status === 200일때 dispatch로 인해 isAuthenticated 값이 갱신된다(useSelector에 의해서)
+      }
+      catch (error) {
+        Swal.fire('error', '잘못된 요청입니다', 'error');
+      }
     }
   };
 
