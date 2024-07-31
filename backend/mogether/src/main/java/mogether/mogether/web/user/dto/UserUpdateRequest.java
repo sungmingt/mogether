@@ -20,8 +20,6 @@ public class UserUpdateRequest {
     private String name;
     @NotEmpty
     private String nickname;
-    private MultipartFile image;
-
     private Address address;
     private int age;
     private Gender gender;

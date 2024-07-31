@@ -19,10 +19,8 @@ public class UserJoinRequest {
     @NotEmpty
     @Email
     private String email;
-
     @NotEmpty
     private String password; ///대소문자, 특수문자 포함 8자리 이상
-
     @NotEmpty
     private String name;
     @NotEmpty
