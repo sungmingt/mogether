@@ -8,6 +8,7 @@ import mogether.mogether.domain.moim.Moim;
 import mogether.mogether.web.moim.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -45,7 +46,8 @@ public class MoimController {
             })
     @ResponseStatus(CREATED)
     @PostMapping("/")
-    public MoimCreateResponse create(@RequestBody MoimCreateRequest moimCreateRequest) {
+    public MoimCreateResponse create(@RequestPart(name = "images") List<MultipartFile> images,
+                                     @RequestPart(name = "dto") MoimCreateRequest moimCreateRequest) {
         return new MoimCreateResponse();
     }
 
@@ -55,7 +57,8 @@ public class MoimController {
             })
     @PatchMapping("/{moimId}")
     public MoimUpdateResponse update(@PathVariable Long moimId,
-                                     @RequestBody MoimUpdateRequest moimUpdateRequest) {
+                                     @RequestPart(name = "images") List<MultipartFile> images,
+                                     @RequestPart(name = "dto") MoimUpdateRequest moimUpdateRequest) {
 
         return new MoimUpdateResponse();
     }

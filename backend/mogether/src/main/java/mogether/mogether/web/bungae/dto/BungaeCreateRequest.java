@@ -18,7 +18,6 @@ public class BungaeCreateRequest {
 
     @NotEmpty
     private Long userId; /////////////
-    private List<MultipartFile> images;
     @NotEmpty
     private String title;
     @NotEmpty

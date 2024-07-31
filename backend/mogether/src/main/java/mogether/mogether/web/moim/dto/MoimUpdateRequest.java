@@ -22,7 +22,6 @@ public class MoimUpdateRequest {
 
     @NotEmpty
     private Long userId; /////////////
-    private List<MultipartFile> images; //////
     @NotEmpty
     private String title;
     @NotEmpty

@@ -7,9 +7,9 @@ import lombok.RequiredArgsConstructor;
 import mogether.mogether.application.bungae.BungaeService;
 import mogether.mogether.domain.bungae.Bungae;
 import mogether.mogether.web.bungae.dto.*;
-import mogether.mogether.web.moim.dto.MoimQuitRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,7 +49,8 @@ public class BungaeController {
             })
     @ResponseStatus(CREATED)
     @PostMapping("/")
-    public BungaeCreateResponse create(@RequestBody BungaeCreateRequest bungaeCreateRequest) {
+    public BungaeCreateResponse create(@RequestPart(name = "images") List<MultipartFile> images,
+                                       @RequestPart(name = "dto") BungaeCreateRequest bungaeCreateRequest) {
         return new BungaeCreateResponse();
     }
 
@@ -59,7 +60,8 @@ public class BungaeController {
             })
     @PatchMapping("/{bungaeId}")
     public BungaeUpdateResponse update(@PathVariable Long bungaeId,
-                                       @RequestBody BungaeUpdateRequest bungaeUpdateRequest) {
+                                       @RequestPart(name = "images") List<MultipartFile> images,
+                                       @RequestPart(name = "dto") BungaeUpdateRequest bungaeUpdateRequest) {
 
         return new BungaeUpdateResponse();
     }

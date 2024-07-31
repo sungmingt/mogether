@@ -11,6 +11,7 @@ import mogether.mogether.web.moim.dto.MoimListResponse;
 import mogether.mogether.web.user.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,14 +22,17 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
 
+//    private final UserService userService;
+
     @Operation(summary = "일반 유저 회원가입", description = "일반 유저의 회원가입 요청",
             responses = {
                     @ApiResponse(responseCode = "201", description = "유저의 회원가입 성공"),
             })
     @PostMapping("/join")
-    public UserJoinResponse join(@PathVariable Long bungaeId,
-                                 @RequestBody UserJoinRequest userJoinRequest) {
+    public UserJoinResponse join(@RequestPart(name = "image") MultipartFile image,
+                                 @RequestPart(name = "dto") UserJoinRequest userJoinRequest) {
         return new UserJoinResponse();
+//        return userService.join(userJoinRequest, image);
     }
 
     @Operation(summary = "유저 정보 변경", description = "유저 정보를 변경한다",
@@ -37,7 +41,8 @@ public class UserController {
             })
     @PatchMapping("/{userId}")
     public UserUpdateResponse update(@PathVariable Long userId,
-                                     @RequestBody UserUpdateRequest userUpdateRequest) {
+                                     @RequestPart(name = "image") MultipartFile image,
+                                     @RequestPart(name = "dto") UserUpdateRequest userUpdateRequest) {
         return new UserUpdateResponse();
     }
 
