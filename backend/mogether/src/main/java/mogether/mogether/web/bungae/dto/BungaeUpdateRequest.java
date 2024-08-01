@@ -26,7 +26,6 @@ public class BungaeUpdateRequest {
     private Keyword keyword; ////
     @NotEmpty
     private Address address;
-    private String description; //
 
     @NotEmpty
     private String gatherAt;
@@ -34,4 +33,10 @@ public class BungaeUpdateRequest {
     private LocalDate createdAt;
     @NotEmpty
     private LocalDate expireAt; ///
+
+    private String placeDetails;
+    private int minMember;
+    private int maxMember;
+    private int ageLimit;
+    private int fee;
 }

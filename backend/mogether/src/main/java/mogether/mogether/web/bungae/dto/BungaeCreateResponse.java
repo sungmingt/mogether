@@ -24,9 +24,24 @@ public class BungaeCreateResponse {
     private String content;
     private Keyword keyword; ////
     private Address address;
-    private String description; //
 
     private String gatherAt;
     private LocalDate createdAt;
     private LocalDate expireAt;
+
+    private String placeDetails;
+    private int minMember;
+    private int maxMember;
+    private int ageLimit;
+    private int fee;
+
+//    public static BungaeCreateResponse of(Bungae bungae) {
+//        return new BungaeCreateResponse(
+//                bungae.getId(), bungae.getHost().getId(), bungae.getImageUrls(),
+//                bungae.getTitle(), bungae.getContent(), bungae.getKeyword(),
+//                bungae.getAddress(), bungae.getGatherAt(), bungae.getCreatedAt(),
+//                bungae.getExpireAt(), bungae.getPlaceDetails(), bungae.getMinMember(),
+//                bungae.getMaxMember(), bungae.getAgeLimit(), bungae.getFee()
+//        );
+//    }
 }

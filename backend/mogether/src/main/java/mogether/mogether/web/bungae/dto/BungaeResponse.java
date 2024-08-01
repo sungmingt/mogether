@@ -33,10 +33,15 @@ public class BungaeResponse {
     private String content;
     private Keyword keyword; ////
     private Address address;
-    private String description; //
     private Long interestsCount;
 
     private String gatherAt;
     private LocalDate createdAt;
     private LocalDate expireAt;
+
+    private String placeDetails;
+    private int minMember;
+    private int maxMember;
+    private int ageLimit;
+    private int fee;
 }
