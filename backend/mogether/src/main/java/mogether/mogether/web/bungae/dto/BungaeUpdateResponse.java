@@ -25,9 +25,14 @@ public class BungaeUpdateResponse {
     private String content;
     private Keyword keyword; ////
     private Address address;
-    private String description; //
 
     private String gatherAt;
     private LocalDate createdAt;
     private LocalDate expireAt;
+
+    private String placeDetails;
+    private int minMember;
+    private int maxMember;
+    private int ageLimit;
+    private int fee;
 }
