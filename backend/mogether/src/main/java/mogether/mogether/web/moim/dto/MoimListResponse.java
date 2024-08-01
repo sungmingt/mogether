@@ -6,12 +6,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mogether.mogether.domain.Address;
 import mogether.mogether.domain.Keyword;
-import mogether.mogether.domain.bungae.Bungae;
 import mogether.mogether.domain.moim.Moim;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +27,8 @@ public class MoimListResponse {
     private String hostProfileImageUrl;
     private List<String> participantsImageUrls;//
     private Long participantsCount;//
+
+    private boolean isJoined;
     private boolean isInterested; //todo
 
     private String title;
@@ -50,6 +50,7 @@ public class MoimListResponse {
                         "hostPRofileImageUrl",
                         new ArrayList<String>(),
                         12L,
+                        false,
                         false,
                         moim.getTitle(),
                         moim.getContent(),

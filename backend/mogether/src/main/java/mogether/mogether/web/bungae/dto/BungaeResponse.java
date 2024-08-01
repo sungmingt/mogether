@@ -1,6 +1,5 @@
 package mogether.mogether.web.bungae.dto;
 
-import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +8,6 @@ import mogether.mogether.domain.Address;
 import mogether.mogether.domain.Keyword;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -27,6 +25,8 @@ public class BungaeResponse {
     private String hostIntro;
     private List<String> participantsImageUrls;//
     private Long participantsCount;//
+
+    private boolean isJoined;
     private boolean isInterested;//todo
 
     private String title;

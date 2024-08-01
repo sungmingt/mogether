@@ -9,9 +9,7 @@ import mogether.mogether.domain.Keyword;
 import mogether.mogether.domain.bungae.Bungae;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,6 +27,8 @@ public class BungaeListResponse {
     private String hostProfileImageUrl;
     private List<String> participantsImageUrls;//
     private Long participantsCount;//
+
+    private boolean isJoined;
     private boolean isInterested; //todo
 
     private String title;
@@ -51,6 +51,7 @@ public class BungaeListResponse {
                         "hostProfileImageUrl",
                         new ArrayList<String>(),
                         12L,
+                        false,
                         false,
                         bungae.getTitle(),
                         bungae.getContent(),
