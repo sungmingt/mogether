@@ -26,8 +26,9 @@ public class BungaeResponse {
     private List<String> participantsImageUrls;//
     private Long participantsCount;//
 
+    //todo: get 요청에 userId를 알려면, token 정보에 넣거나 hearder로 받아야 한다,,,,,
     private boolean isJoined;
-    private boolean isInterested;//todo
+    private boolean isInterested;
 
     private String title;
     private String content;
@@ -44,4 +45,20 @@ public class BungaeResponse {
     private int maxMember;
     private int ageLimit;
     private int fee;
+
+//    public static BungaeResponse of(Bungae findBungae) {
+//        User host = findBungae.getHost();
+//        List<BungaeUser> bungaeUserList = findBungae.getBungaeUserList();
+//        List<String> participantsImageUrls = bungaeUserList.stream()
+//                .map(bungaeUser -> bungaeUser.getUser().getImageUrl())
+//                .toList();
+//
+//        return new BungaeResponse(
+//                findBungae.getId(), findBungae.getImageUrls(), host.getId(),
+//                host.getName(), host.getImageUrl(), host.getIntro(),
+//                participantsImageUrls,
+//                participantsImageUrls.size(),
+//
+//        )
+//    }
 }

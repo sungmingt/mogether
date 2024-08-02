@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mogether.mogether.domain.Address;
 import mogether.mogether.domain.Keyword;
+import mogether.mogether.domain.bungae.Bungae;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -35,13 +36,13 @@ public class BungaeCreateResponse {
     private int ageLimit;
     private int fee;
 
-//    public static BungaeCreateResponse of(Bungae bungae) {
-//        return new BungaeCreateResponse(
-//                bungae.getId(), bungae.getHost().getId(), bungae.getImageUrls(),
-//                bungae.getTitle(), bungae.getContent(), bungae.getKeyword(),
-//                bungae.getAddress(), bungae.getGatherAt(), bungae.getCreatedAt(),
-//                bungae.getExpireAt(), bungae.getPlaceDetails(), bungae.getMinMember(),
-//                bungae.getMaxMember(), bungae.getAgeLimit(), bungae.getFee()
-//        );
-//    }
+    public static BungaeCreateResponse of(Bungae bungae) {
+        return new BungaeCreateResponse(
+                bungae.getId(), bungae.getHost().getId(), bungae.getImageUrls(),
+                bungae.getTitle(), bungae.getContent(), bungae.getKeyword(),
+                bungae.getAddress(), bungae.getGatherAt(), bungae.getCreatedAt(),
+                bungae.getExpireAt(), bungae.getPlaceDetails(), bungae.getMinMember(),
+                bungae.getMaxMember(), bungae.getAgeLimit(), bungae.getFee()
+        );
+    }
 }
