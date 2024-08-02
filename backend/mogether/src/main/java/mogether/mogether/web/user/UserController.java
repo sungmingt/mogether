@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import mogether.mogether.application.user.UserService;
 import mogether.mogether.domain.bungae.Bungae;
 import mogether.mogether.domain.moim.Moim;
 import mogether.mogether.web.bungae.dto.BungaeListResponse;
@@ -22,7 +23,7 @@ import java.util.List;
 @RequestMapping("/user")
 public class UserController {
 
-//    private final UserService userService;
+    private final UserService userService;
 
     @Operation(summary = "일반 유저 회원가입", description = "일반 유저의 회원가입 요청",
             responses = {
@@ -31,8 +32,7 @@ public class UserController {
     @PostMapping("/join")
     public UserJoinResponse join(@RequestPart(name = "image") MultipartFile image,
                                  @RequestPart(name = "dto") UserJoinRequest userJoinRequest) {
-        return new UserJoinResponse();
-//        return userService.join(userJoinRequest, image);
+        return userService.join(userJoinRequest, image);
     }
 
     @Operation(summary = "유저 정보 변경", description = "유저 정보를 변경한다",
@@ -43,7 +43,7 @@ public class UserController {
     public UserUpdateResponse update(@PathVariable Long userId,
                                      @RequestPart(name = "image") MultipartFile image,
                                      @RequestPart(name = "dto") UserUpdateRequest userUpdateRequest) {
-        return new UserUpdateResponse();
+        return userService.update(userId, userUpdateRequest, image);
     }
 
     @Operation(summary = "비밀번호 변경", description = "유저의 비밀번호를 변경한다",
@@ -53,6 +53,7 @@ public class UserController {
     @PatchMapping("/{userId}/password") ////
     public HttpStatus updatePassword(@PathVariable Long userId,
                                      @RequestBody UserUpdatePasswordRequest userUpdatePasswordRequest) {
+        userService.updatePassword(userId, userUpdatePasswordRequest);
         return HttpStatus.OK;
     }
 
@@ -61,8 +62,8 @@ public class UserController {
                     @ApiResponse(responseCode = "200", description = "유저 정보 조회 성공"),
             })
     @GetMapping("/{userId}")
-    public UserResponse getUserInfo(@PathVariable Long userId) {
-        return new UserResponse();
+    public UserResponse getUserInfo(@PathVariable(name = "userId") Long userId) {
+        return userService.getUserInfo(userId);
     }
 
     //관심 번개 목록
