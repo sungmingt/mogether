@@ -45,6 +45,9 @@ jobs:
     - name: Copy script
       run: cd backend/mogether && cp ./scripts/start.sh ./deploy
 
+    - name: Copy script
+      run: cd backend/mogether && cp ./scripts/deploy-before.sh ./deploy
+      
     - name: Make zip file
       run: zip -r ./mogether.zip ./deploy
       shell: bash
