@@ -17,5 +17,5 @@ hooks:
     # - location: backend/mogether/scripts/stop.sh
       # timeout: 60
   ApplicationStart:
-    - location: backend/mogether/scrpits/deploy.sh
+    - location: backend/mogether/scrpits/start.sh
       timeout: 60
