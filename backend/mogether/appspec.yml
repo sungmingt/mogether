@@ -19,3 +19,4 @@ hooks:
   ApplicationStart:
     - location: backend/mogether/scrpits/start.sh
       timeout: 60
+      runas: ubuntu
