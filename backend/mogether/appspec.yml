@@ -14,7 +14,7 @@ permissions:
 
 hooks:
   BeforeInstall:
-    - location: deploy-before.sh
+    - location: backend/mogether/scripts/deploy-before.sh
       runas: ubuntu
   # AfterInstall:
     # - location: backend/mogether/scripts/stop.sh
