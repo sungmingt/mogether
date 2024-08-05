@@ -13,6 +13,9 @@ permissions:
     group: ubuntu
 
 hooks:
+  BeforeInstall:
+    - location: deploy-before.sh
+      runas: ubuntu
   # AfterInstall:
     # - location: backend/mogether/scripts/stop.sh
       # timeout: 60
