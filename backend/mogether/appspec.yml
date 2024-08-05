@@ -17,6 +17,7 @@ hooks:
     # - location: backend/mogether/scripts/stop.sh
       # timeout: 60
   ApplicationStart:
-    - location: backend/mogether/scrpits/start.sh
+    - location: scripts/start.sh
+    # - location: backend/mogether/scrpits/start.sh
       timeout: 60
       runas: ubuntu
