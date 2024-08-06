@@ -1,10 +1,11 @@
 #!/usr/bin/env bash
 
 REPOSITORY=/home/ubuntu/app
+JAR_NAME=$(ls -tr $REPOSITORY/*SNAPSHOT.jar | tail -n 1)
 
 echo "> 현재 구동 중인 애플리케이션 pid 확인"
 
-CURRENT_PID=$(pgrep -fla java | grep hayan | awk '{print $1}')
+CURRENT_PID=$(pgrep -fla java | grep hayan | awk '{print $1}' | pgrep -f $JAR_NAME)
 
 echo "현재 구동 중인 애플리케이션 pid: $CURRENT_PID"
 
