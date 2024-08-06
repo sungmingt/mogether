@@ -43,7 +43,7 @@ jobs:
       run: cp appspec.yml ./deploy
     # script files 복사
     - name: Copy script
-      run: cd backend/mogether && cp ./scripts ./deploy
+      run: cd backend/mogether && cp ./scripts/*.sh ./deploy
       # run: cd backend/mogether/scripts && cp start.sh ./deploy
       
     - name: Make zip file
