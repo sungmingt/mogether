@@ -35,8 +35,7 @@ jobs:
         
     # Jar 파일 복사
     - name: Copy Jar
-      # run: cd backend/mogether && cp ./build/libs/moim-0.0.1-SNAPSHOT.jar ./deploy
-      run: cd backend/mogether && cp ./build/libs/moim-0.0.1-SNAPSHOT.jar /deploy
+      run: cd backend/mogether && cp ./build/libs/moim-0.0.1-SNAPSHOT.jar ./deploy
       
     # appspec.yml 파일 복사
     - name: Copy appspec.yml
@@ -44,12 +43,12 @@ jobs:
       run: cp appspec.yml ./deploy
     # script files 복사
     - name: Copy script
-      run: cd backend/mogether && cp ./scripts/start.sh /deploy
-      # run: cd backend/mogether && cp scripts/start.sh ./deploy
+      # run: cd backend/mogether && cp ./scripts/start.sh /deploy
+      run: cd backend/mogether && cp scripts/start.sh ./deploy
       
     - name: Make zip file
-      # run: zip -r ./mogether.zip ./deploy
-      run: zip -r ./mogether.zip /deploy
+      run: zip -r ./mogether.zip ./deploy
+      # run: zip -r ./mogether.zip /deploy
       shell: bash
 
     - name: Configure AWS credentials
