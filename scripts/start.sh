@@ -6,7 +6,7 @@ JAR_NAME=$(ls -tr $REPOSITORY/*SNAPSHOT.jar | tail -n 1)
 echo "> 현재 구동 중인 애플리케이션 pid 확인"
 
 # CURRENT_PID=$(pgrep -fla java | grep hayan | awk '{print $1}' | pgrep -f $JAR_NAME)
-CURRENT_PID=$(pgrep -f moim-0.0.1-SNAPSHOT.jar)
+CURRENT_PID=$(pgrep -f $JAR_NAME)
 
 echo "현재 구동 중인 애플리케이션 pid: $CURRENT_PID" >> /home/ubuntu/app/deploy.log
 
