@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { GoogleLoginResponse } from 'react-google-login';
 
 const API_BASE_URL = 'http://api.mo-gether.site:8080'; // 백엔드 서버의 기본 URL
 
@@ -36,9 +37,10 @@ api.interceptors.response.use(
         const { data } = await axios.post(`${API_BASE_URL}/auth/refresh-token`, {
           refreshToken,
         });
+        const newAccessToken = data.accessToken.split(' ')[1];  //`Bearer ${} 이런 식을 보내지면
 
-        localStorage.setItem('accessToken', data.accessToken);
-        originalRequest.headers['Authorization'] = `Bearer ${data.accessToken}`;
+        localStorage.setItem('accessToken', newAccessToken);
+        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
 
         return axios(originalRequest);
       } catch (err) {
@@ -53,32 +55,56 @@ api.interceptors.response.use(
 // API 요청 함수들
 export const loginApi = async (email: string, password: string) => {
   const response = await api.post('/auth/login', { email, password });
-  localStorage.setItem('accessToken', response.data.accessToken);
-  localStorage.setItem('refreshToken', response.data.refreshToken);
-  return response.data;
+  const accessToken = response.headers['accessToken'].split(' ')[1];
+  const refreshToken = response.headers['refreshToken'].split(' ')[1];
+  localStorage.setItem('accessToken', accessToken);
+  localStorage.setItem('refreshToken', refreshToken);
+  return response;
 };
 
 export const registerApi = async (name: string, email: string, password: string) => {  //register 호출 시 인자 3개를 받아옴
   const response = await api.post('/auth/register', { name: name, email: email, password: password });
-  localStorage.setItem('accessToken', response.data.accessToken);
-  localStorage.setItem('refreshToken', response.data.refreshToken);
-  return response.data;
+  // localStorage.setItem('accessToken', response.data.accessToken);
+  // localStorage.setItem('refreshToken', response.data.refreshToken);
+  return response;
 };
 
 export const fetchUserProfileApi = async () => {
     const response = await api.get('/user/profile');
-    return response.data;
+    return response;
   };
 
 export const fetchPostsApi = async () => {
   const response = await api.get('/posts');
-  return response.data;
+  return response;
 };
 
 export const createPostApi = async (postData: any) => {
   const response = await api.post('/posts', postData);
-  return response.data;
+  return response;
 };
+
+export const PostCardApi = async (moimId: number) => {
+  const response = await api.get(`/posts/${moimId}`);
+  return response;
+};
+
+export const interestApi = async (interest: any) => {
+  const response = await api.post('/interest/moim', interest);
+  return response
+}
+
+export const userApi = async (userId: number) => {
+  const response = await api.get(`/user/${userId}`);
+  return response;
+}
+
+export const searchPostApi = async (searchData: any) => {
+  const response = await api.get(`/moim?name=${searchData.name}&city=${searchData.city}&gu=${searchData.gu}`);
+  return response;
+}
+
+
 
 
 

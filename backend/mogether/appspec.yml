@@ -7,15 +7,17 @@ files:
     overwrite: yes
 
 permissions:
-  - object: /
+  - object: /home/ubuntu/app/
     pattern: "**"
     owner: ubuntu
     group: ubuntu
 
 hooks:
-  AfterInstall:
-    - location: backend/mogether/scripts/stop.sh
-      timeout: 60
+  # AfterInstall:
+    # - location: backend/mogether/scripts/stop.sh
+      # timeout: 60
   ApplicationStart:
-    - location: backend/mogether/scrpits/start.sh
+    - location: start.sh
+    # - location: /backend/mogether/scripts/start.sh
       timeout: 60
+      runas: ubuntu
