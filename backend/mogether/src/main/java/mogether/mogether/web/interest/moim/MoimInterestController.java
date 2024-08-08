@@ -17,8 +17,8 @@ public class MoimInterestController {
             responses = {
                     @ApiResponse(responseCode = "201", description = "모임 관심 등록 성공"),
             })
-    @PostMapping
-    public HttpStatus doInterest(@RequestBody MoimInterestRequest doInterestRequest) {
+    @PostMapping("/{moimId}")
+    public HttpStatus doInterest(@PathVariable Long moimId) {
         return HttpStatus.CREATED;
     }
 
@@ -26,8 +26,8 @@ public class MoimInterestController {
             responses = {
                     @ApiResponse(responseCode = "204", description = "모임 관심 취소 성공"),
             })
-    @DeleteMapping
-    public HttpStatus undoInterest(@RequestBody MoimInterestRequest undoInterestRequest) {
+    @DeleteMapping("/{moimId}")
+    public HttpStatus undoInterest(@PathVariable Long moimId) {
         return HttpStatus.NO_CONTENT;
         //todo: 관심 취소할때 interest id를 모른다? -> 글을 조회할때 관심 등록했는지 프론트에서 어떻게 알지?
     }
