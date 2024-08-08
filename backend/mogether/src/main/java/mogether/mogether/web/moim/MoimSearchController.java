@@ -17,7 +17,7 @@ import java.util.List;
 @Tag(name = "search - moim", description = "모임 검색 API")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/moim")
+@RequestMapping("/moim/search")
 public class MoimSearchController {
 
     @Operation(summary = "모임 검색", description = "제목, 위치(시, 구) 기반 모임 검색",

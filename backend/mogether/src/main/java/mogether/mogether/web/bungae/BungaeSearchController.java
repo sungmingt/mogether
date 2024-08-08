@@ -14,7 +14,7 @@ import java.util.List;
 @Tag(name = "search - bungae", description = "번개 검색 API")
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/bungae")
+@RequestMapping("/bungae/search")
 public class BungaeSearchController {
 
     @Operation(summary = "번개 검색", description = "제목, 위치(시, 구) 기반 번개 검색",
@@ -24,8 +24,8 @@ public class BungaeSearchController {
     @GetMapping
     public List<BungaeListResponse> search(@RequestParam(required = false) String name,
                                            @RequestParam(required = false) String city,
-                                           @RequestParam(required = false) String gu) {
-        List<Bungae> bungaeList = new ArrayList<>();
-        return BungaeListResponse.toBungaeListResponse(bungaeList);
+                                           @RequestParam(required = false) String gu,
+                                           @AuthenticationPrincipal PrincipalDetail principalDetail) {
+        return bungaeService.searchByAddress(name, city, gu, principalDetail);
     }
 }
