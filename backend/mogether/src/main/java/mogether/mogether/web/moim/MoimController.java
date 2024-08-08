@@ -26,8 +26,10 @@ public class MoimController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "유저의 모임 가입 성공"),
             })
-    @PostMapping("/join")
-    public HttpStatus join(@RequestBody MoimJoinRequest moimJoinRequest) {
+    @PostMapping("/{moimId}/join")
+    public HttpStatus join(@PathVariable Long moimId) {
+//        moimService.join(moimJoinRequest);
+
         return HttpStatus.OK; /////
     }
 
@@ -35,8 +37,8 @@ public class MoimController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "유저의 모임 탈퇴 성공"),
             })
-    @DeleteMapping("/quit")
-    public HttpStatus quit(@RequestBody MoimQuitRequest moimQuitRequest) {
+    @DeleteMapping("/{moimId}/quit")
+    public HttpStatus quit(@PathVariable Long moimId) {
         return HttpStatus.OK; /////
     }
 
@@ -45,7 +47,7 @@ public class MoimController {
                     @ApiResponse(responseCode = "201", description = "유저의 모임 글 등록 성공"),
             })
     @ResponseStatus(CREATED)
-    @PostMapping("/")
+    @PostMapping
     public MoimCreateResponse create(@RequestPart(name = "images") List<MultipartFile> images,
                                      @RequestPart(name = "dto") MoimCreateRequest moimCreateRequest) {
         return new MoimCreateResponse();
@@ -76,7 +78,7 @@ public class MoimController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "모임 글 리스트 조회 성공"),
             })
-    @GetMapping("/")
+    @GetMapping
     public List<MoimListResponse> readAll() { //페이징 방식, dto 형식
         List<Moim> moimList = new ArrayList<>();
         return MoimListResponse.toMoimListResponse(moimList); ///
@@ -87,8 +89,7 @@ public class MoimController {
                     @ApiResponse(responseCode = "204", description = "유저의 모임 글 삭제 성공"),
             })
     @DeleteMapping("/{moimId}")
-    public HttpStatus delete(@PathVariable Long moimId,
-                             @RequestBody MoimDeleteRequest moimDeleteRequest) {
+    public HttpStatus delete(@PathVariable Long moimId) {
         return NO_CONTENT;
     }
 }

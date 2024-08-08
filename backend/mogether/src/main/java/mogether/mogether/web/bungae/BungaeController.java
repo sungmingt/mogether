@@ -29,9 +29,9 @@ public class BungaeController {
             responses = {
             @ApiResponse(responseCode = "200", description = "유저의 번개 참여 성공"),
     })
-    @PostMapping("/join")
-    public HttpStatus join(@RequestBody BungaeJoinRequest bungaeJoinRequest) {
-        bungaeService.join(bungaeJoinRequest);
+    @PostMapping("/{bungaeId}/join")
+    public HttpStatus join(@PathVariable Long bungaeId) {
+//        bungaeService.join(bungaeJoinRequest);
         return HttpStatus.OK;
     }
 
@@ -39,9 +39,9 @@ public class BungaeController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "유저의 번개 참여 취소 성공"),
             })
-    @DeleteMapping("/quit")
-    public HttpStatus quit(@RequestBody BungaeQuitRequest bungaeQuitRequest) {
-        bungaeService.quit(bungaeQuitRequest);
+    @DeleteMapping("/{bungaeId}/quit")
+    public HttpStatus quit(@PathVariable Long bungaeId) {
+//        bungaeService.quit(bungaeQuitRequest);
         return HttpStatus.OK;
     }
 
@@ -93,8 +93,8 @@ public class BungaeController {
                     @ApiResponse(responseCode = "204", description = "번개 글 삭제 성공"),
             })
     @DeleteMapping("/{bungaeId}")
-    public HttpStatus delete(@PathVariable Long bungaeId,
-                             @RequestBody BungaeDeleteRequest deleteRequest) {
+    public HttpStatus delete(@PathVariable("bungaeId") Long bungaeId) {
+//        bungaeService.delete(bungaeId, deleteRequest.getUserId());
         return NO_CONTENT;
     }
 }
