@@ -1,0 +1,3 @@
+[submodule "mogether-security"]
+	path = mogether-security
+	url = https://github.com/sungmingt/mogether-security.git
