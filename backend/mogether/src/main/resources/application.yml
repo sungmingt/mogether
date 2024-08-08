@@ -1,0 +1,10 @@
+spring:
+  config:
+    # activate:
+      # on-profile: local
+    import:
+      - mogether-security/application.yml
+      # - security/application-datasource.yml
+      # - security/application-cloud.yml
+      # - security/application-mail.yml
+      # - security/application-auth.yml
