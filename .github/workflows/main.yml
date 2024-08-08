@@ -19,11 +19,21 @@ jobs:
       uses: actions/checkout@v3
       with:
         ref: sungmin
+        # submodules: true
+        # token: ${{ secrets.BE_SECURITY }}
+
+    - name: Checkout submodules
+      uses: actions/checkout@v3
+      with:
+        submodules: recursive
+        token: ${{ secrets.BE_SECURITY }}
+        
     - name: Install JDK 17
       uses: actions/setup-java@v3
       with:
         java-version: '17'
         distribution: 'corretto'
+        
     - name: gradlew에 실행 권한 부여
       run: cd backend/mogether && chmod +x ./gradlew
     - name: Build with Gradle

@@ -7,6 +7,7 @@ import lombok.Setter;
 import mogether.mogether.domain.Address;
 import mogether.mogether.domain.user.Gender;
 import mogether.mogether.domain.user.SocialType;
+import mogether.mogether.domain.user.User;
 
 @Getter
 @Setter
@@ -28,4 +29,12 @@ public class UserJoinResponse {
     private Gender gender;
     private String intro;
     private String phoneNumber;
+
+    public static UserJoinResponse of(User user) {
+        return new UserJoinResponse(
+                user.getId(), user.getImageUrl(), user.getEmail(),
+                user.getSocialType(), user.getProviderId(), user.getName(),
+                user.getNickname(), user.getAddress(), user.getAge(),
+                user.getGender(), user.getIntro(), user.getPhoneNumber());
+    }
 }

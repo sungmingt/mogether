@@ -1,8 +1,9 @@
 package mogether.mogether.domain;
 
+import jakarta.persistence.Embeddable;
 import lombok.Getter;
 
-//@Embbedable
+@Embeddable
 @Getter
 public class Address {
 

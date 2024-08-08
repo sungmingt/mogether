@@ -31,7 +31,8 @@ public class BungaeController {
     })
     @PostMapping("/join")
     public HttpStatus join(@RequestBody BungaeJoinRequest bungaeJoinRequest) {
-        return HttpStatus.OK; /////
+        bungaeService.join(bungaeJoinRequest);
+        return HttpStatus.OK;
     }
 
     @Operation(summary = "번개 참여 취소", description = "모임 id와 유저 id를 통해 유저가 번개 참여를 취소한다.",
@@ -39,8 +40,9 @@ public class BungaeController {
                     @ApiResponse(responseCode = "200", description = "유저의 번개 참여 취소 성공"),
             })
     @DeleteMapping("/quit")
-    public HttpStatus quit(@RequestBody BungaeQuitRequest moimQuitRequest) {
-        return HttpStatus.OK; /////
+    public HttpStatus quit(@RequestBody BungaeQuitRequest bungaeQuitRequest) {
+        bungaeService.quit(bungaeQuitRequest);
+        return HttpStatus.OK;
     }
 
     @Operation(summary = "번개 글 등록", description = "유저 id를 통해 유저가 번개 글을 등록한다.",
@@ -48,10 +50,10 @@ public class BungaeController {
                     @ApiResponse(responseCode = "201", description = "유저의 번개 글 등록 성공"),
             })
     @ResponseStatus(CREATED)
-    @PostMapping("/")
+    @PostMapping
     public BungaeCreateResponse create(@RequestPart(name = "images") List<MultipartFile> images,
                                        @RequestPart(name = "dto") BungaeCreateRequest bungaeCreateRequest) {
-        return new BungaeCreateResponse();
+        return bungaeService.create(images, bungaeCreateRequest);
     }
 
     @Operation(summary = "번개 글 수정", description = "모임 id와 유저 id를 통해 유저가 작성한 번개 글을 수정한다.",
@@ -73,6 +75,7 @@ public class BungaeController {
     @GetMapping("/{bungaeId}")
     public BungaeResponse read(@PathVariable Long bungaeId) {
         return new BungaeResponse();
+//        return bungaeService.read(bungaeId);
     }
 
     @Operation(summary = "번개 글 리스트 조회", description = "번개 글 리스트를 조회한다.",
