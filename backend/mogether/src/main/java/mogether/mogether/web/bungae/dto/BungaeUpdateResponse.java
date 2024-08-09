@@ -4,11 +4,11 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import mogether.mogether.domain.Address;
-import mogether.mogether.domain.Keyword;
+import mogether.mogether.domain.info.Address;
+import mogether.mogether.domain.info.Keyword;
+import mogether.mogether.domain.bungae.Bungae;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -35,4 +35,14 @@ public class BungaeUpdateResponse {
     private int maxMember;
     private int ageLimit;
     private int fee;
+
+    public static BungaeUpdateResponse of(Bungae bungae) {
+        return new BungaeUpdateResponse(
+                bungae.getId(), bungae.getHost().getId(), bungae.getImageUrls(),
+                bungae.getTitle(), bungae.getContent(), bungae.getKeyword(),
+                bungae.getAddress(), bungae.getGatherAt(), bungae.getCreatedAt(),
+                bungae.getExpireAt(), bungae.getPlaceDetails(), bungae.getMinMember(),
+                bungae.getMaxMember(), bungae.getAgeLimit(), bungae.getFee()
+        );
+    }
 }

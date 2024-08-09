@@ -1,4 +1,4 @@
-package mogether.mogether.domain.user;
+package mogether.mogether.application.user;
 
 import mogether.mogether.exception.MogetherException;
 

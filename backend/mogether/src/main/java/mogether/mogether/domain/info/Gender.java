@@ -1,4 +1,4 @@
-package mogether.mogether.domain.user;
+package mogether.mogether.domain.info;
 
 import java.util.Arrays;
 

@@ -1,15 +1,14 @@
 package mogether.mogether.web.moim.dto;
 
-import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import mogether.mogether.domain.Address;
-import mogether.mogether.domain.Keyword;
+import mogether.mogether.domain.info.Address;
+import mogether.mogether.domain.info.Keyword;
+import mogether.mogether.domain.moim.Moim;
 
 import java.time.LocalDate;
-import java.util.Date;
 import java.util.List;
 
 @Getter
@@ -25,9 +24,17 @@ public class MoimUpdateResponse {
     private String title;
     private String content;
     private Keyword keyword; ////
-    private Address address;
     private String description; //
+    private Address address;
 
     private LocalDate createdAt;
     private LocalDate expireAt;
+
+    public static MoimUpdateResponse of(Moim moim) {
+        return new MoimUpdateResponse(
+                moim.getId(), moim.getHost().getId(), moim.getImageUrls(),
+                moim.getTitle(), moim.getContent(), moim.getKeyword(), moim.getDescrpition(),
+                moim.getAddress(), moim.getCreatedAt(), moim.getExpireAt()
+        );
+    }
 }

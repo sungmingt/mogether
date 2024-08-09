@@ -1,4 +1,4 @@
-package mogether.mogether.domain.interest;
+package mogether.mogether.domain.interest.moim;
 
 import jakarta.persistence.*;
 import lombok.Getter;

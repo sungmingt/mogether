@@ -4,9 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import mogether.mogether.domain.Address;
-import mogether.mogether.domain.user.Gender;
-import mogether.mogether.domain.user.SocialType;
+import mogether.mogether.domain.info.Address;
+import mogether.mogether.domain.info.Gender;
+import mogether.mogether.domain.info.SocialType;
 import mogether.mogether.domain.user.User;
 
 @Getter
@@ -21,7 +21,6 @@ public class UserJoinResponse {
     private SocialType socialType;
     private String providerId;
 
-    private String name;
     private String nickname;
 
     private Address address;
@@ -33,8 +32,8 @@ public class UserJoinResponse {
     public static UserJoinResponse of(User user) {
         return new UserJoinResponse(
                 user.getId(), user.getImageUrl(), user.getEmail(),
-                user.getSocialType(), user.getProviderId(), user.getName(),
-                user.getNickname(), user.getAddress(), user.getAge(),
-                user.getGender(), user.getIntro(), user.getPhoneNumber());
+                user.getSocialType(), user.getProviderId(), user.getNickname(),
+                user.getAddress(), user.getAge(), user.getGender(),
+                user.getIntro(), user.getPhoneNumber());
     }
 }
