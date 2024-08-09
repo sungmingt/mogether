@@ -30,7 +30,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String username = "username"; ///////////////
+//    private String username = "username"; ///////////////
 
     @OneToOne(fetch = LAZY, cascade = ALL, orphanRemoval = true)
     @JoinColumn(name = "image_id")
@@ -56,15 +56,14 @@ public class User {
 
     private String imageUrl;
 
+    private String nickname;
     private String email;
     private String password;
 
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
-    private String providerId;
-    private String providerKey; //socialType과 providerId를 결합한 고유 값
-
-    private String nickname;
+    private String socialId;
+//    private String providerKey; //socialType과 providerId를 결합한 고유 값
 
     @Embedded
     private Address address;
@@ -121,5 +120,12 @@ public class User {
         this.id = id;
         this.email = email;
         this.password = password;
+    }
+
+    public User(String nickname, String email, SocialType socialType, String socialId) {
+        this.email = email;
+        this.socialType = socialType;
+        this.socialId = socialId;
+        this.nickname = nickname;
     }
 }
