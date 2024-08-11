@@ -8,7 +8,7 @@ public enum ErrorCode {
     USER_NOT_FOUND(404, "존재하지 않는 회원입니다."),
     USER_NOT_AUTHORIZED(403, "로그인되지 않은 사용자입니다."),
     USER_ALREADY_AUTHORIZED(400, "이미 로그인 상태입니다."),
-    REQUEST_NOT_AUTHORIZED(403, "작성자가 일치하지 않습니다."),
+    NOT_RESOURCE_OWNER(403, "해당 리소스의 소유자가 아닙니다."),
 
     //USER INFO
     EMAIL_ALREADY_EXISTS(409, "이미 존재하는 이메일입니다."),
@@ -29,8 +29,10 @@ public enum ErrorCode {
     REQUIRED_TOKEN_MISSING(401, "토큰이 존재하지 않습니다."),
     TOKEN_FROM_BLACKLIST(401, "blacklist에 등록된 토큰입니다."),
     PAYLOAD_NOT_VALID(401, "토큰의 payload가 유효하지 않습니다."),
+
     TOKEN_INVALID(401, "유효하지 않은 토큰입니다."),
     TOKEN_SIGNATURE_INVALID(401, "올바르지 않은 토큰 시그니처입니다."),
+    TOKEN_EXPIRED(401, "만료된 토큰입니다."),
 
     //FILE
     IMAGE_NOT_FOUND(404, "이미지가 존재하지 않습니다."),
