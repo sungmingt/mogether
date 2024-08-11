@@ -26,12 +26,14 @@ public class SecurityConfig {
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
 
-    @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() { // security를 적용하지 않을 리소스
-        return web -> web.ignoring()
-                // error endpoint를 열어줘야 함, favicon.ico 추가!
-                .requestMatchers("/error", "/favicon.ico");
-    }
+    public static final String[] permittedURIs = {
+            "/", "/auth/success", "/error", "/favicon.ico",
+            "/api-docs/**", "/v3/api-docs/**", "/v3/api-docs/swagger-config/**",
+            "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources", "/swagger-resources/**",
+            "/configuration/ui", "/configuration/security", "/webjars/**",
+
+            "/login/**", "/user/join", "/token", "/oauth2/**"
+    };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -47,29 +49,11 @@ public class SecurityConfig {
                 .sessionManagement(c ->
                         c.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용하지 않음
 
-                // request 인증, 인가 설정
+                // permit requests
                 .authorizeHttpRequests(request ->
-                        request.requestMatchers(
-                                new AntPathRequestMatcher("/"),
-                                new AntPathRequestMatcher("/auth/success")
-                                ).permitAll()
-                                .requestMatchers(
-                                        "/api-docs/**",
-                                        "/v3/api-docs/**",
-                                        "/v3/api-docs/swagger-config/**",
-                                        "/swagger-ui.html",
-                                        "/swagger-resources",
-                                        "/swagger-resources/**",
-                                        "/configuration/ui",
-                                        "/configuration/security",
-                                        "/webjars/**",
-                                        "/swagger-ui/**",
-
-                                        "/login/**",
-                                        "/oauth2/**"
-                                ).permitAll()
-                                .anyRequest().permitAll()
-//                                .anyRequest().authenticated()
+                        request.requestMatchers(permittedURIs)
+                                .permitAll()
+                                .anyRequest().authenticated()
                 )
 
                 // oauth2
