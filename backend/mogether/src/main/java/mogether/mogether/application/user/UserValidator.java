@@ -8,6 +8,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 import java.util.regex.Pattern;
 
+import static mogether.mogether.exception.ErrorCode.*;
 import static mogether.mogether.exception.ErrorCode.PASSWORD_NOT_VALID;
 import static mogether.mogether.exception.ErrorCode.USER_NOT_AUTHORIZED;
 
@@ -40,6 +41,16 @@ public class UserValidator {
             return String.format("%0128x", new BigInteger(1, md.digest()));
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e.getMessage());
+        }
+    }
+
+    public static boolean isOwner(Long id, Long reuqestId) {
+        return Objects.equals(id, reuqestId);
+    }
+
+    public static void validateUser(Long id, Long requestId) {
+        if (!isOwner(id, requestId)) {
+            throw new MogetherException(NOT_RESOURCE_OWNER);
         }
     }
 }
