@@ -4,8 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-//import mogether.mogether.application.bungae.BungaeService;
+import mogether.mogether.application.bungae.BungaeService;
+import mogether.mogether.domain.oauth.AppUser;
 import mogether.mogether.web.bungae.dto.BungaeListResponse;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
