@@ -13,5 +13,5 @@ import lombok.Setter;
 public class BungaeDeleteRequest {
 
     @NotEmpty
-    private long userId;
+    private Long userId;
 }

@@ -19,18 +19,16 @@ import java.time.LocalDate;
 public class MoimCreateRequest {
 
     @NotEmpty
-    private Long userId; /////////////
+    private Long userId;
     @NotEmpty
     private String title;
     @NotEmpty
     private String content;
     @NotEmpty
-    private Keyword keyword; ////
-
+    private Keyword keyword;
     @NotEmpty
     private Address address;
 
-    //모임시간
     private String description; //
 
     @NotEmpty

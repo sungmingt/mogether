@@ -15,8 +15,6 @@ import mogether.mogether.domain.info.Gender;
 public class UserUpdateRequest {
 
     @NotEmpty
-    private String name;
-    @NotEmpty
     private String nickname;
     private Address address;
     private int age;

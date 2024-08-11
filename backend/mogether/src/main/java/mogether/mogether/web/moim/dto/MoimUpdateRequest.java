@@ -19,13 +19,13 @@ import java.time.LocalDate;
 public class MoimUpdateRequest {
 
     @NotEmpty
-    private Long userId; /////////////
+    private Long userId;
     @NotEmpty
     private String title;
     @NotEmpty
     private String content;
     @NotEmpty
-    private Keyword keyword; ////
+    private Keyword keyword;
 
     @NotEmpty
     private Address address;
