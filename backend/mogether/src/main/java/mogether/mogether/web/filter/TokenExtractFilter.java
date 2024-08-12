@@ -7,6 +7,8 @@ import jakarta.servlet.http.HttpServletRequestWrapper;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import mogether.mogether.domain.token.TokenProvider;
+import mogether.mogether.exception.ErrorCode;
+import mogether.mogether.exception.MogetherException;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -14,6 +16,7 @@ import java.io.IOException;
 import java.util.*;
 
 import static mogether.mogether.domain.token.TokenInfo.ACCESS_TOKEN;
+import static mogether.mogether.web.filter.PathMatcher.*;
 
 @Slf4j
 @Component
@@ -25,6 +28,11 @@ public class TokenExtractFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
 
         log.info("===== Token Extractor Filter 진입 =====");
+        if (isPermittedURI(request) || isForAnonymousURI(request)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+
         HttpServletRequestWrapper requestWrapper = new HttpServletRequestWrapper(request) {
             private final Map<String, String> customHeaders = new HashMap<>();
 
@@ -35,6 +43,11 @@ public class TokenExtractFilter extends OncePerRequestFilter {
                 }
 
                 if (ACCESS_TOKEN.equalsIgnoreCase(name)) {
+                    if (super.getHeader(name) == null) {
+                        log.info("required token is missing");
+                        throw new MogetherException(ErrorCode.REQUIRED_TOKEN_MISSING);
+                    }
+
                     String modifiedToken = TokenProvider.replaceBearerToToken(super.getHeader(name));
                     if (modifiedToken != null) {
                         customHeaders.put(name, modifiedToken);

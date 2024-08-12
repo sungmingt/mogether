@@ -18,6 +18,8 @@ import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import static mogether.mogether.web.filter.PathMatcher.*;
+
 @RequiredArgsConstructor
 @EnableWebSecurity
 @EnableMethodSecurity
@@ -29,15 +31,6 @@ public class SecurityConfig {
     private final OAuth2FailureHandler oAuth2FailureHandler;
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
     private final TokenExtractFilter tokenExtractFilter;
-
-    public static final String[] permittedURIs = {
-            "/", "/auth/success", "/error", "/favicon.ico",
-            "/api-docs/**", "/v3/api-docs/**", "/v3/api-docs/swagger-config/**",
-            "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources", "/swagger-resources/**",
-            "/configuration/ui", "/configuration/security", "/webjars/**",
-
-            "/login/**", "/user/join", "/token", "/oauth2/**"
-    };
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -53,9 +46,10 @@ public class SecurityConfig {
                         c.sessionCreationPolicy(SessionCreationPolicy.STATELESS)) // 세션 사용하지 않음
 
                 // permit requests
-                .authorizeHttpRequests(request ->
-                        request.requestMatchers(permittedURIs)
-                                .permitAll()
+                .authorizeHttpRequests(
+                        request -> request
+                                .requestMatchers(permittedURIs).permitAll()
+                                .requestMatchers(forAnonymousURIs).permitAll()
                                 .anyRequest().authenticated()
                 )
 

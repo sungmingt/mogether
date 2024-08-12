@@ -6,7 +6,6 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import mogether.mogether.config.SecurityConfig;
 import mogether.mogether.domain.oauth.AppUser;
 import mogether.mogether.domain.token.TokenProvider;
 import mogether.mogether.domain.token.redis.BlackListTokenRepository;
@@ -15,8 +14,6 @@ import mogether.mogether.exception.MogetherException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
-import org.springframework.security.web.util.matcher.RequestMatcher;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -26,6 +23,8 @@ import java.util.*;
 
 import static mogether.mogether.domain.token.TokenInfo.*;
 import static mogether.mogether.exception.ErrorCode.*;
+import static mogether.mogether.web.filter.PathMatcher.isForAnonymousURI;
+import static mogether.mogether.web.filter.PathMatcher.isPermittedURI;
 
 @Slf4j
 @Component
@@ -33,14 +32,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private final BlackListTokenRepository blackListTokenRepository;
     private final TokenProvider tokenProvider;
-    private final List<RequestMatcher> requestMatchers = new ArrayList<>();
 
     public TokenAuthenticationFilter(BlackListTokenRepository blackListTokenRepository, TokenProvider tokenProvider) {
         this.blackListTokenRepository = blackListTokenRepository;
         this.tokenProvider = tokenProvider;
-        for (String uri : SecurityConfig.permittedURIs) {
-            requestMatchers.add(new AntPathRequestMatcher(uri));
-        }
     }
 
     @Override
@@ -48,10 +43,12 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         log.info("===== token auth filter 진입 =====");
 
-        if (isPermittedUri(request)) {
+        if (isPermittedURI(request) || isForAnonymousURI(request)) {
             filterChain.doFilter(request, response);
             return;
         }
+
+        System.out.println("uri 통과 실패 ");
 
         try {
             String accessToken = getTokenfromRequest(request);
@@ -95,15 +92,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(appUser, null, List.of());
         SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
-
-    protected boolean isPermittedUri(HttpServletRequest request) {
-        for (RequestMatcher matcher : requestMatchers) {
-            if (matcher.matches(request)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     private String getTokenfromRequest(HttpServletRequest request) {
