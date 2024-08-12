@@ -1,8 +1,10 @@
 package mogether.mogether.config;
 
 import lombok.RequiredArgsConstructor;
-import mogether.mogether.domain.oauth.OAuth2SuccessHandler;
-import mogether.mogether.domain.oauth.TokenAuthenticationFilter;
+import mogether.mogether.web.filter.OAuth2FailureHandler;
+import mogether.mogether.web.filter.OAuth2SuccessHandler;
+import mogether.mogether.web.filter.TokenAuthenticationFilter;
+import mogether.mogether.web.filter.TokenExtractFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -14,17 +16,19 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @RequiredArgsConstructor
-@Configuration
 @EnableWebSecurity
 @EnableMethodSecurity
+@Configuration
 public class SecurityConfig {
 
     private final OAuth2UserService oAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
+    private final OAuth2FailureHandler oAuth2FailureHandler;
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
+    private final TokenExtractFilter tokenExtractFilter;
 
     public static final String[] permittedURIs = {
             "/", "/auth/success", "/error", "/favicon.ico",
@@ -38,7 +42,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // rest api 설정
                 .csrf(AbstractHttpConfigurer::disable) // csrf 비활성화 -> cookie를 사용하지 않으면 꺼도 된다. (cookie를 사용할 경우 httpOnly(XSS 방어), sameSite(CSRF 방어)로 방어해야 한다.)
                 .cors(AbstractHttpConfigurer::disable) // cors 비활성화 -> 프론트와 연결 시 따로 설정 필요
                 .httpBasic(AbstractHttpConfigurer::disable) // 기본 인증 로그인 비활성화
@@ -63,11 +66,21 @@ public class SecurityConfig {
                                 .failureHandler(oAuth2FailureHandler)
                 )
 
-                // 인증 예외 핸들링
+                // jwt filter
+                .addFilterBefore(tokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterBefore(tokenExtractFilter, tokenAuthenticationFilter.getClass());
+        // 인증 예외 핸들링
 //                .exceptionHandling((exceptions) -> exceptions
 //                        .authenticationEntryPoint(new CustomAuthenticationEntryPoint())
 //                        .accessDeniedHandler(new CustomAccessDeniedHandler()));
-
         return http.build();
+    }
+
+    @Bean
+    public WebSecurityCustomizer webSecurityCustomizer() { // security를 적용하지 않을 리소스
+        return web -> web.ignoring()
+//                .dispatcherTypeMatchers(DispatcherType.ERROR);
+//                 error endpoint를 열어줘야 함, favicon.ico 추가!
+                .requestMatchers("/error", "/favicon.ico");
     }
 }
