@@ -31,7 +31,7 @@ public class MoimImageService {
     private final AmazonS3 amazonS3;
     private final MoimImageRepository moimImageRepository;
 
-    @Value("${cloud.aws.s3.bucket}/bungae")
+    @Value("${cloud.aws.s3.bucket}/moim")
     private String bucket;
 
     @Value("${cloud.aws.s3.default_post}")
