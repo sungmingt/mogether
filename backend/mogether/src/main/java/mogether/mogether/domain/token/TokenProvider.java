@@ -1,4 +1,4 @@
-package mogether.mogether.domain.oauth;
+package mogether.mogether.domain.token;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
@@ -16,7 +16,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
-import static mogether.mogether.domain.redis.TokenInfo.*;
+import static mogether.mogether.domain.token.TokenInfo.*;
 import static mogether.mogether.exception.ErrorCode.*;
 
 @Component

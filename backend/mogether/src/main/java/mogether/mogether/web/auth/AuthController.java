@@ -9,8 +9,8 @@ import mogether.mogether.web.auth.dto.Token;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import static mogether.mogether.domain.redis.TokenInfo.ACCESS_TOKEN;
-import static mogether.mogether.domain.redis.TokenInfo.REFRESH_TOKEN;
+import static mogether.mogether.domain.token.TokenInfo.ACCESS_TOKEN;
+import static mogether.mogether.domain.token.TokenInfo.REFRESH_TOKEN;
 
 @RequiredArgsConstructor
 @Slf4j

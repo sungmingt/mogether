@@ -1,4 +1,4 @@
-package mogether.mogether.domain.oauth.service;
+package mogether.mogether.application.auth.oauth;
 
 import lombok.RequiredArgsConstructor;
 import mogether.mogether.domain.oauth.AppUser;

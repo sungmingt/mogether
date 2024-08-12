@@ -1,4 +1,4 @@
-package mogether.mogether.domain.redis;
+package mogether.mogether.domain.token.redis;
 
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -7,7 +7,7 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 import static java.time.Duration.ofMillis;
-import static mogether.mogether.domain.redis.TokenInfo.REFRESH_TOKEN_VALIDATION_SECOND;
+import static mogether.mogether.domain.token.TokenInfo.REFRESH_TOKEN_VALIDATION_SECOND;
 
 @Repository
 public class RefreshTokenRepository {

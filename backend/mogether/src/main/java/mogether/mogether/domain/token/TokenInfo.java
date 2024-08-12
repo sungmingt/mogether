@@ -1,4 +1,4 @@
-package mogether.mogether.domain.redis;
+package mogether.mogether.domain.token;
 
 
 public class TokenInfo {

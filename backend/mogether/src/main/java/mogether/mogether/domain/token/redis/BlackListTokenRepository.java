@@ -1,4 +1,4 @@
-package mogether.mogether.domain.redis;
+package mogether.mogether.domain.token.redis;
 
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;

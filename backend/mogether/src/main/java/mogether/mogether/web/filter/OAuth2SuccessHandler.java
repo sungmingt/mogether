@@ -1,4 +1,4 @@
-package mogether.mogether.domain.oauth;
+package mogether.mogether.web.filter;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -6,6 +6,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mogether.mogether.application.auth.AuthService;
+import mogether.mogether.domain.oauth.AppUser;
 import mogether.mogether.web.auth.dto.Token;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -13,8 +14,8 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import static mogether.mogether.domain.redis.TokenInfo.ACCESS_TOKEN;
-import static mogether.mogether.domain.redis.TokenInfo.REFRESH_TOKEN;
+import static mogether.mogether.domain.token.TokenInfo.ACCESS_TOKEN;
+import static mogether.mogether.domain.token.TokenInfo.REFRESH_TOKEN;
 
 @RequiredArgsConstructor
 @Slf4j

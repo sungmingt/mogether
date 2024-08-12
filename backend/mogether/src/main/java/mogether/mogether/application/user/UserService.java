@@ -1,6 +1,7 @@
 package mogether.mogether.application.user;
 
 import lombok.RequiredArgsConstructor;
+import mogether.mogether.domain.info.Gender;
 import mogether.mogether.domain.oauth.AppUser;
 import mogether.mogether.domain.user.*;
 import mogether.mogether.exception.MogetherException;

@@ -2,9 +2,9 @@ package mogether.mogether.application.auth;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import mogether.mogether.domain.oauth.TokenProvider;
-import mogether.mogether.domain.redis.BlackListTokenRepository;
-import mogether.mogether.domain.redis.RefreshTokenRepository;
+import mogether.mogether.domain.token.TokenProvider;
+import mogether.mogether.domain.token.redis.BlackListTokenRepository;
+import mogether.mogether.domain.token.redis.RefreshTokenRepository;
 import mogether.mogether.domain.user.User;
 import mogether.mogether.domain.user.UserRepository;
 import mogether.mogether.application.user.UserValidator;

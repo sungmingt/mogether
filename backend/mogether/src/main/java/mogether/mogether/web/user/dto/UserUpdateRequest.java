@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mogether.mogether.domain.info.Address;
 import mogether.mogether.domain.info.Gender;
+import mogether.mogether.domain.user.User;
 
 @Getter
 @Setter
