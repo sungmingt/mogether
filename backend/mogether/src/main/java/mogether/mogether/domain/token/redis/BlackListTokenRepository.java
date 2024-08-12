@@ -11,9 +11,11 @@ public class BlackListTokenRepository {
 
     private static final String BLACKLIST_PREFIX = "blackList:";
 
+    private final RedisTemplate<String, String> blackListTokenRedisTemplate;
     private final ValueOperations<String, String> valueOperations;
 
     public BlackListTokenRepository(RedisTemplate<String, String> blackListTokenRedisTemplate) {
+        this.blackListTokenRedisTemplate = blackListTokenRedisTemplate;
         this.valueOperations = blackListTokenRedisTemplate.opsForValue();
     }
 
