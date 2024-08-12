@@ -26,11 +26,11 @@ public class BungaeListResponse {
     private String hostName;
     private String hostProfileImageUrl;
 
-    private List<String> participantsImageUrls;//
-    private int participantsCount;//
+    private List<String> participantsImageUrls;
+    private int participantsCount;
 
     private boolean isJoined;
-    private boolean isInterested; //todo
+    private boolean isInterested;
 
     private String title;
     private String content;
@@ -42,9 +42,8 @@ public class BungaeListResponse {
     private LocalDate createdAt;
     private LocalDate expireAt;
 
-    public static List<BungaeListResponse> of(List<Bungae> bunageList, User requestUser) {
-
-        return bunageList.stream()
+    public static List<BungaeListResponse> of(List<Bungae> bungaeList, User requestUser) {
+        return bungaeList.stream()
                 .map(bungae -> new BungaeListResponse(
                         bungae.getId(),
                         bungae.getImageUrls().get(0), //////
@@ -62,6 +61,36 @@ public class BungaeListResponse {
 
                         isJoined(requestUser, bungae.getBungaeUserList()),
                         isInterested(requestUser, bungae),
+
+                        bungae.getTitle(),
+                        bungae.getContent(),
+                        bungae.getKeyword(),
+                        bungae.getAddress(),
+                        bungae.getBungaeInterestList().size(),
+                        bungae.getGatherAt(),
+                        bungae.getCreatedAt(),
+                        bungae.getExpireAt()))
+                .toList();
+    }
+
+    public static List<BungaeListResponse> ofAnonymous(List<Bungae> bungaeList) {
+        return bungaeList.stream()
+                .map(bungae -> new BungaeListResponse(
+                        bungae.getId(),
+                        bungae.getImageUrls().get(0), //////
+
+                        bungae.getHost().getId(),
+                        bungae.getHost().getNickname(),
+                        bungae.getHost().getImageUrl(),
+
+                        bungae.getBungaeUserList()
+                                .stream()
+                                .map(bungaeUser -> bungaeUser.getUser().getImageUrl())
+                                .limit(6) ////
+                                .toList(),
+                        bungae.getBungaeUserList().size(),
+
+                        false, false,
 
                         bungae.getTitle(),
                         bungae.getContent(),

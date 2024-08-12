@@ -70,19 +70,24 @@ public class MoimService {
     public MoimResponse read(Long moimId, AppUser appUser) {
         Moim findMoim = findById(moimId);
 
-        if (appUser != null) {
+//        if (appUser != null) {
             User requestUser = userService.findById(appUser.getId());
             return MoimResponse.of(findMoim, requestUser);
-        } else {
-            return MoimResponse.ofAnonymous(findMoim);
-        }
+//        } else {
+//            return MoimResponse.ofAnonymous(findMoim);
+//        }
     }
 
     //모임 리스트 조회
     public List<MoimListResponse> readAll(AppUser appUser) {
         List<Moim> moimList = moimRepository.findAll(); //todo: 조회 전략 수정
-        User requestUser = userService.findById(appUser.getId());
-        return MoimListResponse.of(moimList, requestUser);
+
+        if (appUser != null) {
+            User requestUser = userService.findById(appUser.getId());
+            return MoimListResponse.of(moimList, requestUser);
+        } else {
+            return MoimListResponse.ofAnonymous(moimList);
+        }
     }
 
     //모임 hosting 리스트 조회

@@ -88,4 +88,35 @@ public class MoimListResponse {
                 .stream()
                 .anyMatch(moimInterest -> moimInterest.getMoim().getId().equals(moim.getId()));
     }
+
+    public static List<MoimListResponse> ofAnonymous(List<Moim> moimList) {
+        return moimList.stream()
+                .map(moim -> new MoimListResponse(
+                        moim.getId(),
+                        moim.getImageUrls().get(0), //////
+
+                        moim.getHost().getId(),
+                        moim.getHost().getNickname(),
+                        moim.getHost().getImageUrl(),
+
+                        moim.getMoimUserList()
+                                .stream()
+                                .map(moimUser -> moimUser.getUser().getImageUrl())
+                                .limit(6)  /////
+                                .toList(),
+                        moim.getMoimUserList().size(),
+
+                        false, false,
+                        moim.getMoimInterestList().size(),
+
+                        moim.getTitle(),
+                        moim.getContent(),
+                        moim.getKeyword(),
+                        moim.getDescrpition(),
+                        moim.getAddress(),
+                        moim.getCreatedAt(),
+                        moim.getExpireAt()))
+                .toList();
+
+    }
 }

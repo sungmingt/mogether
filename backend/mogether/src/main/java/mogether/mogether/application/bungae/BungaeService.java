@@ -11,6 +11,7 @@ import mogether.mogether.domain.user.User;
 import mogether.mogether.exception.ErrorCode;
 import mogether.mogether.exception.MogetherException;
 import mogether.mogether.web.bungae.dto.*;
+import mogether.mogether.web.moim.dto.MoimListResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -76,8 +77,13 @@ public class BungaeService {
     //번개 리스트 조회
     public List<BungaeListResponse> readAll(AppUser appUser) {
         List<Bungae> bungaeList = bungaeRepository.findAll(); //todo: 조회 전략 수정
-        User requestUser = userService.findById(appUser.getId());
-        return BungaeListResponse.of(bungaeList, requestUser);
+
+        if (appUser != null) {
+            User requestUser = userService.findById(appUser.getId());
+            return BungaeListResponse.of(bungaeList, requestUser);
+        } else {
+            return BungaeListResponse.ofAnonymous(bungaeList);
+        }
     }
 
     //번개 hosting 리스트 조회
