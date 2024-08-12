@@ -1,4 +1,4 @@
-package mogether.mogether.web.filter;
+package mogether.mogether.web.filter.oauth2;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
