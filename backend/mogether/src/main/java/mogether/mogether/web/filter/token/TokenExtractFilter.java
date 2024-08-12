@@ -1,4 +1,4 @@
-package mogether.mogether.web.filter;
+package mogether.mogether.web.filter.token;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;

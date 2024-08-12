@@ -1,6 +1,5 @@
-package mogether.mogether.web.filter;
+package mogether.mogether.web.filter.token;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -18,11 +17,11 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.util.*;
 
 import static mogether.mogether.domain.token.TokenInfo.*;
 import static mogether.mogether.exception.ErrorCode.*;
+import static mogether.mogether.web.filter.ErrorResponseSender.sendErrorResponse;
 import static mogether.mogether.web.filter.PathMatcher.isForAnonymousURI;
 import static mogether.mogether.web.filter.PathMatcher.isPermittedURI;
 
@@ -66,23 +65,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
         } catch (RuntimeException e) {
             log.error(e.getMessage());
             response.sendError(500, e.getMessage());
-        }
-    }
-
-    private static void sendErrorResponse(HttpServletResponse response, MogetherException e) throws IOException {
-        response.setStatus(e.getErrorCode().getStatus());
-        response.setContentType("application/json");
-        response.setCharacterEncoding("UTF-8");
-
-        ObjectMapper objectMapper = new ObjectMapper();
-        Map<String, Object> errorResponse = new HashMap<>();
-        errorResponse.put("status", e.getErrorCode().getStatus());
-        errorResponse.put("message", e.getMessage());
-
-        String jsonResponse = objectMapper.writeValueAsString(errorResponse);
-        try (PrintWriter writer = response.getWriter()) {
-            writer.write(jsonResponse);
-            writer.flush();
         }
     }
 
