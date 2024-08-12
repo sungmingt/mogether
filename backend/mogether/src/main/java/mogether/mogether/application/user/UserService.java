@@ -76,7 +76,7 @@ public class UserService {
         User findUser = findById(userId);
         findUser.update(
                 findUser.getNickname(), request.getAddress(), request.getAge(),
-                request.getGender(), request.getIntro(), request.getPhoneNumber());
+                Gender.of(request.getGender()), request.getIntro(), request.getPhoneNumber());
 
         return UserJoinResponse.of(findUser);
     }

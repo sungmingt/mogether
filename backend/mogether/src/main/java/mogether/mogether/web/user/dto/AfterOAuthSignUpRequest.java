@@ -5,7 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mogether.mogether.domain.info.Address;
-import mogether.mogether.domain.info.Gender;
 
 @Getter
 @Setter
@@ -15,7 +14,7 @@ public class AfterOAuthSignUpRequest {
 
     private Address address;
     private int age;
-    private Gender gender;
+    private String gender;
     private String intro;
     private String phoneNumber;
 }
