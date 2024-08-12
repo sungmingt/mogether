@@ -69,8 +69,13 @@ public class MoimService {
     //모임 상세 조회
     public MoimResponse read(Long moimId, AppUser appUser) {
         Moim findMoim = findById(moimId);
-        User requestUser = userService.findById(appUser.getId());
-        return MoimResponse.of(findMoim, requestUser);
+
+        if (appUser != null) {
+            User requestUser = userService.findById(appUser.getId());
+            return MoimResponse.of(findMoim, requestUser);
+        } else {
+            return MoimResponse.ofAnonymous(findMoim);
+        }
     }
 
     //모임 리스트 조회

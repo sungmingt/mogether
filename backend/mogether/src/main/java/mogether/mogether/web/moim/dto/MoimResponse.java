@@ -76,4 +76,22 @@ public class MoimResponse {
                 .stream()
                 .anyMatch(moimInterest -> moimInterest.getMoim().getId().equals(moim.getId()));
     }
+
+    public static MoimResponse ofAnonymous(Moim findMoim) {
+        User host = findMoim.getHost();
+        List<MoimUser> moimUserList = findMoim.getMoimUserList();
+        List<String> participantsImageUrls = moimUserList.stream()
+                .map(moimUser -> moimUser.getUser().getImageUrl())
+                .toList();
+
+        return new MoimResponse(
+                findMoim.getId(), findMoim.getImageUrls(), host.getId(),
+                host.getNickname(), host.getImageUrl(), host.getIntro(),
+                participantsImageUrls, moimUserList.size(),
+                false, false,
+                findMoim.getMoimInterestList().size(),
+                findMoim.getTitle(), findMoim.getContent(), findMoim.getKeyword(),
+                findMoim.getDescrpition(), findMoim.getAddress(),
+                findMoim.getCreatedAt(), findMoim.getExpireAt());
+    }
 }
