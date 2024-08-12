@@ -19,7 +19,7 @@ public class UserUpdateRequest {
     private String nickname;
     private Address address;
     private int age;
-    private Gender gender;
+    private String gender;
     private String intro;
     private String phoneNumber;
 }

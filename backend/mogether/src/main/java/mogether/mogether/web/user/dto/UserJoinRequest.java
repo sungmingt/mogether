@@ -8,6 +8,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mogether.mogether.domain.info.Address;
 import mogether.mogether.domain.info.Gender;
+import mogether.mogether.domain.info.SocialType;
+import mogether.mogether.domain.user.User;
+
+import static mogether.mogether.application.user.UserValidator.encodePassword;
 
 @Getter
 @Setter
@@ -26,7 +30,21 @@ public class UserJoinRequest {
     private String nickname;
     private Address address;
     private int age;
-    private Gender gender;
+    private String gender;
     private String intro;
     private String phoneNumber;
+
+    public User toUser() {
+        return new User(
+                this.email,
+                encodePassword(this.password),
+                SocialType.NONE,
+                this.nickname,
+                this.address,
+                this.age,
+                Gender.of(this.gender),
+                this.intro,
+                this.phoneNumber
+        );
+    }
 }

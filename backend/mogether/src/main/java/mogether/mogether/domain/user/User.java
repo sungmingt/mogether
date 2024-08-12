@@ -94,9 +94,10 @@ public class User {
         this.password = newPassword;
     }
 
-    public User(String email, String password, String nickname, Address address, int age, Gender gender, String intro, String phoneNumber) {
+    public User(String email, String password, SocialType socialType, String nickname, Address address, int age, Gender gender, String intro, String phoneNumber) {
         this.email = email;
         this.password = password;
+        this.socialType = socialType;
         this.nickname = nickname;
         this.age = age;
         this.intro = intro;

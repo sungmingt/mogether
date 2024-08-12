@@ -25,7 +25,7 @@ public class MoimUpdateRequest {
     @NotEmpty
     private String content;
     @NotEmpty
-    private Keyword keyword;
+    private String keyword;
 
     @NotEmpty
     private Address address;
@@ -40,7 +40,7 @@ public class MoimUpdateRequest {
         return new Moim(
                 this.title,
                 this.content,
-                this.keyword,
+                Keyword.of(this.keyword),
                 this.address,
                 this.description,
                 this.createdAt,

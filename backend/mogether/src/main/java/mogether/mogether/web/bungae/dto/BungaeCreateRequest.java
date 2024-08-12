@@ -23,7 +23,7 @@ public class BungaeCreateRequest {
     @NotEmpty
     private String content;
     @NotEmpty
-    private Keyword keyword; ////
+    private String keyword;
     @NotEmpty
     private Address address;
 
@@ -44,7 +44,7 @@ public class BungaeCreateRequest {
         Bungae bungae = new Bungae(
                 this.title,
                 this.content,
-                this.keyword,
+                Keyword.of(this.keyword),
                 this.address,
                 this.gatherAt,
                 this.createdAt,

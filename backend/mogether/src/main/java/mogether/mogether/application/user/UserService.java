@@ -27,7 +27,7 @@ public class UserService {
         checkEmailExists(userJoinRequest.getEmail());
         checkPasswordPattern(userJoinRequest.getPassword());
 
-        User user = createUser(userJoinRequest);
+        User user = (userJoinRequest.toUser());
         User savedUser = userRepository.save(user);
         profileImageService.save(user, image);
 
@@ -58,6 +58,7 @@ public class UserService {
     }
 
     //유저 정보 조회
+    @Transactional(readOnly = true)
     public UserResponse getUserInfo(Long userId) {
         User findUser = findById(userId);
         return UserResponse.of(findUser);
@@ -105,7 +106,7 @@ public class UserService {
                 userUpdateRequest.getNickname(),
                 userUpdateRequest.getAddress(),
                 userUpdateRequest.getAge(),
-                userUpdateRequest.getGender(),
+                Gender.of(userUpdateRequest.getGender()),
                 userUpdateRequest.getIntro(),
                 userUpdateRequest.getPhoneNumber()
         );
@@ -115,16 +116,5 @@ public class UserService {
         if (!realPassword.equals(requestedPassword)) {
             throw new MogetherException(PASSWORD_NOT_MATCH);
         }
-    }
-
-    public UserJoinResponse addInfoAfterOAuthSignUp(Long userId, AppUser appUser, AfterOAuthSignUpRequest request) {
-        validateUser(userId, appUser.getId());
-
-        User findUser = findById(userId);
-        findUser.update(
-                findUser.getNickname(), request.getAddress(), request.getAge(),
-                request.getGender(), request.getIntro(), request.getPhoneNumber());
-
-        return UserJoinResponse.of(findUser);
     }
 }
