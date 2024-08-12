@@ -70,6 +70,18 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
+    public UserJoinResponse addInfoAfterOAuthSignUp(Long userId, AppUser appUser, AfterOAuthSignUpRequest request) {
+        validateUser(userId, appUser.getId());
+
+        User findUser = findById(userId);
+        findUser.update(
+                findUser.getNickname(), request.getAddress(), request.getAge(),
+                request.getGender(), request.getIntro(), request.getPhoneNumber());
+
+        return UserJoinResponse.of(findUser);
+    }
+
+
     @Transactional(readOnly = true)
     public String getProfileImageUrl(Long userId) {
         User user = findById(userId);
@@ -86,19 +98,6 @@ public class UserService {
         if (userRepository.existsByEmail(email)) {
             throw new MogetherException(EMAIL_ALREADY_EXISTS);
         }
-    }
-
-    private static User createUser(UserJoinRequest userJoinRequest) {
-        return new User(
-                userJoinRequest.getEmail(),
-                encodePassword(userJoinRequest.getPassword()),
-                userJoinRequest.getNickname(),
-                userJoinRequest.getAddress(),
-                userJoinRequest.getAge(),
-                userJoinRequest.getGender(),
-                userJoinRequest.getIntro(),
-                userJoinRequest.getPhoneNumber()
-        );
     }
 
     private static void updateUser(UserUpdateRequest userUpdateRequest, User findUser) {
