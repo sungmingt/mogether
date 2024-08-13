@@ -3,6 +3,7 @@ import authReducer from './slices/authSlice';
 import userReducer from './slices/userSlice';
 import moimReducer from './slices/moimSlice';
 import bungaeReducer from './slices/bungaeSlice';
+import userProfileReducer from './slices/userProfileSlice';
 
 import App from '../App';
 
@@ -12,6 +13,7 @@ const store = configureStore({
         user: userReducer,
         moim: moimReducer,
         bungae: bungaeReducer,
+        userProfile: userProfileReducer,
     },
 })
 

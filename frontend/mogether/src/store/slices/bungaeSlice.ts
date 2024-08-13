@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction, AsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { fetchPostsApi, MoimCardApi, interestMoimApi, searchMoimApi, joinMoimApi, interestMoimDeleteApi, joinQuitMoimApi } from '../../utils/api';
+import { fetchBungaeApi, interestMoimApi, searchMoimApi, joinMoimApi, interestMoimDeleteApi, joinQuitMoimApi, BungaeCardApi } from '../../utils/api';
 
 export interface Bungae {  //여기서는 번개!
   id: number;   // 서버에서 id를 줄 때 -> id 이렇게 준다...
@@ -24,9 +24,14 @@ export interface Bungae {  //여기서는 번개!
   description?: string;
   createdAt: string;
   expireAt: string;
-  interested?: boolean;
-  joined?: boolean;
+  interested: boolean;
+  joined: boolean;
   gatherAt: string;
+  placeDetails: string;
+  minMember: number;
+  maxMember: number;
+  ageLimit: number;
+  fee: number;
 }
 
 interface BungaeState {
@@ -49,7 +54,7 @@ export const fetchPosts = createAsyncThunk(  //처음 게시글 리스트 소환
   'bungaes/fetchPosts',
   async (_, thunkAPI) => { //인자 2개는 필요한데 1개만 필요하므로 _를 사용해서 인자를 무시함
     try {
-      const response = await fetchPostsApi();
+      const response = await fetchBungaeApi();
       if (response.status === 200 || response.status === 201) {
         return response.data;
       }
@@ -66,7 +71,7 @@ export const clickPosts = createAsyncThunk(
   'bungaes/clickPosts',
   async (moimId: number, thunkAPI) => {
     try {
-      const response = await MoimCardApi(moimId);  //애초에 api.ts에서 response.data를 값으로 넘겨줌
+      const response = await BungaeCardApi(moimId);  //애초에 api.ts에서 response.data를 값으로 넘겨줌
       if (response.status === 200) {
         return response.data;
       }

@@ -1,12 +1,11 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { loginApi, registerApi } from '../../utils/api';
+import { loginApi, registerApi, logoutApi, kakaoRegisterApi, GoogleRegisterApi, GoogleLoginApi, KakaoLoginApi } from '../../utils/api';
 import { RootState } from '../store';
 
 interface User {
     email: string;
     password: string;
     nickname: string;
-    name: string;
     gender: string;
     age: number;
     phoneNumber: string;
@@ -16,10 +15,12 @@ interface User {
         details: string;
     };
     intro: string;
-    image: string;
-    userId?: number;
+    image?: File;
+    imageUrl?: string;
+    userId: number;
 }
 
+//지금 현재 접속 시도자가 인증된 유저인지 확인하고 관리하는? 슬라이스
 interface AuthState {
     isAuthenticated: boolean;   // 토큰 존재 여부에 따른 접근 허용 및 차단
     user?: User | null;
@@ -33,7 +34,7 @@ const initialState: AuthState = {
     user: null,
     loading: false,
     error: null,
-    userId: 0,
+    userId: Number(localStorage.getItem('userId')) || 0,
 };
 
 export const login = createAsyncThunk(
@@ -65,17 +66,92 @@ export const register = createAsyncThunk(
     }
 );
 
+export const logout = createAsyncThunk(
+    'auth/logout',
+    async (_, thunkAPI) => {
+        try {
+            const response = await logoutApi();
+            if (response.status === 200 || response.status === 201) {
+                return response.data;
+            }
+        } catch (error) {
+            return thunkAPI.rejectWithValue('Logout failed');
+        }
+    }
+);
+
+export const kakaoRegister = createAsyncThunk(
+    'auth/kakaoRegister',
+    async (_, thunkAPI) => {
+        try {
+            const response = await kakaoRegisterApi();
+            if (response.status === 200 || response.status === 201) {
+                return response.data;
+            }
+        } catch (error) {
+            return thunkAPI.rejectWithValue('Kakao registration failed');
+        }
+    }
+);
+
+export const googleRegister = createAsyncThunk(
+    'auth/googleRegister',
+    async (_, thunkAPI) => {
+        try {
+            const response = await GoogleRegisterApi();
+            if (response.status === 200 || response.status === 201) {
+                return response.data;
+            }
+        } catch (error) {
+            return thunkAPI.rejectWithValue('Kakao registration failed');
+        }
+    }
+); 
+
+export const googleLogin = createAsyncThunk(
+    'auth/googleLogin',
+    async (_, thunkAPI) => {
+        try {
+            const response = await GoogleLoginApi();
+            if (response.status === 200 || response.status === 201) {
+                return response.data;
+            }
+        } catch (error) {
+            return thunkAPI.rejectWithValue('Google login failed');
+        }
+    }
+);
+
+export const kakaoLogin = createAsyncThunk(
+    'auth/kakaoLogin',
+    async (_, thunkAPI) => {
+        try {
+            const response = await KakaoLoginApi();
+            if (response.status === 200 || response.status === 201) {
+                return response.data;
+            }
+        } catch (error) {
+            return thunkAPI.rejectWithValue('Kakao login failed');
+        }
+    }
+);
+
+
+
+
 const authSlice = createSlice({
     name: 'auth',
     initialState,
     reducers: {
-        logout(state) {
-            state.isAuthenticated = false;
-            state.user = null;
-            state.error = null;
-            localStorage.removeItem('accessToken');
-            localStorage.removeItem('refreshToken');
-        },
+        // logout(state) {
+        //     state.isAuthenticated = false;
+        //     state.user = null;
+        //     state.error = null;
+        //     localStorage.removeItem('accessToken');
+        //     localStorage.removeItem('refreshToken');
+        //     localStorage.removeItem('userId');
+        //     state.userId = 0;
+        // },
     },
     extraReducers: (builder) => {
         builder
@@ -84,7 +160,6 @@ const authSlice = createSlice({
                 // localStorage.setItem();
                 state.loading = false;
                 state.error = null;
-                state.userId = action.payload.userId;
             })
             .addCase(login.pending, (state) => {
                 state.loading = true;
@@ -93,6 +168,44 @@ const authSlice = createSlice({
             .addCase(login.rejected, (state, action) => {
                 state.isAuthenticated = false;
                 state.user = null;
+                state.loading = false;
+                state.error = action.payload as string;  //action payload에 타입 지정
+            })
+            .addCase(kakaoLogin.fulfilled, (state, action) => {
+                state.isAuthenticated = true;
+                // localStorage.setItem();
+                state.loading = false;
+                state.error = null;
+            })
+            .addCase(kakaoLogin.rejected, (state, action) => {
+                state.isAuthenticated = false;
+                state.user = null;
+                state.loading = false;
+                state.error = action.payload as string;  //action payload에 타입 지정
+            })
+            .addCase(googleLogin.fulfilled, (state, action) => {
+                state.isAuthenticated = true;
+                // localStorage.setItem();
+                state.loading = false;
+                state.error = null;
+            })
+            .addCase(googleLogin.rejected, (state, action) => {
+                state.isAuthenticated = false;
+                state.user = null;
+                state.loading = false;
+                state.error = action.payload as string;  //action payload에 타입 지정
+            })
+            .addCase(logout.fulfilled, (state, action) => {
+                state.isAuthenticated = false;
+                state.user = null;
+                state.error = null;
+                localStorage.removeItem('accessToken');
+                localStorage.removeItem('refreshToken');
+                localStorage.removeItem('userId');
+                state.userId = 0;
+                state.loading = false;
+            })
+            .addCase(logout.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;  //action payload에 타입 지정
             })
@@ -112,11 +225,26 @@ const authSlice = createSlice({
                 state.user = null;
                 state.loading = false;
                 state.error = action.payload as string;
+            })
+            .addCase(kakaoRegister.fulfilled, (state) => {
+                state.loading = false;
+                state.error = null;
+            })
+            .addCase(kakaoRegister.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            })
+            .addCase(googleRegister.fulfilled, (state) => {
+                state.loading = false;
+                state.error = null;
+            })
+            .addCase(googleRegister.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
             });
     },
 });
 
-export const { logout } = authSlice.actions;  //createSlice로 슬라이스를 생성하고, 해당 객체 안에 키값으로 reducers를 가진 값을 action으로 해서 가져옴
 export const selectAuthLoading = (state: RootState) => state.auth.loading;
 export const selectAuthError = (state: RootState) => state.auth.error;
 export const selectIsAuthenticated = (state: RootState) => state.auth.isAuthenticated; //slice의 name을 통해 접근

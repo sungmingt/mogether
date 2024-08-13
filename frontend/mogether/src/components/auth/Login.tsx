@@ -1,12 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { login, socialLogin, selectAuthError, selectIsAuthenticated } from '../../store/slices/authSlice';
+import { login, selectAuthError, selectIsAuthenticated, googleLogin, kakaoLogin } from '../../store/slices/authSlice';
 import styled from 'styled-components';
 import { RootState, AppDispatch } from '../../store/store';
 import { useNavigate } from 'react-router-dom';
-import { GoogleLogin, GoogleLoginResponse, GoogleLoginResponseOffline } from 'react-google-login';
-import KakaoLogin from 'react-kakao-login';
-import { fetchProfile } from '../../store/slices/userSlice';
+import {selectAllUserProfiles } from '../../store/slices/userProfileSlice';
 import Swal from 'sweetalert2';
 
 
@@ -111,35 +109,66 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState<string>('');
   const error = useSelector((state: RootState) => selectAuthError(state));
   const isAuthenticated = useSelector((state: RootState) => selectIsAuthenticated(state));
-  
+  const allProfiles = useSelector(selectAllUserProfiles);
+  // const [userId, setUserId] = useState<number>(0);
+  // const userId = useSelector(selectCurrentUserProfile)?.userId;
+
 
   const handleLogin = async () => {
     if (email !== '' && password !== '') {
       try {
-        const response = dispatch(login({ email: email, password: password })).unwrap();
+        const response = await dispatch(login({ email: email, password: password })).unwrap();
         // response.status === 200일때 dispatch로 인해 isAuthenticated 값이 갱신된다(useSelector에 의해서)
+        navigate('/');
+
       }
       catch (error) {
         Swal.fire('error', '잘못된 요청입니다', 'error');
       }
     }
-  };
-
-  const responseGoogle = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
-    if ('tokenId' in response) {
-      dispatch(socialLogin({ provider: 'google', token: response.tokenId }));
+    else if (email === '') {
+      Swal.fire('error', '이메일을 입력해주세요', 'error');
+    }
+    else if (password === '') {
+      Swal.fire('error', '비밀번호를 입력해주세요', 'error');
     }
   };
 
-  const responseKakao = (response: any) => {
-    dispatch(socialLogin({ provider: 'kakao', token: response.response.access_token }));
+  // const responseGoogle = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
+  //   if ('tokenId' in response) {
+  //     dispatch(socialLogin({ provider: 'google', token: response.tokenId }));
+  //   }
+  // };
+
+  // const responseKakao = (response: any) => {
+  //   dispatch(socialLogin({ provider: 'kakao', token: response.response.access_token }));
+  // };
+
+  const handleKakao = async () => {
+    try {
+      const response = await dispatch(kakaoLogin()).unwrap();
+      navigate('/');
+    }
+    catch (error) {
+      Swal.fire('error', '잘못된 요청입니다', 'error');
+    }
+  };
+
+  const handleGoogle = async () => {
+    try {
+      const response = await dispatch(googleLogin()).unwrap();
+      navigate('/');
+    }
+    catch (error) {
+      Swal.fire('error', '잘못된 요청입니다', 'error');
+    }
   };
 
   useEffect(() => {
     if (isAuthenticated) {
       navigate('/');
     }
-  }, [isAuthenticated, navigate]);
+  }, [isAuthenticated]);
 
   return (
     <LoginContainer>
@@ -163,33 +192,17 @@ const Login: React.FC = () => {
       
       {error && <ErrorMessage>{error}</ErrorMessage>}
       <SocialButtonContainer>
-        <GoogleLogin
-          clientId="YOUR_GOOGLE_CLIENT_ID"
-          buttonText="Google로 로그인하기"
-          onSuccess={responseGoogle}
-          onFailure={responseGoogle}
-          cookiePolicy={'single_host_origin'}
-          render={(props: any) => (
-            <GoogleButton onClick={props.onClick} disabled={props.disabled}>
+        <GoogleButton onClick={handleGoogle}>
               <img src="../../assets/googleLogo" alt="Google logo" />
               구글로 로그인하기
-            </GoogleButton>
-          )}
-        />
-        <KakaoLogin
-          token="YOUR_KAKAO_APP_KEY"
-          onSuccess={responseKakao}
-          onFail={responseKakao}
-          render={(props: any) => (
-            <KakaoButton onClick={props.onClick}>
+        </GoogleButton>
+        <KakaoButton onClick={handleKakao}>
               <img src="../../assets/kakoLogo" alt="Kakao logo" />
               Kakao로 로그인하기
-            </KakaoButton>
-          )}
-        />
+        </KakaoButton>
       </SocialButtonContainer>
       <div>
-        <a href="/forgot-password">Forgot your password?</a>
+        <a href="/forgotpassword">Forgot your password?</a>
       </div>
     </LoginContainer>
   );

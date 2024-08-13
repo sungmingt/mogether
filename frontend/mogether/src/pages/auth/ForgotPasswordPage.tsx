@@ -1,5 +1,5 @@
 import React from "react";
-import Register from "../../components/auth/Register";
+import FindPassword from "../../components/auth/FindPassword";
 import styled from "styled-components";
 import Header from "../Header";
 import Footer from "../Footer";
@@ -7,20 +7,21 @@ import Footer from "../Footer";
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  // height: 100vh;
-  // background-color: #e9ecef;
+  min-height: 100vh;
 `;
 
-const RegisterPage = () => {
+// const ContentContainer = styled.div`
+//   flex: 1;
+// `;
+
+const FindPasswordContainer = () => {
   return (
     <PageContainer>
       <Header />
-      <Register />
+      <FindPassword />
       <Footer />
     </PageContainer>
   );
 };
 
-export default RegisterPage;
+export default FindPasswordContainer;

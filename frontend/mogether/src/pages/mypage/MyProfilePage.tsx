@@ -1,26 +1,26 @@
 import React from "react";
-import Register from "../../components/auth/Register";
 import styled from "styled-components";
+import MyProfile from "../../components/profile/MyProfile";
+import Leftbar from "./Leftbar_myprofile";
 import Header from "../Header";
 import Footer from "../Footer";
 
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  // height: 100vh;
-  // background-color: #e9ecef;
+  min-height: 100vh;
 `;
 
-const RegisterPage = () => {
+
+const MyProfilePage: React.FC = () => {
   return (
     <PageContainer>
       <Header />
-      <Register />
+      <MyProfile />
+      <Leftbar />
       <Footer />
     </PageContainer>
   );
 };
 
-export default RegisterPage;
+export default MyProfilePage;

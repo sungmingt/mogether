@@ -12,7 +12,7 @@ import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
 import { createMoim, createBungae } from '../../store/slices/userSlice';
 import { RootState, AppDispatch } from '../../store/store';
-import { fetchProfile } from '../../store/slices/userSlice';
+import { selectUserProfile } from '../../store/slices/userProfileSlice';
 import { selectIsAuthenticated } from "../../store/slices/authSlice";
 import { useNavigate } from 'react-router-dom';
 import moment from "moment";
@@ -227,14 +227,24 @@ const LocationWrapper = styled.div`
   gap: 15px;
 `;
 
+const DateLabel = styled.label`
+  font-weight: bold;
+  margin: 5px;
+  display: flex;
+  align-items: centerl;
+`;
+
+const DateWrapper = styled.div`
+  margin-bottom: 13px;
+`;
+
 const MoimCreate = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
-  const userProfile = useSelector((state: RootState) => state.user.profile);
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [category, setCategory] = useState<string | null>("moim");
-  const [keywords, setKeywords] = useState<string[]>([]);
+  const [keyword, setKeyword] = useState<string | null>("Art");
   const [location, setLocation] = useState("");
   const [subLocation, setSubLocation] = useState("");
   const [imageUrls, setImageUrls] = useState<string[]>([]);
@@ -256,19 +266,16 @@ const MoimCreate = () => {
   });
   const [additionalFocusedInput, setAdditionalFocusedInput] = useState<FocusedInputShape | null>(null);
   const isAuthenticated = useSelector(selectIsAuthenticated);
+  const userId = Number(localStorage.getItem('userId')) || 0;
 
   useEffect(() => {
     if (!isAuthenticated) {
-      navigate('/Login');   //userProfile이 존재 x -> 가져옴
+      navigate('/login');   //userProfile이 존재 x -> 가져옴
     }
   }, [dispatch, isAuthenticated]);
 
-  const handleKeywordChange = useCallback((keyword: string) => {  //이전과 동일한 참조값이 반환될 경우 -> 리렌더 x
-    setKeywords((prev) =>
-      prev.includes(keyword)
-        ? prev.filter((k) => k !== keyword)
-        : [...prev, keyword]
-    );
+  const handleKeywordChange = useCallback((keyword: string) => {
+    setKeyword(keyword);
   }, []);
 
   const handleCategoryChange = useCallback((selectedCategory: string) => {
@@ -299,7 +306,7 @@ const MoimCreate = () => {
     if (
       !title ||
       !content ||
-      keywords.length === 0 ||
+      keyword === "" ||
       !category ||
       !dateRange.startDate ||
       !dateRange.endDate ||
@@ -311,10 +318,10 @@ const MoimCreate = () => {
     }
 
     const moimData = {
-      userId: userProfile?.userId,
+      userId: userId,
       title: title,
       content: content,
-      keyword: keywords,
+      keyword: keyword,
       images: imageUrls,
       address: {
         city: location,
@@ -326,10 +333,10 @@ const MoimCreate = () => {
       expireAt: dateRange.endDate,
     };
     const bungaeData = {
-      userId: userProfile?.userId,
+      userId: userId,
       title: title,
       content: content,
-      keyword: keywords,
+      keyword: keyword,
       images: imageUrls,
       address: {
         city: location,
@@ -341,21 +348,7 @@ const MoimCreate = () => {
       expireAt: dateRange.endDate,
       gatherAt: meetingStartTime
     };
-    // try {
-    //   if (category === "moim") {
-    //     const response = await dispatch(createMoim(postData)).unwrap();
-    //   }
-    //   else {
-    //     const response = await dispatch(createBungae(postData)).unwrap();
-    //   }
-    // } catch (error) {
-    //   Swal.fire({
-    //     icon: 'error',
-    //     title: '게시글 생성 실패',
-    //     text: '생성 중 오류가 발생했습니다. 다시 시도하세요.',
-    //   });
-    //   window.location.reload();
-    // }
+    
     if (category === "moim") {
       try {
         const response = await dispatch(createMoim(moimData)).unwrap();
@@ -430,14 +423,14 @@ const MoimCreate = () => {
           </ButtonGroup>
         </div>
         {category === "bungae" && (
-          <div>
-            <Label>
+          <DateWrapper>
+            <DateLabel>
               <FontAwesomeIcon
                 icon={faCalendarAlt}
                 style={{ marginRight: 5 }}
               />
               Meeting Start Time<RequiredIcon>*</RequiredIcon>
-            </Label>
+            </DateLabel>
             <Datetime
               value={meetingStartTime || ""}  //왼쪽값이 false인 경우 -> 오른쪽값 반환
               onChange={(date) => setMeetingStartTime(date ? date.toString() : null)}
@@ -445,29 +438,29 @@ const MoimCreate = () => {
               dateFormat="YYYY-MM-DD"
               timeFormat="HH:mm"
             />
-          </div>
+          </DateWrapper>
         )}
         <div>
           <Label>
             Keywords<RequiredIcon>*</RequiredIcon>
           </Label>
           <ButtonGroup>
-            {["Art", "Music", "Travel", "Sports"].map((keyword) => (
+            {["Art", "Music", "Travel", "Sports"].map((key) => (
               <Button
-                key={keyword}
-                selected={keywords.includes(keyword)}
-                onClick={() => handleKeywordChange(keyword)}
+                key={key}
+                selected={keyword===key}
+                onClick={() => handleKeywordChange(key)}
               >
-                {keyword}
+                {key}
               </Button>
             ))}
           </ButtonGroup>
         </div>
-        <div>
-          <Label>
+        <DateWrapper>
+          <DateLabel>
             <FontAwesomeIcon icon={faCalendarAlt} style={{ marginRight: 5 }} />
             모집 기간<RequiredIcon>*</RequiredIcon>
-          </Label>
+          </DateLabel>
           <StyledDateRangePicker
             startDate={dateRange.startDate ? moment(dateRange.startDate) : null}
             startDateId="start_date_id"
@@ -487,7 +480,7 @@ const MoimCreate = () => {
             numberOfMonths={1}
             isOutsideRange={() => false}
           />
-        </div>
+        </DateWrapper>
         <LocationWrapper>
           <Select
             value={location}
@@ -586,14 +579,14 @@ const MoimCreate = () => {
               }))
             }
           />
-          <div>
-            <Label>
+          <DateWrapper>
+            <DateLabel>
               <FontAwesomeIcon
                 icon={faCalendarAlt}
                 style={{ marginRight: 5 }}
               />
               Meeting Period<RequiredIcon>*</RequiredIcon>
-            </Label>
+            </DateLabel>
             <StyledDateRangePicker
               startDate={additionalInfo.meetingPeriodStart ? moment(additionalInfo.meetingPeriodStart) : null}
               startDateId="meeting_period_start_id"
@@ -614,7 +607,7 @@ const MoimCreate = () => {
               numberOfMonths={1}
               isOutsideRange={() => false}
             />
-          </div>
+          </DateWrapper>
         </NoteContainer>
       </Form>
       <StyledButton onClick={handleSubmit}>Submit</StyledButton>

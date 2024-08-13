@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from "react";
 import styled, { keyframes } from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { FaBars, FaTimes, FaBell, FaUserCircle } from "react-icons/fa";
 import axios from "axios";
-import {selectIsAuthenticated} from '../store/slices/authSlice';
-import { useSelector } from "react-redux";
-import { RootState } from "../store/store";
+import {selectIsAuthenticated, logout} from '../store/slices/authSlice';
+import { useDispatch, useSelector } from "react-redux";
+import { RootState, AppDispatch } from '../store/store';
+import Swal from "sweetalert2";
 
 const HeaderContainer = styled.header`
   top: 0;
@@ -158,13 +159,72 @@ const DropdownMenu = styled.div<{ isOpen: boolean }>`
   }
 `;
 
+const IconWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  margin-left: 10px;
+
+  media (max-width: 768px) {
+    display: none;
+  }
+`;
+
+const IconMenu = styled.div<{isOpen: boolean}>`  
+  display: ${({isOpen}) => (isOpen ? "block" : "none")};
+  position: absolute:
+  top: 60px;
+  right: 0;
+  margin-right: 10px;
+  width: 20%;
+  backgroud-color: #fff;
+  border: 2px solid #000000;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+  max-height: ${({ isOpen }) => (isOpen ? "500px" : "0")};
+  overflow: hidden;
+  opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
+  animation: ${({ isOpen }) => (isOpen ? slideDown : slideUp)} 0.5s ease-in-out;
+
+  a {
+    display: block;
+    padding: 10px 20px;
+    color: #000;
+    text-decoration: none;
+    font-size: 18px;
+
+    &:hover {
+      background-color: #f0f0f0;
+      color: #7848f4;
+    }
+  } 
+`;
+
 const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+  const [isNotificationMenuOpen, setIsNotificationMenuOpen] = useState(false);
   const isAuthenticated = useSelector((state: RootState) => selectIsAuthenticated(state));
+  const dispatch = useDispatch<AppDispatch>();
+  const accessToken = localStorage.getItem("accessToken");
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
+  };
+
+  const toggleProfileMenu = () => {
+    setIsProfileMenuOpen(!isProfileMenuOpen);
+    if (isNotificationMenuOpen) {
+      setIsNotificationMenuOpen(false);
+    }
+  };
+
+  const toggleNotificationMenu = () => {
+    setIsNotificationMenuOpen(!isNotificationMenuOpen);
+    if (isProfileMenuOpen) {
+      setIsProfileMenuOpen(false);
+    }
   };
 
   const handleNavigation = (path: string) => {
@@ -185,6 +245,15 @@ const Header: React.FC = () => {
     };
   }, [isOpen]);
 
+  const handleLogout = async () => {
+    try {
+      const response = await dispatch(logout());
+      navigate("/");
+    } catch (error) {
+      Swal.fire("error", "로그아웃에 실패했습니다", "error");
+  }
+  };
+
   
 
   return (
@@ -193,35 +262,87 @@ const Header: React.FC = () => {
         {isOpen ? <FaTimes /> : <FaBars />}
       </MenuIcon>
       <Nav>
-        <NavLink to="/group">소모임</NavLink>
-        <NavLink to="/bungae">번개</NavLink>
-        <NavLink to="/study">스터디</NavLink>
+        <NavLink to="/moim/list">소모임</NavLink>
+        <NavLink to="/bungae/list">번개</NavLink>
         <NavLink to="/mypage">마이페이지</NavLink>
       </Nav>
       <ButtonContainer>
-        <Button onClick={() => handleNavigation("/login")}>Login</Button>
-        <Button onClick={() => handleNavigation("/register")}>Register</Button>
+      {isAuthenticated ? (
+          <>
+            <Button onClick={() => handleNavigation("/createPost")}>Create Post</Button>
+            <Button onClick={() => handleLogout()}>Logout</Button>
+            <IconWrapper onClick={toggleNotificationMenu}>
+              <FaBell size={24} />
+              <IconMenu isOpen={isNotificationMenuOpen}>
+                {/* <NavLink to="/notifications" onClick={toggleNotificationMenu}>
+                  알림1
+                </NavLink>
+                <NavLink to="/notifications" onClick={toggleNotificationMenu}>
+                  알림2
+                </NavLink> */}
+              </IconMenu>
+            </IconWrapper>
+            <IconWrapper onClick={toggleProfileMenu}>
+              <FaUserCircle size={24} />
+              <IconMenu isOpen={isProfileMenuOpen}>
+                <NavLink to="/mypage" onClick={toggleProfileMenu}>
+                  프로필
+                </NavLink>
+                <NavLink to="/mypage/createdMoim" onClick={toggleProfileMenu}>
+                  작성 글
+                </NavLink>
+                <NavLink to="/mypage/interestedMoim" onClick={toggleProfileMenu}>
+                  관심 글
+                </NavLink>
+              </IconMenu>
+            </IconWrapper>
+          </>
+        ) : (
+          <>
+            <Button onClick={() => handleNavigation("/login")}>Login</Button>
+            <Button onClick={() => handleNavigation("/register")}>Register</Button>
+          </>
+        )}
       </ButtonContainer>
-      <DropdownMenu isOpen={isOpen}>
-        <NavLink to="/group" onClick={toggleMenu}>
-          소모임
-        </NavLink>
-        <NavLink to="/bungae" onClick={toggleMenu}>
-          번개
-        </NavLink>
-        <NavLink to="/study" onClick={toggleMenu}>
-          스터디
-        </NavLink>
-        <NavLink to="/mypage" onClick={toggleMenu}>
-          마이페이지
-        </NavLink>
-        <DropdownButton>
-          <Button onClick={() => handleNavigation("/login")}>Login</Button>
-          <Button onClick={() => handleNavigation("/register")}>
-            Register
-          </Button>
-        </DropdownButton>
-      </DropdownMenu>
+      {isAuthenticated ? (
+        <DropdownMenu isOpen={isOpen}>
+          <NavLink to="/moim/list" onClick={toggleMenu}>
+            소모임
+          </NavLink>
+          <NavLink to="/bunage/list" onClick={toggleMenu}>
+            번개
+          </NavLink>
+          <NavLink to="/mypage" onClick={toggleMenu}>
+            마이페이지
+          </NavLink>
+          <DropdownButton>
+            <Button onClick={() => handleNavigation("/createPost")}>
+              Create Post
+            </Button>
+            <Button onClick={() => handleLogout()}>
+              Logout
+            </Button>
+          </DropdownButton>
+        </DropdownMenu>
+      ) : (
+        <DropdownMenu isOpen={isOpen}>
+          <NavLink to="/moim/list" onClick={toggleMenu}>
+            소모임
+          </NavLink>
+          <NavLink to="/bungae/list" onClick={toggleMenu}>
+            번개
+          </NavLink>
+          <NavLink to="/mypage" onClick={toggleMenu}>
+            마이페이지
+          </NavLink>
+          <DropdownButton>
+            <Button onClick={() => handleNavigation("/login")}>Login</Button>
+            <Button onClick={() => handleNavigation("/register")}>
+              Register
+            </Button>
+          </DropdownButton>
+        </DropdownMenu>
+      )}
     </HeaderContainer>
   );
 };

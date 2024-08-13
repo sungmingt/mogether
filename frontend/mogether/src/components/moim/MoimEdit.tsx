@@ -10,12 +10,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
-import { createMoim, createBungae } from '../../store/slices/userSlice';
+import { createMoim, createBungae, EditMoim } from '../../store/slices/userSlice';
 import { RootState, AppDispatch } from '../../store/store';
-import { fetchProfile } from '../../store/slices/userSlice';
-import { selectIsAuthenticated } from "../../store/slices/authSlice";
-import { useNavigate } from 'react-router-dom';
+import { selectIsAuthenticated, selectUserId } from "../../store/slices/authSlice";
+import { useNavigate, useParams } from 'react-router-dom';
+import {clickPosts} from '../../store/slices/moimSlice';
 import moment from "moment";
+import { set } from "react-datepicker/dist/date_utils";
 
 const PostCreateContainer = styled.div`
   display: flex;
@@ -230,7 +231,8 @@ const LocationWrapper = styled.div`
 const MoimEdit = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
-  const userProfile = useSelector((state: RootState) => state.user.profile);
+  const userId = Number(localStorage.getItem('userId')) || 0;
+  const userProfile = useSelector((state: RootState) => state.userProfile.userProfiles[userId]);  //rootState : store.ts에서 가져옴 -> store.ts는 각각 정의된 store에서 가져옴
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [category, setCategory] = useState<string | null>("moim");
@@ -238,6 +240,7 @@ const MoimEdit = () => {
   const [location, setLocation] = useState("");
   const [subLocation, setSubLocation] = useState("");
   const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [imageFile, setImageFile] = useState<File[] | null>(null);
   const [dateRange, setDateRange] = useState<{ startDate: string | null, endDate: string | null }>({
     startDate: null,
     endDate: null,
@@ -256,6 +259,9 @@ const MoimEdit = () => {
   });
   const [additionalFocusedInput, setAdditionalFocusedInput] = useState<FocusedInputShape | null>(null);
   const isAuthenticated = useSelector(selectIsAuthenticated);
+  const {id} = useParams<{id: string}>();
+  const moimId = id ? parseInt(id, 10) : 0;
+  const bungaeId = id ? parseInt(id, 10) : 0;
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -270,6 +276,28 @@ const MoimEdit = () => {
         : [...prev, keyword]
     );
   }, []);
+
+  useEffect(() => {
+    const fetchMoimData = async () => {
+      if (moimId) {
+        const response = await dispatch(clickPosts(moimId)).unwrap();
+        setTitle(response.title);
+        setContent(response.content);
+        setKeywords(response.keyword);
+        setLocation(response.address.city);
+        setSubLocation(response.address.gu);
+        setDateRange({
+          startDate: response.createdAt,
+          endDate: response.expireAt
+        });
+        setMeetingStartTime(response.gatherAt);
+        if (response.imageUrls) {
+          setImageUrls(response.imageUrls);
+        }
+      }
+    }
+    fetchMoimData();
+  }, [dispatch, moimId]);
 
   const handleCategoryChange = useCallback((selectedCategory: string) => {
     setCategory(selectedCategory);
@@ -289,10 +317,12 @@ const MoimEdit = () => {
     const fileArray = Array.from(files || []);
     const newUrls = fileArray.map((file) => URL.createObjectURL(file));
     setImageUrls((prev) => [...prev, ...newUrls]);
+    setImageFile((prev) => (prev ? [...prev, ...fileArray] : fileArray));
   };
 
   const handleImageRemove = (index: number) => {
     setImageUrls((prev) => prev.filter((_, i) => i !== index));
+    setImageFile((prev) => prev ? prev.filter((_, i) => i !== index) : null);
   };
 
   const handleSubmit = async () => {
@@ -309,42 +339,38 @@ const MoimEdit = () => {
       Swal.fire("Error", "필수 입력 항목을 모두 입력해주세요.", "error");
       return;
     }
-
-    const moimData = {
-      userId: userProfile?.userId,
-      title: title,
-      content: content,
-      keyword: keywords,
-      images: imageUrls,
-      address: {
-        city: location,
-        gu: subLocation,
-        details: additionalInfo.placeDetails,
-      },
-      description: content,
-      createdAt: dateRange.startDate,
-      expireAt: dateRange.endDate,
-    };
-    const bungaeData = {
-      userId: userProfile?.userId,
-      title: title,
-      content: content,
-      keyword: keywords,
-      images: imageUrls,
-      address: {
-        city: location,
-        gu: subLocation,
-        details: additionalInfo.placeDetails,
-      },
-      description: content,
-      createdAt: dateRange.startDate,
-      expireAt: dateRange.endDate,
-      gatherAt: meetingStartTime
-    };
     
+
     if (category === "moim") {
+      const moimData = {
+        userId: userProfile?.userId,
+        title: title,
+        content: content,
+        keyword: keywords,
+        address: {
+          city: location,
+          gu: subLocation,
+          details: additionalInfo.placeDetails,
+        },
+        description: content,
+        createdAt: dateRange.startDate,
+        expireAt: dateRange.endDate,
+      };
+
+      const moimFormData = new FormData();
+      moimFormData.append('dto', new Blob([JSON.stringify(moimData)], { type: 'application/json' }));
+
+      if (imageFile) {
+        imageFile.forEach((file) => {
+        moimFormData.append('images', file);
+        });
+	    }
+	    else {
+	      moimFormData.append('images', null as any);
+	    };
       try {
-        const response = await dispatch(createMoim(moimData)).unwrap();
+        const moimFormDataMoimId = {moimId: moimId, moimFormData: moimFormData};
+        const response = await dispatch(EditMoim(moimFormDataMoimId)).unwrap();
       }
       catch (error) {
         Swal.fire({
@@ -356,8 +382,35 @@ const MoimEdit = () => {
       }
     }
     else {
+      const bungaeData = {
+        userId: userProfile?.userId,
+        title: title,
+        content: content,
+        keyword: keywords,
+        address: {
+          city: location,
+          gu: subLocation,
+          details: additionalInfo.placeDetails,
+        },
+        description: content,
+        createdAt: dateRange.startDate,
+        expireAt: dateRange.endDate,
+        gatherAt: meetingStartTime
+      };
+      const bungaeFormData = new FormData();
+      bungaeFormData.append('dto', new Blob([JSON.stringify(bungaeData)], { type: 'application/json' }));
+
+      if (imageFile) {
+        imageFile.forEach((file) => {
+          bungaeFormData.append('images', file);
+        });
+	    }
+	    else {
+	      bungaeFormData.append('images', null as any);
+	    };
       try {
-        const response = await dispatch(createBungae(bungaeData)).unwrap();
+        const bungaeFormDataBungaeId = {bungaeId: bungaeId, bungaeFormData: bungaeFormData};
+        const response = await dispatch(createBungae(bungaeFormDataBungaeId)).unwrap();
       }
       catch (error) {
         Swal.fire({

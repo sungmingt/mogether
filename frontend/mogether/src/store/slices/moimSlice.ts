@@ -1,13 +1,14 @@
 import { createSlice, createAsyncThunk, PayloadAction, AsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { fetchPostsApi, MoimCardApi, interestMoimApi, searchMoimApi, joinMoimApi, interestMoimDeleteApi, joinQuitMoimApi } from '../../utils/api';
-
+import { fetchMoimApi, MoimCardApi, interestMoimApi, searchMoimApi, joinMoimApi, interestMoimDeleteApi, joinQuitMoimApi } from '../../utils/api';
+// 카테고리가 moim인 모든 게시글들을 저장하는 slice
 export interface Post {  //여기서의 post는....moim의 형식을 의미한다....
   id: number;   // 서버에서 id를 줄 때 -> id 이렇게 준다...
   title: string;
   content: string;
   imageUrls?: string[];
-  thumbnailUrl?: string;
+  sendImageUrls?: File[];  //file array로 서버에 multipart/form-data형식으로 보냄
+  thumbnailUrl: string;
   hostId: number;
   hostName: string;
   hostProfileImageUrl: string;
@@ -48,7 +49,7 @@ export const fetchPosts = createAsyncThunk(  //처음 게시글 리스트 소환
   'posts/fetchPosts',
   async (_, thunkAPI) => { //인자 2개는 필요한데 1개만 필요하므로 _를 사용해서 인자를 무시함
     try {
-      const response = await fetchPostsApi();
+      const response = await fetchMoimApi();
       if (response.status === 200 || response.status === 201) {
         return response.data;
       }
@@ -209,7 +210,7 @@ const postSlice = createSlice({   // 게시글 리스트의 상태와 액션을 
         state.loading = true;
         state.error = null;
       })
-      .addCase(clickPosts.fulfilled, (state, action) => {
+      .addCase(clickPosts.fulfilled, (state, action: PayloadAction<Post>) => {
         state.loading = false;
         state.idPost = action.payload;   // Post 객체 하나 -> 저장하는 공간이 idPost라는 의미
       })

@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import { fetchProfile, selectUserProfile, PatchUserProfile } from "../../store/slices/userSlice";
+import { fetchProfile, selectUserProfile, PatchUserProfile } from "../../store/slices/userProfileSlice";
 import { RootState, AppDispatch } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { UserProfile } from "../../store/slices/userSlice";
 import { selectUserId, selectIsAuthenticated } from "../../store/slices/authSlice";
 
 const ProfileContainer = styled.div`
@@ -73,12 +72,19 @@ const Button = styled.button`
   }
 `;
 
+const FileInput = styled.input`
+  margin-top: 10px;
+`;
+
 const MyProfile: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
-  const userProfile = useSelector(selectUserProfile);
-  const userId = useSelector(selectUserId);
+  const userId = Number(localStorage.getItem('userId')) || 0;
+  const currentUserProfile = useSelector(
+    (state: RootState) => state.userProfile.userProfiles[userId]
+  );
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState<any>(null);
+  const [profileImage, setProfileImage] = useState<File | null>(null);
   const navigate = useNavigate();
   const isAuthenticated = useSelector(selectIsAuthenticated);
 
@@ -86,7 +92,7 @@ const MyProfile: React.FC = () => {
     const fetchProfileData = async () => {
         try {
             const response = dispatch(fetchProfile(userId)).unwrap();  //dispatch로 인해 profile 변경 -> useSelector로 변경값 갱신 -> 그걸 가져옴
-            setFormData(userProfile);
+            setFormData(currentUserProfile);
             console.log(response);
         }
         catch (error) {
@@ -110,11 +116,46 @@ const MyProfile: React.FC = () => {
       [name]: value,
     });
   };
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setProfileImage(e.target.files[0]);
+    }
+  };
 
   const handleToggleEdit = async () => {
     if (editMode) {  //editMode가 true인 경우
+      if (editMode) {
+        if (!formData.nickname || !formData.name) {
+          Swal.fire("error", "Nickname and Name are required", "error");
+          return;
+        }
+  
+        const patchData = new FormData();
+        if (profileImage) {
+          patchData.append("image", profileImage);
+        }
+        else {
+          patchData.append("image", null as any);
+        }
+        patchData.append(
+          "dto",
+          new Blob(
+            [
+              JSON.stringify({
+                name: formData.name,
+                nickname: formData.nickname,
+                address: formData.address,
+                age: formData.age,
+                gender: formData.gender,
+                intro: formData.intro,
+                phoneNumber: formData.phoneNumber,
+              }),
+            ],
+            { type: "application/json" }
+          )
+        );
       try {
-        const response = await dispatch(PatchUserProfile(formData)).unwrap();
+        const response = await dispatch(PatchUserProfile(patchData)).unwrap();
         // window.location.reload();  //useEffect를 한번 더 실행?
       }
       catch (error) {
@@ -123,12 +164,16 @@ const MyProfile: React.FC = () => {
       }
     }
     setEditMode(!editMode);
-  };
+  }
+};
 
   return (
     <ProfileContainer>
       <ProfileTitle>My Profile</ProfileTitle>
       <ProfileImage src={formData.userProfileImage} alt="Profile" />
+      {editMode && (
+        <FileInput type="file" accept="image/*" onChange={handleImageChange} />
+      )}
       <ProfileItem>
         <Label>Nickname:</Label>
         {editMode ? (
