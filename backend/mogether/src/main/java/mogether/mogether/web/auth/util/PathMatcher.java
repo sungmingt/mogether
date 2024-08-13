@@ -20,6 +20,7 @@ public class PathMatcher {
             "/api-docs/**", "/v3/api-docs/**", "/v3/api-docs/swagger-config/**",
             "/swagger-ui/**", "/swagger-ui.html", "/swagger-resources", "/swagger-resources/**",
             "/configuration/ui", "/configuration/security", "/webjars/**",
+            "/h2-console/**",
 
             "/login/**", "/user/join", "/token", "/oauth2/**",
     };
@@ -52,16 +53,13 @@ public class PathMatcher {
             return false;
         }
 
-        System.out.println("method 통과");
-
         for (RequestMatcher matcher : forAnonymousURIMatcher) {
             System.out.println(matcher.toString());
             if (matcher.matches(request)) {
                 return true;
             }
         }
-
-        System.out.println("uri 통과 실패");
+        
         return false;
     }
 }
