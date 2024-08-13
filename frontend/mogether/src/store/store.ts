@@ -1,14 +1,19 @@
 import { configureStore, ThunkDispatch } from "@reduxjs/toolkit";
 import authReducer from './slices/authSlice';
 import userReducer from './slices/userSlice';
-import postReducer from './slices/postSlice';
+import moimReducer from './slices/moimSlice';
+import bungaeReducer from './slices/bungaeSlice';
+import userProfileReducer from './slices/userProfileSlice';
+
 import App from '../App';
 
 const store = configureStore({
     reducer: {
         auth: authReducer,
         user: userReducer,
-        post: postReducer,
+        moim: moimReducer,
+        bungae: bungaeReducer,
+        userProfile: userProfileReducer,
     },
 })
 

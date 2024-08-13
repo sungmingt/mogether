@@ -2,6 +2,11 @@ import React, { useState, useEffect } from "react";
 import styled, { keyframes, css } from "styled-components";
 import { useNavigate } from "react-router-dom";
 // import { animateScroll as scroll } from "react-scroll";
+import { fetchProfile } from '../store/slices/userProfileSlice';
+import { selectUserId } from "../store/slices/authSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { AppDispatch } from '../store/store';
+import Swal from "sweetalert2";
 
 const HomePageContainer = styled.div`
   display: flex;
@@ -140,6 +145,8 @@ const ButtonGroup = styled.div`
 
 const HomePage: React.FC = () => {
   const navigate = useNavigate();
+  const userId = Number(localStorage.getItem('userId')) | 0; 
+  const dispatch = useDispatch<AppDispatch>(); 
   const [visibleSections, setVisibleSections] = useState<{
     [key: string]: boolean;
   }>({});
@@ -163,6 +170,17 @@ const HomePage: React.FC = () => {
       window.removeEventListener("scroll", handleScroll);
     };
   }, []);
+
+  useEffect(() => {
+    if (userId > 0) {
+      try {
+        const response = dispatch(fetchProfile(userId));  //userSlice의 fetchProfile로 정보가 들어감
+      }
+      catch (error) {
+        console.error(error);
+      }
+    }
+  }, [userId])
 
   const handleImageClick = () => {
     navigate("/postCreate");
@@ -195,8 +213,12 @@ const HomePage: React.FC = () => {
         color="#e6e6e6"
       >
         <TextContainer>
-          <Title>Join a Group</Title>
-          <TypingText>Find and join groups that interest you.</TypingText>
+          <Title>함께라서 더 즐거운 우리들의 모임</Title>
+          <TypingText>
+            취미도, 관심사도, 함께할 때 더 빛납니다. <br></br>
+            <br></br>
+            지금, 모게더에서 새로운 인연과 경험을 만나보세요💕
+          </TypingText>
         </TextContainer>
         <ImageWrapper>
           <Image src={require("../assets/somoim.png")} alt="Join a Group" />

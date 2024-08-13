@@ -4,7 +4,7 @@ import { FaBars, FaTimes } from "react-icons/fa";
 import Toggle from "react-toggle";
 import "react-toggle"; 
 import { useDispatch } from "react-redux";
-import { filterPostsByKeywords } from '../../store/slices/postSlice';
+import { filterPostsByKeywords } from '../../store/slices/moimSlice';
 
 const slideIn = keyframes`
   from {

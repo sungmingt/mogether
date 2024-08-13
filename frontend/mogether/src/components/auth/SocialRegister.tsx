@@ -4,8 +4,8 @@ import styled from "styled-components";
 import { AppDispatch, RootState } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { selectAuthLoading, selectIsAuthenticated, register, kakaoRegister, googleRegister } from '../../store/slices/authSlice';
-import {registerUser} from "../../store/slices/userProfileSlice";
+import { selectAuthLoading, selectIsAuthenticated, register } from '../../store/slices/authSlice';
+import {socialRegisterUser} from "../../store/slices/userProfileSlice";
 import { FaCamera } from "react-icons/fa";
 
 
@@ -162,7 +162,7 @@ const ImageWrapper2 = styled.img`
   margin-top: 10px;
 `;
 
-const Register: React.FC = () => {
+const SocialRegister: React.FC = () => {
   const [name, setName] = useState<string>("");
   const [email, setEmail] = useState<string>("");
   const [password, setPassword] = useState<string>("");
@@ -186,6 +186,7 @@ const Register: React.FC = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const dispatch = useDispatch<AppDispatch>();
   const [profileImage, setProfileImage] = useState<File | null>(null);
+  const userId = Number(localStorage.getItem('userId')) || 0;
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -193,75 +194,39 @@ const Register: React.FC = () => {
     }
   }, [isAuthenticated]);
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setEmail(value.trim());
-    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      setEmailError(null);
-    } else {
-      setEmailError("Invalid email format");
-    }
-  };
-
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setPassword(value.trim());
-    if (/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value)) {
-      setPasswordError(null);
-    } else {
-      setPasswordError("Password must be at least 8 characters long, including uppercase, lowercase, number, and special character");
-    }
-  };
-
-  const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setNickname(value.trim());
-    if (value.length >= 2) {
-      setNicknameError(null);
-    } else {
-      setNicknameError("Nickname must be at least 2 characters");
-    }
-  };
+  // const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = e.target.value;
+  //   setNickname(value.trim());
+  //   if (value.length >= 2) {
+  //     setNicknameError(null);
+  //   } else {
+  //     setNicknameError("Nickname must be at least 2 characters");
+  //   }
+  // };
 
 
-  const handleRegister = async () => {
-    if (   // 아래의 모든 조건을 만족해야 회원가입 가능
-      emailError === null &&
-      passwordError === null &&
-      email !== "" &&
-      password !== ""
-    ) {
-      const registerForm = {
-        email: email,
-        password: password,
-        name: name,
-        nickname: nickname,
-        address: address,
-        age: age,
-        gender: gender,
-        intro: intro,
-        phoneNumber: phoneNumber
-      };
-      const registerFormData = new FormData();
-      registerFormData.append('dto', new Blob([JSON.stringify(registerForm)], { type: 'application/json' }));
-
-      if (profileImage) {
-        registerFormData.append('images', profileImage);
-	    }
-	    else {
-	      registerFormData.append('images', null as any);
-	    };
-      try {
-        const response = await dispatch(registerUser(registerFormData)).unwrap();
-        navigate("/Login");
-      }
-      catch (error) {
-        Swal.fire('error', '잘못된 요청입니다', 'error');
-      }
+  const handleSocialRegister = async () => {
+    const socialRegisterForm = {
+      address: address,
+      age: age,
+      gender: gender,
+      intro: intro,
+      phoneNumber: phoneNumber
+    };
+    const socialRegisterFormData = new FormData();
+    socialRegisterFormData.append('dto', new Blob([JSON.stringify(socialRegisterForm)], { type: 'application/json' }));
+    if (profileImage) {
+      socialRegisterFormData.append('images', profileImage);
     }
     else {
-      Swal.fire('error', '필수 요청 사항을 모두 입력해 주세요', 'error');
-      return;
+      socialRegisterFormData.append('images', null as any);
+    };
+    try {
+      const response = await dispatch(socialRegisterUser({socialRegisterFormData, userId})).unwrap();
+      navigate("/login");
+    }
+    catch (error) {
+      Swal.fire('error', '잘못된 요청입니다', 'error');
     }
   };
 
@@ -271,24 +236,6 @@ const Register: React.FC = () => {
       setProfileImage(file);
     }
   };
-
-  const handleKakaoRegister = async () => {
-    try {
-      const response = await dispatch(kakaoRegister()).unwrap();
-      navigate('/SocialRegister');
-    } catch (error) {
-      Swal.fire('error', '잘못된 요청입니다', 'error');
-    }
-  }
-
-  const handleGoogleRegister = async () => {
-    try {
-      const response = await dispatch(googleRegister()).unwrap();
-      navigate('/SocialRegister');
-    } catch (error) {
-      Swal.fire('error', '잘못된 요청입니다', 'error');
-    }
-  }
 
   return (
     <RegisterContainer>
@@ -314,36 +261,6 @@ const Register: React.FC = () => {
             onChange={handleImageChange}
           />
         </ImageWrapper>
-        <InputWrapper>
-          <Input
-            type="text"
-            placeholder="Nickname"
-            value={nickname}
-            onChange={handleNicknameChange}
-            isValid={passwordError === null}
-          />
-          <ErrorMessage>{nicknameError}</ErrorMessage>
-        </InputWrapper>
-        <InputWrapper>
-          <Input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={handleEmailChange}
-            isValid={emailError === null}
-          />
-          <ErrorMessage>{emailError}</ErrorMessage>
-        </InputWrapper>
-        <InputWrapper>
-          <Input
-            type="password"
-            placeholder="Password (at least 8 characters)"
-            value={password}
-            onChange={handlePasswordChange}
-            isValid={passwordError === null}
-          />
-          <ErrorMessage>{passwordError}</ErrorMessage>
-        </InputWrapper>
         <InputWrapper>
           <Input
             type="text"
@@ -410,32 +327,14 @@ const Register: React.FC = () => {
           />
         </InputWrapper>
         <Button
-          onClick={handleRegister}
-          disabled={
-            emailError !== null ||
-            passwordError !== null ||
-            email === "" ||
-            password === "" ||
-            nameError !== null ||
-            nicknameError !== null ||
-            name === ""||
-            nickname === ""
-          }
+          onClick={() => {handleSocialRegister}}
         >
           Register
         </Button>
-        <ImageWrapper2 src={require("../../assets/OR.png")} />
-        <SocialButtonsContainer>
-          <SocialButton onClick={handleGoogleRegister}>
-            <img src={require("../../assets/Google__G__logo 1.png")} />
-            Google로 회원가입
-          </SocialButton>
-          <KakaoButton onClick={handleKakaoRegister}><img src={require("../../assets/KakaoTalk_logo 1.png")}/>Kakao로 회원가입</KakaoButton>
-        </SocialButtonsContainer>
       </RegisterBox>
       {error && <ErrorMessage>{error}</ErrorMessage>}
     </RegisterContainer>
   );
 };
 
-export default Register;
+export default SocialRegister;

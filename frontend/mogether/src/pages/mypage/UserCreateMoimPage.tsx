@@ -1,26 +1,24 @@
 import React from "react";
-import Register from "../../components/auth/Register";
 import styled from "styled-components";
-import Header from "../Header";
+import UserCreatedMoims from "../../components/profile/UserCreateMoim";
 import Footer from "../Footer";
+import Header from "../Header";
 
 const PageContainer = styled.div`
+
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  // height: 100vh;
-  // background-color: #e9ecef;
+  min-height: 100vh;
 `;
 
-const RegisterPage = () => {
+const UserCreatedMoimPage: React.FC = () => {
   return (
     <PageContainer>
       <Header />
-      <Register />
+      <UserCreatedMoims />
       <Footer />
     </PageContainer>
   );
 };
 
-export default RegisterPage;
+export default UserCreatedMoimPage;

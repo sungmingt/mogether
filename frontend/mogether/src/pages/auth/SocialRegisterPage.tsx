@@ -1,5 +1,5 @@
 import React from "react";
-import Register from "../../components/auth/Register";
+import SocialRegister from "../../components/auth/SocialRegister";
 import styled from "styled-components";
 import Header from "../Header";
 import Footer from "../Footer";
@@ -13,14 +13,14 @@ const PageContainer = styled.div`
   // background-color: #e9ecef;
 `;
 
-const RegisterPage = () => {
+const SocialRegisterPage = () => {
   return (
     <PageContainer>
       <Header />
-      <Register />
+      <SocialRegister />
       <Footer />
     </PageContainer>
   );
 };
 
-export default RegisterPage;
+export default SocialRegisterPage;

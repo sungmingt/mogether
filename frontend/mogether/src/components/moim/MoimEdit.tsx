@@ -10,12 +10,13 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
-import { createPost } from '../../store/slices/userSlice';
+import { createMoim, createBungae, EditMoim } from '../../store/slices/userSlice';
 import { RootState, AppDispatch } from '../../store/store';
-import { fetchProfile } from '../../store/slices/userSlice';
-import { selectIsAuthenticated } from "../../store/slices/authSlice";
-import { useNavigate } from 'react-router-dom';
+import { selectIsAuthenticated, selectUserId } from "../../store/slices/authSlice";
+import { useNavigate, useParams } from 'react-router-dom';
+import {clickPosts} from '../../store/slices/moimSlice';
 import moment from "moment";
+import { set } from "react-datepicker/dist/date_utils";
 
 const PostCreateContainer = styled.div`
   display: flex;
@@ -227,17 +228,19 @@ const LocationWrapper = styled.div`
   gap: 15px;
 `;
 
-const PostCreate = () => {
+const MoimEdit = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
-  const userProfile = useSelector((state: RootState) => state.user.profile);
+  const userId = Number(localStorage.getItem('userId')) || 0;
+  const userProfile = useSelector((state: RootState) => state.userProfile.userProfiles[userId]);  //rootState : store.ts에서 가져옴 -> store.ts는 각각 정의된 store에서 가져옴
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [category, setCategory] = useState<string | null>("bungae");
+  const [category, setCategory] = useState<string | null>("moim");
   const [keywords, setKeywords] = useState<string[]>([]);
   const [location, setLocation] = useState("");
   const [subLocation, setSubLocation] = useState("");
   const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [imageFile, setImageFile] = useState<File[] | null>(null);
   const [dateRange, setDateRange] = useState<{ startDate: string | null, endDate: string | null }>({
     startDate: null,
     endDate: null,
@@ -256,6 +259,9 @@ const PostCreate = () => {
   });
   const [additionalFocusedInput, setAdditionalFocusedInput] = useState<FocusedInputShape | null>(null);
   const isAuthenticated = useSelector(selectIsAuthenticated);
+  const {id} = useParams<{id: string}>();
+  const moimId = id ? parseInt(id, 10) : 0;
+  const bungaeId = id ? parseInt(id, 10) : 0;
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -270,6 +276,28 @@ const PostCreate = () => {
         : [...prev, keyword]
     );
   }, []);
+
+  useEffect(() => {
+    const fetchMoimData = async () => {
+      if (moimId) {
+        const response = await dispatch(clickPosts(moimId)).unwrap();
+        setTitle(response.title);
+        setContent(response.content);
+        setKeywords(response.keyword);
+        setLocation(response.address.city);
+        setSubLocation(response.address.gu);
+        setDateRange({
+          startDate: response.createdAt,
+          endDate: response.expireAt
+        });
+        setMeetingStartTime(response.gatherAt);
+        if (response.imageUrls) {
+          setImageUrls(response.imageUrls);
+        }
+      }
+    }
+    fetchMoimData();
+  }, [dispatch, moimId]);
 
   const handleCategoryChange = useCallback((selectedCategory: string) => {
     setCategory(selectedCategory);
@@ -289,10 +317,12 @@ const PostCreate = () => {
     const fileArray = Array.from(files || []);
     const newUrls = fileArray.map((file) => URL.createObjectURL(file));
     setImageUrls((prev) => [...prev, ...newUrls]);
+    setImageFile((prev) => (prev ? [...prev, ...fileArray] : fileArray));
   };
 
   const handleImageRemove = (index: number) => {
     setImageUrls((prev) => prev.filter((_, i) => i !== index));
+    setImageFile((prev) => prev ? prev.filter((_, i) => i !== index) : null);
   };
 
   const handleSubmit = async () => {
@@ -309,30 +339,87 @@ const PostCreate = () => {
       Swal.fire("Error", "필수 입력 항목을 모두 입력해주세요.", "error");
       return;
     }
+    
 
-    const postData = {
-      userId: userProfile?.userId,
-      title: title,
-      content: content,
-      keyword: keywords,
-      images: imageUrls,
-      address: {
-        city: location,
-        gu: subLocation,
-        details: additionalInfo.placeDetails,
-      },
-      description: content,
-      createdAt: dateRange.startDate,
-      expireAt: dateRange.endDate,
-    };
+    if (category === "moim") {
+      const moimData = {
+        userId: userProfile?.userId,
+        title: title,
+        content: content,
+        keyword: keywords,
+        address: {
+          city: location,
+          gu: subLocation,
+          details: additionalInfo.placeDetails,
+        },
+        description: content,
+        createdAt: dateRange.startDate,
+        expireAt: dateRange.endDate,
+      };
 
-    const response = await dispatch(createPost(postData));   //useDispatch는 slice 파일의 액션 처리 함수에 접근하여 갱신함
-    //response는 thunk를 이용해 비동기 작업 처리시 반환된 액션 객체로, 반환된 액션 객체에 meta가 포함되어 있는데, 이 meta에 requestStatus 속성이 있다
-    if (response.meta.requestStatus === 'fulfilled') {   //response는 서버의 그 response와 연결짓지 말고, dispatch의 결과물인데 dispatch의 결과물로 meta, action, error가 잇음
-      navigate('/PostList');
-    } else {
-      Swal.fire("Error", "게시글 생성에 실패했습니다.", "error");
-      window.location.reload();
+      const moimFormData = new FormData();
+      moimFormData.append('dto', new Blob([JSON.stringify(moimData)], { type: 'application/json' }));
+
+      if (imageFile) {
+        imageFile.forEach((file) => {
+        moimFormData.append('images', file);
+        });
+	    }
+	    else {
+	      moimFormData.append('images', null as any);
+	    };
+      try {
+        const moimFormDataMoimId = {moimId: moimId, moimFormData: moimFormData};
+        const response = await dispatch(EditMoim(moimFormDataMoimId)).unwrap();
+      }
+      catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: '게시글 생성 실패',
+          text: '생성 중 오류가 발생했습니다. 다시 시도하세요.',
+        });
+        window.location.reload();
+      }
+    }
+    else {
+      const bungaeData = {
+        userId: userProfile?.userId,
+        title: title,
+        content: content,
+        keyword: keywords,
+        address: {
+          city: location,
+          gu: subLocation,
+          details: additionalInfo.placeDetails,
+        },
+        description: content,
+        createdAt: dateRange.startDate,
+        expireAt: dateRange.endDate,
+        gatherAt: meetingStartTime
+      };
+      const bungaeFormData = new FormData();
+      bungaeFormData.append('dto', new Blob([JSON.stringify(bungaeData)], { type: 'application/json' }));
+
+      if (imageFile) {
+        imageFile.forEach((file) => {
+          bungaeFormData.append('images', file);
+        });
+	    }
+	    else {
+	      bungaeFormData.append('images', null as any);
+	    };
+      try {
+        const bungaeFormDataBungaeId = {bungaeId: bungaeId, bungaeFormData: bungaeFormData};
+        const response = await dispatch(createBungae(bungaeFormDataBungaeId)).unwrap();
+      }
+      catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: '게시글 생성 실패',
+          text: '생성 중 오류가 발생했습니다. 다시 시도하세요.',
+        });
+        window.location.reload();
+      }
     }
 
 
@@ -574,4 +661,4 @@ const PostCreate = () => {
   );
 };
 
-export default PostCreate;
+export default MoimEdit;
