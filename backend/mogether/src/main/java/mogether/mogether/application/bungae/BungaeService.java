@@ -89,8 +89,13 @@ public class BungaeService {
     //번개 hosting 리스트 조회
     public List<BungaeListResponse> getHostingList(Long hostId, AppUser appUser) {
         List<Bungae> hostingList = bungaeRepository.findByHostId(hostId);
-        User requestUser = userService.findById(appUser.getId());
-        return BungaeListResponse.of(hostingList, requestUser);
+
+        if (appUser != null) {
+            User requestUser = userService.findById(appUser.getId());
+            return BungaeListResponse.of(hostingList, requestUser);
+        } else {
+            return BungaeListResponse.ofAnonymous(hostingList);
+        }
     }
 
     //검색
