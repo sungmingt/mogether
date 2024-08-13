@@ -1,4 +1,4 @@
-package mogether.mogether.web.filter;
+package mogether.mogether.web.auth.util;
 
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;

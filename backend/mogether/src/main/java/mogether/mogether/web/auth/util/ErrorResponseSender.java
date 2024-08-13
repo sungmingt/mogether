@@ -1,4 +1,4 @@
-package mogether.mogether.web.filter;
+package mogether.mogether.web.auth.util;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.http.HttpServletResponse;
