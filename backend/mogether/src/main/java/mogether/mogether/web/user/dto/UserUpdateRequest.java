@@ -5,8 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import mogether.mogether.domain.Address;
-import mogether.mogether.domain.user.Gender;
+import mogether.mogether.domain.info.Address;
+import mogether.mogether.domain.info.Gender;
+import mogether.mogether.domain.user.User;
 
 @Getter
 @Setter
@@ -15,12 +16,10 @@ import mogether.mogether.domain.user.Gender;
 public class UserUpdateRequest {
 
     @NotEmpty
-    private String name;
-    @NotEmpty
     private String nickname;
     private Address address;
     private int age;
-    private Gender gender;
+    private String gender;
     private String intro;
     private String phoneNumber;
 }

@@ -8,9 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import mogether.mogether.domain.bungae.Bungae;
 import mogether.mogether.domain.bungae.BungaeImage;
 import mogether.mogether.domain.bungae.BungaeImageRepository;
-import mogether.mogether.domain.user.ProfileImage;
-import mogether.mogether.domain.user.ProfileImageRepository;
-import mogether.mogether.domain.user.User;
 import mogether.mogether.exception.MogetherException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static mogether.mogether.exception.ErrorCode.FILE_CANNOT_SAVE;
 import static mogether.mogether.exception.ErrorCode.FILE_DELETE_FAILED;
@@ -40,12 +36,12 @@ public class BungaeImageService {
     private String defaultImageUrl;
 
     public void save(Bungae bungae, List<MultipartFile> multipartFiles) {
-        if (multipartFiles == null || multipartFiles.isEmpty()){
-            bungae.setImageUrls(List.of(defaultImageUrl));
-            return;
-        }
-
         for (MultipartFile multipartFile : multipartFiles) {
+            if(multipartFile.isEmpty()){
+                bungae.setImageUrls(List.of(defaultImageUrl));
+                return;
+            }
+
             BungaeImage bungaeImage = uploadToS3(multipartFile);
             bungaeImage.setBungae(bungae);
             bungae.getImageUrls().add(bungaeImage.getFileUrl());

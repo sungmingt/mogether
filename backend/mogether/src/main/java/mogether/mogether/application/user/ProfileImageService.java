@@ -1,10 +1,13 @@
-package mogether.mogether.domain.user;
+package mogether.mogether.application.user;
 
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import mogether.mogether.domain.user.User;
+import mogether.mogether.domain.user.image.ProfileImage;
+import mogether.mogether.domain.user.image.ProfileImageRepository;
 import mogether.mogether.exception.MogetherException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

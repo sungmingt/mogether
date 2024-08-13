@@ -4,7 +4,10 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import mogether.mogether.application.interest.BungaeInterestService;
+import mogether.mogether.domain.oauth.AppUser;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @Tag(name = "interest - bungae", description = "번개 관심 API")
@@ -13,12 +16,16 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/interest/bungae")
 public class BungaeInterestController {
 
+    private final BungaeInterestService bungaeInterestService;
+
     @Operation(summary = "번개 관심 등록", description = "번개 관심 등록 요청",
             responses = {
                     @ApiResponse(responseCode = "201", description = "번개 관심 등록 성공"),
             })
-    @PostMapping
-    public HttpStatus doInterest(@RequestBody BungaeInterestRequest doInterestRequest) {
+    @PostMapping("/{bungaeId}")
+    public HttpStatus doInterest(@PathVariable("bungaeId") Long bungaeId,
+                                 @AuthenticationPrincipal AppUser appUser) {
+        bungaeInterestService.doInterest(bungaeId, appUser);
         return HttpStatus.CREATED;
     }
 
@@ -26,9 +33,9 @@ public class BungaeInterestController {
             responses = {
                     @ApiResponse(responseCode = "204", description = "번개 관심 취소 성공"),
             })
-    @DeleteMapping //todo: 어차피 관심 취소할때 interest id를 모른다?
-    public HttpStatus undoInterest(@RequestBody BungaeInterestRequest undoInterestRequest) {
-
+    @DeleteMapping("/{bungaeId}")
+    public HttpStatus undoInterest(@PathVariable("bungaeId") Long bungaeId, @AuthenticationPrincipal AppUser appUser) {
+        bungaeInterestService.undoInterest(bungaeId, appUser);
         return HttpStatus.NO_CONTENT;
     }
 }

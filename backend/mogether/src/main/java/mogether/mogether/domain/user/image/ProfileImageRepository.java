@@ -1,4 +1,4 @@
-package mogether.mogether.domain.user;
+package mogether.mogether.domain.user.image;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -4,8 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import mogether.mogether.domain.Address;
-import mogether.mogether.domain.Keyword;
+import mogether.mogether.domain.info.Address;
+import mogether.mogether.domain.info.Keyword;
 import mogether.mogether.domain.bungae.Bungae;
 
 import java.time.LocalDate;

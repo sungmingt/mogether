@@ -25,8 +25,6 @@ public class BungaeUser {
     @JoinColumn(name = "user_id")
     private User user;
 
-    //todo: 유저의 가입 날짜 필드
-
     public BungaeUser(Bungae bungae, User user) {
         this.bungae = bungae;
         bungae.getBungaeUserList().add(this);

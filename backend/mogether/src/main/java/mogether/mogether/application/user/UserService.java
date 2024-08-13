@@ -1,6 +1,8 @@
 package mogether.mogether.application.user;
 
 import lombok.RequiredArgsConstructor;
+import mogether.mogether.domain.info.Gender;
+import mogether.mogether.domain.oauth.AppUser;
 import mogether.mogether.domain.user.*;
 import mogether.mogether.exception.MogetherException;
 import mogether.mogether.web.user.dto.*;
@@ -8,7 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import static mogether.mogether.domain.user.UserValidator.checkPasswordPattern;
+import static mogether.mogether.application.user.UserValidator.*;
+import static mogether.mogether.application.user.UserValidator.checkPasswordPattern;
 import static mogether.mogether.exception.ErrorCode.*;
 
 @Transactional
@@ -24,7 +27,7 @@ public class UserService {
         checkEmailExists(userJoinRequest.getEmail());
         checkPasswordPattern(userJoinRequest.getPassword());
 
-        User user = createUser(userJoinRequest);
+        User user = (userJoinRequest.toUser());
         User savedUser = userRepository.save(user);
         profileImageService.save(user, image);
 
@@ -32,7 +35,10 @@ public class UserService {
     }
 
     //유저 정보 수정
-    public UserUpdateResponse update(Long userId, UserUpdateRequest userUpdateRequest, MultipartFile image) {
+    public UserUpdateResponse update(Long userId, AppUser appUser,
+                                     UserUpdateRequest userUpdateRequest, MultipartFile image) {
+        validateUser(userId, appUser.getId());
+
         User findUser = findById(userId);
         profileImageService.update(findUser, image);
         updateUser(userUpdateRequest, findUser);
@@ -41,22 +47,39 @@ public class UserService {
     }
 
     //비밀번호 변경
-    public void updatePassword(Long userId, UserUpdatePasswordRequest userUpdatePasswordRequest) {
+    public void updatePassword(Long userId, AppUser appUser, PasswordUpdateRequest passwordUpdateRequest) {
+        validateUser(userId, appUser.getId());
+
         User findUser = findById(userId);
+        validateExpasswordSameness(findUser.getPassword(), encodePassword(passwordUpdateRequest.getExPassword()));
+        checkPasswordPattern(passwordUpdateRequest.getNewPassword());
 
-        validateExpassword(findUser.getPassword(), userUpdatePasswordRequest.getExPassword());
-        checkPasswordPattern(userUpdatePasswordRequest.getNewPassword());
-
-        findUser.updatePassword(userUpdatePasswordRequest.getNewPassword());
+        findUser.updatePassword(passwordUpdateRequest.getNewPassword());
     }
 
     //유저 정보 조회
+    @Transactional(readOnly = true)
     public UserResponse getUserInfo(Long userId) {
         User findUser = findById(userId);
         return UserResponse.of(findUser);
     }
 
-    //관심 번개 목록
+    //탈퇴
+    public void quit(Long userId, AppUser appUser) {
+        validateUser(userId, appUser.getId());
+        userRepository.deleteById(userId);
+    }
+
+    public UserJoinResponse addInfoAfterOAuthSignUp(Long userId, AppUser appUser, AfterOAuthSignUpRequest request) {
+        validateUser(userId, appUser.getId());
+
+        User findUser = findById(userId);
+        findUser.update(
+                findUser.getNickname(), request.getAddress(), request.getAge(),
+                Gender.of(request.getGender()), request.getIntro(), request.getPhoneNumber());
+
+        return UserJoinResponse.of(findUser);
+    }
 
 
     @Transactional(readOnly = true)
@@ -77,36 +100,20 @@ public class UserService {
         }
     }
 
-    private static User createUser(UserJoinRequest userJoinRequest) {
-        return new User(
-                userJoinRequest.getEmail(),
-                userJoinRequest.getPassword(),
-                userJoinRequest.getName(),
-                userJoinRequest.getNickname(),
-                userJoinRequest.getAddress(),
-                userJoinRequest.getAge(),
-                userJoinRequest.getGender(),
-                userJoinRequest.getIntro(),
-                userJoinRequest.getPhoneNumber()
-        );
-    }
-
     private static void updateUser(UserUpdateRequest userUpdateRequest, User findUser) {
         findUser.update(
-                userUpdateRequest.getName(),
                 userUpdateRequest.getNickname(),
                 userUpdateRequest.getAddress(),
                 userUpdateRequest.getAge(),
-                userUpdateRequest.getGender(),
+                Gender.of(userUpdateRequest.getGender()),
                 userUpdateRequest.getIntro(),
                 userUpdateRequest.getPhoneNumber()
         );
     }
 
-    private void validateExpassword(String realPassword, String requestedPassword) {
+    private void validateExpasswordSameness(String realPassword, String requestedPassword) {
         if (!realPassword.equals(requestedPassword)) {
             throw new MogetherException(PASSWORD_NOT_MATCH);
         }
     }
-
 }

@@ -4,15 +4,16 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import mogether.mogether.domain.Address;
-import mogether.mogether.domain.Keyword;
-import mogether.mogether.domain.interest.BungaeInterest;
+import mogether.mogether.domain.info.Address;
+import mogether.mogether.domain.info.Keyword;
+import mogether.mogether.domain.interest.bungae.BungaeInterest;
 import mogether.mogether.domain.user.User;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
+import static jakarta.persistence.CascadeType.*;
 import static jakarta.persistence.GenerationType.*;
 
 @Getter
@@ -24,13 +25,13 @@ public class Bungae {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
-    @OneToMany(mappedBy = "bungae")
+    @OneToMany(mappedBy = "bungae", cascade = REMOVE)
     private List<BungaeImage> bungaeImageList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "bungae") //todo: orphan, cascade 설정
+    @OneToMany(mappedBy = "bungae", cascade = REMOVE)
     private List<BungaeUser> bungaeUserList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "bungae")
+    @OneToMany(mappedBy = "bungae", cascade = REMOVE)
     private List<BungaeInterest> bungaeInterestList = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,7 +45,6 @@ public class Bungae {
     private Address address;
 
     private String gatherAt;
-    //interests
     private LocalDate createdAt;
     private LocalDate expireAt;
 
@@ -64,8 +64,22 @@ public class Bungae {
         user.getBungaeHostList().add(this);
     }
 
-    public Bungae(User host, String title, String content, Keyword keyword, Address address, String gatherAt, LocalDate createdAt, LocalDate expireAt, String placeDetails, int minMember, int maxMember, int ageLimit, int fee) {
-        this.host = host;
+    public void update(Bungae newBungae){
+        this.title = newBungae.getTitle();
+        this.content = newBungae.getContent();
+        this.keyword = newBungae.getKeyword();
+        this.address = newBungae.getAddress();
+        this.gatherAt = newBungae.getGatherAt();
+        this.createdAt = newBungae.getCreatedAt();
+        this.expireAt = newBungae.getExpireAt();
+        this.placeDetails = newBungae.getPlaceDetails();
+        this.minMember = newBungae.getMinMember();
+        this.maxMember = newBungae.getMaxMember();
+        this.ageLimit = newBungae.getAgeLimit();
+        this.fee = newBungae.getFee();
+    }
+
+    public Bungae(String title, String content, Keyword keyword, Address address, String gatherAt, LocalDate createdAt, LocalDate expireAt, String placeDetails, int minMember, int maxMember, int ageLimit, int fee) {
         this.title = title;
         this.content = content;
         this.keyword = keyword;
@@ -78,5 +92,13 @@ public class Bungae {
         this.maxMember = maxMember;
         this.ageLimit = ageLimit;
         this.fee = fee;
+    }
+
+    public Bungae(User host, String title, String content, List<String> imageUrls, Address address) {
+        this.host = host;
+        this.title = title;
+        this.content = content;
+        this.imageUrls = imageUrls;
+        this.address = address;
     }
 }
