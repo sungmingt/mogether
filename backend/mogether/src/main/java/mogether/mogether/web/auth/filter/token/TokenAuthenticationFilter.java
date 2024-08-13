@@ -42,7 +42,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
                                     FilterChain filterChain) throws ServletException, IOException {
         log.info("===== token auth filter 진입 =====");
 
-        if (isPermittedURI(request) || isForAnonymousURI(request)) {
+        if (isPermittedURI(request) || (isForAnonymousURI(request) && !hasTokenHeader(request))) {
             filterChain.doFilter(request, response);
             return;
         }
