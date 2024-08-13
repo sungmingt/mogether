@@ -1,4 +1,4 @@
-package mogether.mogether.web.filter.token;
+package mogether.mogether.web.auth.filter.token;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -21,9 +21,11 @@ import java.util.*;
 
 import static mogether.mogether.domain.token.TokenInfo.*;
 import static mogether.mogether.exception.ErrorCode.*;
-import static mogether.mogether.web.filter.ErrorResponseSender.sendErrorResponse;
-import static mogether.mogether.web.filter.PathMatcher.isForAnonymousURI;
-import static mogether.mogether.web.filter.PathMatcher.isPermittedURI;
+import static mogether.mogether.web.auth.util.ErrorResponseSender.sendErrorResponse;
+import static mogether.mogether.web.auth.util.PathMatcher.isForAnonymousURI;
+import static mogether.mogether.web.auth.util.PathMatcher.isPermittedURI;
+import static mogether.mogether.web.auth.util.TokenExtractor.getTokenfromRequest;
+import static mogether.mogether.web.auth.util.TokenExtractor.hasTokenHeader;
 
 @Slf4j
 @Component
@@ -74,10 +76,5 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(appUser, null, List.of());
         SecurityContextHolder.getContext().setAuthentication(authentication);
-    }
-
-    private String getTokenfromRequest(HttpServletRequest request) {
-        return Optional.ofNullable(request.getHeader(ACCESS_TOKEN))
-                .orElseThrow(() -> new MogetherException(REQUIRED_TOKEN_MISSING));
     }
 }

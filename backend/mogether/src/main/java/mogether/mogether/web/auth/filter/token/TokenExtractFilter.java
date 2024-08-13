@@ -1,4 +1,4 @@
-package mogether.mogether.web.filter.token;
+package mogether.mogether.web.auth.filter.token;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -16,7 +16,8 @@ import java.io.IOException;
 import java.util.*;
 
 import static mogether.mogether.domain.token.TokenInfo.ACCESS_TOKEN;
-import static mogether.mogether.web.filter.PathMatcher.*;
+import static mogether.mogether.web.auth.util.PathMatcher.*;
+import static mogether.mogether.web.auth.util.TokenExtractor.hasTokenHeader;
 
 @Slf4j
 @Component
