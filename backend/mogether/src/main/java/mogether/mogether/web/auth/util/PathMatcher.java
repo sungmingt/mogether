@@ -59,7 +59,7 @@ public class PathMatcher {
                 return true;
             }
         }
-        
+
         return false;
     }
 }
