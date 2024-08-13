@@ -26,7 +26,8 @@ public class PathMatcher {
     };
 
     public static final String[] forAnonymousURIs = {
-            "/moim", "/bungae", "/user/*", "/user/*/host/bungae", "/user/*/host/moim"
+            "/moim", "/bungae", "/moim/*", "/bungae/*",
+            "/user/*", "/user/*/host/bungae", "/user/*/host/moim"
     };
 
     //initialization
