@@ -71,12 +71,12 @@ public class MoimService {
     public MoimResponse read(Long moimId, AppUser appUser) {
         Moim findMoim = findById(moimId);
 
-//        if (appUser != null) {
+        if (appUser != null) {
             User requestUser = userService.findById(appUser.getId());
             return MoimResponse.of(findMoim, requestUser);
-//        } else {
-//            return MoimResponse.ofAnonymous(findMoim);
-//        }
+        } else {
+            return MoimResponse.ofAnonymous(findMoim);
+        }
     }
 
     //모임 리스트 조회

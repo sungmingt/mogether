@@ -70,8 +70,13 @@ public class BungaeService {
     //번개 상세 조회
     public BungaeResponse read(Long bungaeId, AppUser appUser) {
         Bungae findBungae = findById(bungaeId);
-        User requestUser = userService.findById(appUser.getId());
-        return BungaeResponse.of(findBungae, requestUser);
+
+        if (appUser != null) {
+            User requestUser = userService.findById(appUser.getId());
+            return BungaeResponse.of(findBungae, requestUser);
+        } else {
+            return BungaeResponse.ofAnonymous(findBungae);
+        }
     }
 
     //번개 리스트 조회

@@ -8,7 +8,10 @@ import mogether.mogether.domain.info.Address;
 import mogether.mogether.domain.info.Keyword;
 import mogether.mogether.domain.bungae.Bungae;
 import mogether.mogether.domain.bungae.BungaeUser;
+import mogether.mogether.domain.moim.Moim;
+import mogether.mogether.domain.moim.MoimUser;
 import mogether.mogether.domain.user.User;
+import mogether.mogether.web.moim.dto.MoimResponse;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -84,4 +87,22 @@ public class BungaeResponse {
                 .anyMatch(bungaeInterest -> bungaeInterest.getBungae().getId().equals(bungae.getId()));
     }
 
+    public static BungaeResponse ofAnonymous(Bungae findBungae) {
+        User host = findBungae.getHost();
+        List<BungaeUser> bungaeUserList = findBungae.getBungaeUserList();
+        List<String> participantsImageUrls = bungaeUserList.stream()
+                .map(bungaeUser -> bungaeUser.getUser().getImageUrl())
+                .toList();
+
+        return new BungaeResponse(
+                findBungae.getId(), findBungae.getImageUrls(), host.getId(),
+                host.getNickname(), host.getImageUrl(), host.getIntro(),
+                participantsImageUrls, bungaeUserList.size(),
+                false, false,
+                findBungae.getTitle(), findBungae.getContent(), findBungae.getKeyword(),
+                findBungae.getAddress(), findBungae.getBungaeInterestList().size(),
+                findBungae.getGatherAt(), findBungae.getCreatedAt(), findBungae.getExpireAt(),
+                findBungae.getPlaceDetails(), findBungae.getMinMember(), findBungae.getMaxMember(),
+                findBungae.getAgeLimit(), findBungae.getFee());
+    }
 }
