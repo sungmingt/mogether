@@ -3,7 +3,7 @@ name: CI/CD Pipeline for mogether
 on:
   push:
     branches:
-      - 3-feat-view 
+      - test
 
 jobs:
   build-deploy:
