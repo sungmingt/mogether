@@ -327,7 +327,7 @@ const SocialRegister: React.FC = () => {
           />
         </InputWrapper>
         <Button
-          onClick={() => {handleSocialRegister}}
+          onClick={handleSocialRegister}
         >
           Register
         </Button>

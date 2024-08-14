@@ -107,7 +107,7 @@ const FindPassword:React.FC = () => {
           onChange={(e) => setNickname(e.target.value)}
         />
       </InputWrapper>
-      <Button onClick={() => {handleFindPassword}}>Find</Button>
+      <Button onClick={handleFindPassword}>Find</Button>
       {password && (
         <PasswordDisplay>
           <p>Password: <strong>{password}</strong></p>

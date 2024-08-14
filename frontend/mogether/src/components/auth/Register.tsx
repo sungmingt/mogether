@@ -7,6 +7,8 @@ import Swal from "sweetalert2";
 import { selectAuthLoading, selectIsAuthenticated, register, kakaoRegister, googleRegister } from '../../store/slices/authSlice';
 import {registerUser} from "../../store/slices/userProfileSlice";
 import { FaCamera } from "react-icons/fa";
+import GoogleRedirectUrlPage from "./GoogleRedirectUrlPage";
+import KakaoRedirectUrlPage from "./KakaoRedirectUrlPage";
 
 
 const RegisterContainer = styled.div`
