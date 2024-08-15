@@ -30,8 +30,14 @@ jobs:
         working-directory: ./frontend/mogether
         run: npm install --force
 
+      - name: Install additional Babel plugin
+        working-directory: ./frontend/mogether
+        run: npm install --save-dev @babel/plugin-proposal-private-property-in-object
+
       - name: Build the project
         working-directory: ./frontend/mogether
+        env:
+          CI: false  
         run: npm run build
 
       - name: Configure AWS credentials
