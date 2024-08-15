@@ -22,7 +22,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: frontend/mogether/node_modules
-          key: ${{ runner.os }}-node-${{ hashFiles('frontend/mogether/package-lock.json') }}
+          key: ${{ runner.os }}-node-${{ hashFiles('./frontend/mogether/package-lock.json') }}
           restore-keys: |
             ${{ runner.os }}-node-
 
