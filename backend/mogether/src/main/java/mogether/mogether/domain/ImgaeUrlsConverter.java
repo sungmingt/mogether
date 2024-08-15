@@ -27,6 +27,6 @@ public class ImgaeUrlsConverter implements AttributeConverter<List<String>, Stri
             return new ArrayList<>();
         }
         // Split the string by commas to recreate the list
-        return Arrays.asList(dbData.split(SEPARATOR));
+        return new ArrayList<>(Arrays.asList(dbData.split(SEPARATOR)));
     }
 }

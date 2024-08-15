@@ -72,16 +72,6 @@ public class BungaeImageService {
         return new BungaeImage(fileOriName, s3Url, s3FileName);
     }
 
-    @Transactional(readOnly = true)
-    public List<String> getImageUrls(Bungae bungae) {
-        //arraylist로 초기화 했으니 항상 null 이 아니다? -> count로 검증?
-        return Optional.ofNullable(bungae.getBungaeImageList())
-                        .orElse(List.of(new BungaeImage("mogether_default_post", defaultImageUrl, "mogether_default_post")))
-                        .stream()
-                        .map(BungaeImage::getFileUrl)
-                        .toList();
-    }
-
     public void delete(Bungae findBungae, List<BungaeImage> bungaeImageList) {
         for (BungaeImage bungaeImage : bungaeImageList) {
             deleteFromS3(bungaeImage.getS3FileName());
@@ -99,5 +89,15 @@ public class BungaeImageService {
             log.info("### 파일 삭제 실패 - {}", e.getErrorMessage());
             throw new MogetherException(FILE_DELETE_FAILED);
         }
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> getImageUrls(Bungae bungae) {
+        //arraylist로 초기화 했으니 항상 null 이 아니다? -> count로 검증?
+        return Optional.ofNullable(bungae.getBungaeImageList())
+                .orElse(List.of(new BungaeImage("mogether_default_post", defaultImageUrl, "mogether_default_post")))
+                .stream()
+                .map(BungaeImage::getFileUrl)
+                .toList();
     }
 }
