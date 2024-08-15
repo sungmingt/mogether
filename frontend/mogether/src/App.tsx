@@ -19,6 +19,7 @@ import MyInterestedMoim from './pages/mypage/MyInterestMoimPage';
 import MyInterestedBungae from './pages/mypage/MyInterestBungaePage';
 import UserCreateMoim from './pages/mypage/UserCreateMoimPage';
 import UserCreateBungae from './pages/mypage/UserCreateBungaePage';
+import SocialLoginPage from './components/auth/SocialLoginPage';
 
 
 
@@ -47,6 +48,7 @@ const App = () => {
         <Route path="/interestedBungae" element={<MyInterestedBungae />} />
         <Route path="/usercreatedMoim/:id" element={<UserCreateMoim />} />
         <Route path="/usercreatedBungae/:id" element={<UserCreateBungae />} />
+        <Route path="/social/login" element={<SocialLoginPage />} />
       </Routes>
     </Router>
   )
