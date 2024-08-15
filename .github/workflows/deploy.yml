@@ -28,7 +28,7 @@ jobs:
 
       - name: Install dependencies
         working-directory: ./frontend/mogether
-        run: npm install
+        run: npm install --force
 
       - name: Build the project
         working-directory: ./frontend/mogether
