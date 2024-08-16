@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import styled from 'styled-components';
 import axios from 'axios';
+import { googleLogin, kakaoLogin } from '../../store/slices/authSlice';
 
 const SpinnerOverlay = styled.div`
   position: fixed;

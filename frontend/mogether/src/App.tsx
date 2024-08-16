@@ -20,11 +20,14 @@ import MyInterestedBungae from './pages/mypage/MyInterestBungaePage';
 import UserCreateMoim from './pages/mypage/UserCreateMoimPage';
 import UserCreateBungae from './pages/mypage/UserCreateBungaePage';
 import SocialLoginPage from './components/auth/SocialLoginPage';
+import GlobalStyle from './GlobalStyle';
 
 
 
 const App = () => {
   return (
+    <>
+    <GlobalStyle />
     <Router>
       <Routes>
         {/* <Route path = "/login" element = {<Login />} />
@@ -51,6 +54,7 @@ const App = () => {
         <Route path="/social/login" element={<SocialLoginPage />} />
       </Routes>
     </Router>
+    </>
   )
 }
 
