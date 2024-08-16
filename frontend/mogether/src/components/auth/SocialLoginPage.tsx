@@ -47,7 +47,7 @@ const SocialLoginPage: React.FC = () => {
         : null;
 
     if (apiEndpoint) {
-      axios.get(apiEndpoint, { withCredentials: true })
+      axios.get(apiEndpoint)
         .then((response) => {
           const { accessToken, refreshToken, userId } = response.data;
 

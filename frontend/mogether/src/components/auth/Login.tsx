@@ -134,22 +134,24 @@ const Login: React.FC = () => {
     }
   };
 
-  const handleKakao = async () => {
-    try {
-      navigate('/social/login?kakao');
-    }
-    catch (error) {
-      Swal.fire('error', '잘못된 요청입니다', 'error');
-    }
+  const handleKakao = () => {
+    // try {
+    //   navigate('/social/login?kakao');
+    // }
+    // catch (error) {
+    //   Swal.fire('error', '잘못된 요청입니다', 'error');
+    // }
+    navigate('/social/login?kakao');
   };
 
-  const handleGoogle = async () => {
-    try {
-      navigate('/social/login/google');
-    }
-    catch (error) {
-      Swal.fire('error', '잘못된 요청입니다', 'error');
-    }
+  const handleGoogle = () => {
+    // try {
+    //   navigate('/social/login?google');
+    // }
+    // catch (error) {
+    //   Swal.fire('error', '잘못된 요청입니다', 'error');
+    // }
+    navigate('/social/login?google');
   };
 
   useEffect(() => {
