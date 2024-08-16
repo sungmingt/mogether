@@ -28,7 +28,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final AuthService authService;
 //    private static final String googleRedirectURI = "dfrv032cq0wgz.cloudfront.net/login/social/google";
 //    private static final String kakaoRedirectURI = "dfrv032cq0wgz.cloudfront.net/login/social/kakao";
-    private static final String baseURI = "dfrv032cq0wgz.cloudfront.net/login/social/";
+    private static final String baseURI = "https://dfrv032cq0wgz.cloudfront.net/login/social/";
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
