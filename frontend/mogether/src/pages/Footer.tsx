@@ -43,12 +43,7 @@ const FooterRight = styled.div`
   }
 `;
 
-const Logo = styled.img`
-  width: 40px;
-  height: 40px;
-  margin-right: 10px;
-  border-radius: 50%;
-`;
+
 
 const SocialLinks = styled.div`
   display: flex;
@@ -71,8 +66,7 @@ const Footer: React.FC = () => {
   return (
     <FooterContainer>
       <FooterLeft>
-        <Logo src="./KakaoTalk_logo 1.png" alt="Logo" />
-        <p>&copy; 2023 Your Website</p>
+        <p>&copy; 2024 Mogether Project</p>
       </FooterLeft>
       <FooterRight>
         <SocialLinks>
