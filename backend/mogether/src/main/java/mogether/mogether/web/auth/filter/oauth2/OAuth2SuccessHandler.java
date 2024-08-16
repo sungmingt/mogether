@@ -6,7 +6,6 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mogether.mogether.application.auth.AuthService;
-import mogether.mogether.domain.info.SocialType;
 import mogether.mogether.domain.oauth.AppUser;
 import mogether.mogether.web.auth.dto.Token;
 import org.springframework.security.core.Authentication;
@@ -26,8 +25,6 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     //사용자 정보를 DB에 저장하고, 서비스 자체 액세스 토큰, 리프레시 토큰을 생성/저장
 
     private final AuthService authService;
-//    private static final String googleRedirectURI = "dfrv032cq0wgz.cloudfront.net/login/social/google";
-//    private static final String kakaoRedirectURI = "dfrv032cq0wgz.cloudfront.net/login/social/kakao";
     private static final String baseURI = "https://dfrv032cq0wgz.cloudfront.net/login/social/";
 
     @Override
