@@ -181,11 +181,11 @@ const Login: React.FC = () => {
       {error && <ErrorMessage>{error}</ErrorMessage>}
       <SocialButtonContainer>
         <GoogleButton onClick={handleGoogle}>
-              <img src={require("../../assets/googleLogo")} alt="Google logo" />
+              <img src={require("../../assets/Google__G__logo 1.png")} alt="Google logo" />
               구글로 로그인하기
         </GoogleButton>
         <KakaoButton onClick={handleKakao}>
-              <img src={require("../../assets/kakoLogo")} alt="Kakao logo" />
+              <img src={require("../../assets/KakaoTalk_logo 1.png")} alt="Kakao logo" />
               Kakao로 로그인하기
         </KakaoButton>
       </SocialButtonContainer>
