@@ -19,7 +19,6 @@ public class UserUpdateResponse {
     private String imageUrl;
     private String email;
     private SocialType socialType;
-    private String socialId;
 
     private String nickname;
 
@@ -32,7 +31,7 @@ public class UserUpdateResponse {
     public static UserUpdateResponse of(User user) {
         return new UserUpdateResponse(
                 user.getId(), user.getImageUrl(), user.getEmail(),
-                user.getSocialType(), user.getSocialId(), user.getNickname(),
+                user.getSocialType(), user.getNickname(),
                 user.getAddress(), user.getAge(), user.getGender(),
                 user.getIntro(), user.getPhoneNumber());
     }
