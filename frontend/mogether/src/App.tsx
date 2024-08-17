@@ -19,8 +19,10 @@ import MyInterestedMoim from './pages/mypage/MyInterestMoimPage';
 import MyInterestedBungae from './pages/mypage/MyInterestBungaePage';
 import UserCreateMoim from './pages/mypage/UserCreateMoimPage';
 import UserCreateBungae from './pages/mypage/UserCreateBungaePage';
-import SocialLoginPage from './components/auth/SocialLoginPage';
 import GlobalStyle from './GlobalStyle';
+import KakaoRedirectUrlPage from './components/auth/KakaoRedirectUrlPage';
+import GoogleRedirectUrlPage from './components/auth/GoogleRedirectUrlPage';
+import PrivacyLaw from './pages/auth/PrivacyLaw';
 
 
 
@@ -51,7 +53,9 @@ const App = () => {
         <Route path="/interestedBungae" element={<MyInterestedBungae />} />
         <Route path="/usercreatedMoim/:id" element={<UserCreateMoim />} />
         <Route path="/usercreatedBungae/:id" element={<UserCreateBungae />} />
-        <Route path="/social/login" element={<SocialLoginPage />} />
+        <Route path="/social/login/kakao" element={<KakaoRedirectUrlPage />} />
+        <Route path="/social/login/google" element={<GoogleRedirectUrlPage />} />
+        <Route path="/law/privacy" element={<PrivacyLaw />} />
       </Routes>
     </Router>
     </>
