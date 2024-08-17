@@ -134,34 +134,24 @@ const Login: React.FC = () => {
     }
   };
 
-  // const responseGoogle = (response: GoogleLoginResponse | GoogleLoginResponseOffline) => {
-  //   if ('tokenId' in response) {
-  //     dispatch(socialLogin({ provider: 'google', token: response.tokenId }));
-  //   }
-  // };
-
-  // const responseKakao = (response: any) => {
-  //   dispatch(socialLogin({ provider: 'kakao', token: response.response.access_token }));
-  // };
-
-  const handleKakao = async () => {
-    try {
-      const response = await dispatch(kakaoLogin()).unwrap();
-      navigate('/');
-    }
-    catch (error) {
-      Swal.fire('error', '잘못된 요청입니다', 'error');
-    }
+  const handleKakao = () => {
+    // try {
+    //   navigate('/social/login?kakao');
+    // }
+    // catch (error) {
+    //   Swal.fire('error', '잘못된 요청입니다', 'error');
+    // }
+    navigate('/social/login/kakao');
   };
 
-  const handleGoogle = async () => {
-    try {
-      const response = await dispatch(googleLogin()).unwrap();
-      navigate('/');
-    }
-    catch (error) {
-      Swal.fire('error', '잘못된 요청입니다', 'error');
-    }
+  const handleGoogle = () => {
+    // try {
+    //   navigate('/social/login?google');
+    // }
+    // catch (error) {
+    //   Swal.fire('error', '잘못된 요청입니다', 'error');
+    // }
+    navigate('/social/login/google');
   };
 
   useEffect(() => {
@@ -193,11 +183,11 @@ const Login: React.FC = () => {
       {error && <ErrorMessage>{error}</ErrorMessage>}
       <SocialButtonContainer>
         <GoogleButton onClick={handleGoogle}>
-              <img src="../../assets/googleLogo" alt="Google logo" />
+              <img src={require("../../assets/Google__G__logo 1.png")} alt="Google logo" />
               구글로 로그인하기
         </GoogleButton>
         <KakaoButton onClick={handleKakao}>
-              <img src="../../assets/kakoLogo" alt="Kakao logo" />
+              <img src={require("../../assets/KakaoTalk_logo 1.png")} alt="Kakao logo" />
               Kakao로 로그인하기
         </KakaoButton>
       </SocialButtonContainer>

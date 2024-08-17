@@ -4,12 +4,11 @@ import Swal from "sweetalert2";
 import axios from "axios";
 import styled from "styled-components";
 
-// 스타일링 된 컴포넌트 (로딩 스피너와 배경)
 const SpinnerOverlay = styled.div`
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
+  width: 100%;    
   height: 100%;
   background-color: rgba(0, 0, 0, 0.5);
   display: flex;
@@ -19,8 +18,8 @@ const SpinnerOverlay = styled.div`
 `;
 
 const Spinner = styled.div`
-  border: 16px solid #f3f3f3; /* Light grey */
-  border-top: 16px solid #3498db; /* Blue */
+  border: 16px solid #7848f4; 
+  border-top: 16px solid #7848f4; 
   border-radius: 50%;
   width: 120px;
   height: 120px;
@@ -51,6 +50,8 @@ const KakaoRedirectUrlPage: React.FC = () => {
         if (accessToken) {
           // 받은 액세스 토큰을 저장
           localStorage.setItem("accessToken", accessToken);
+          localStorage.setItem("refreshToken", refreshToken);
+          localStorage.setItem("userId", userId);
 
           // 로그인 성공 알림
           Swal.fire("Success", "로그인 성공!", "success").then(() => {

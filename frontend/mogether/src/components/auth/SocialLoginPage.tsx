@@ -39,36 +39,34 @@ const SocialLoginPage: React.FC = () => {
     const isGoogle = urlParams.get('google') === 'true';
     const isKakao = urlParams.get('kakao') === 'true';
 
-    const apiEndpoint = isGoogle 
-      ? 'https://api.mo-gether.site/oauth2/authorization/google'
-      : isKakao 
-        ? 'https://api.mo-gether.site/oauth2/authorization/kakao'
-        : null;
-
-    if (apiEndpoint) {
-      axios.get(apiEndpoint, { withCredentials: true })
-        .then((response) => {
-          const { accessToken, refreshToken, userId } = response.data;
-
-          const strippedAccessToken = accessToken.replace('Bearer ', '');
-          const strippedRefreshToken = refreshToken.replace('Bearer ', '');
-
-          localStorage.setItem('accessToken', strippedAccessToken);
-          localStorage.setItem('refreshToken', strippedRefreshToken);
-          localStorage.setItem('userId', userId.toString());
-
-          Swal.fire('Success', '로그인 성공!', 'success').then(() => {
-            navigate('/');
-          });
-        })
-        .catch((error) => {
-          Swal.fire('Error', '로그인 실패: ' + error.message, 'error').then(() => {
-            navigate('/login', {replace: true});
-          });
-        });
-    } else {
-      Swal.fire('Error', '유효하지 않은 접근입니다.', 'error')
+    // API 엔드포인트로 리디렉션
+    if (isGoogle) {
+      window.location.href = 'https://api.mo-gether.site/oauth2/authorization/google';
+    } else if (isKakao) {
+      window.location.href = 'https://api.mo-gether.site/oauth2/authorization/kakao';
     }
+
+    // 서버에서 리디렉션된 후, 해당 페이지로 다시 돌아왔을 때 처리
+    axios.get(window.location.href)
+      .then((response) => {
+        const { accessToken, refreshToken, userId } = response.data;
+
+        const strippedAccessToken = accessToken.replace('Bearer ', '');
+        const strippedRefreshToken = refreshToken.replace('Bearer ', '');
+
+        localStorage.setItem('accessToken', strippedAccessToken);
+        localStorage.setItem('refreshToken', strippedRefreshToken);
+        localStorage.setItem('userId', userId.toString());
+
+        Swal.fire('Success', '로그인 성공!', 'success').then(() => {
+          navigate('/');
+        });
+      })
+      .catch((error) => {
+        Swal.fire('Error', '로그인 실패: ' + error.message, 'error').then(() => {
+          navigate('/login', { replace: true });
+        });
+      });
   }, [navigate]);
 
   return (
