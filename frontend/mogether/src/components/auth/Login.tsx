@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { login, selectAuthError, selectIsAuthenticated, googleLogin, kakaoLogin } from '../../store/slices/authSlice';
+import { login, selectAuthError, selectIsAuthenticated } from '../../store/slices/authSlice';
 import styled from 'styled-components';
 import { RootState, AppDispatch } from '../../store/store';
 import { useNavigate } from 'react-router-dom';
