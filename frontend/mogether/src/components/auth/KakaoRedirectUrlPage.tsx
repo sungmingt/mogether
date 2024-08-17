@@ -43,9 +43,9 @@ const KakaoRedirectUrlPage: React.FC = () => {
         );
 
         // 응답에서 액세스 토큰을 추출
-        const accessToken = response.headers["accessToken"];
-        const refreshToken = response.headers["refreshToken"];
-        const userId = response.headers["userId"];
+        const accessToken = response.headers['accessToken'].split(' ')[1];
+        const refreshToken = response.headers['refreshToken'].split(' ')[1];
+        const userId = response.headers['userId'];
 
         if (accessToken) {
           // 받은 액세스 토큰을 저장
@@ -67,7 +67,7 @@ const KakaoRedirectUrlPage: React.FC = () => {
     };
 
     fetchToken();
-  }, [navigate]);
+  }, []);
 
   return (
     <SpinnerOverlay>
