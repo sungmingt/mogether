@@ -35,32 +35,38 @@ const GoogleRedirectUrlPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    window.location.href = 'https://api.mo-gether.site/oauth2/authorization/google';
+    const fetchToken = async () => {
+      try {
+        // OAuth 인증 페이지로 리디렉션
+        const response = await axios.get('https://api.mo-gether.site/oauth2/authorization/google');
 
+        // 응답 헤더에서 토큰과 사용자 ID를 추출
+        const accessToken = response.headers['accessToken'].split(' ')[1];
+        const refreshToken = response.headers['refreshToken'].split(' ')[1];
+        const userId = response.headers['userId'];
 
+        if (accessToken && refreshToken && userId) {
+          // 받은 토큰을 저장
+          localStorage.setItem('accessToken', accessToken);
+          localStorage.setItem('refreshToken', refreshToken);
+          localStorage.setItem('userId', userId);
 
-    // 서버에서 리디렉션된 후, 해당 페이지로 다시 돌아왔을 때 처리
-    axios.get(window.location.href)
-      .then((response) => {
-        const { accessToken, refreshToken, userId } = response.data;
-
-        const strippedAccessToken = accessToken.replace('Bearer ', '');
-        const strippedRefreshToken = refreshToken.replace('Bearer ', '');
-
-        localStorage.setItem('accessToken', strippedAccessToken);
-        localStorage.setItem('refreshToken', strippedRefreshToken);
-        localStorage.setItem('userId', userId.toString());
-
-        Swal.fire('Success', '로그인 성공!', 'success').then(() => {
-          navigate('/');
-        });
-      })
-      .catch((error) => {
-        Swal.fire('Error', '로그인 실패: ' + error.message, 'error').then(() => {
+          // 로그인 성공 알림
+          Swal.fire('Success', '로그인 성공!', 'success').then(() => {
+            navigate('/');
+          });
+        } else {
+          throw new Error("Failed to retrieve tokens");
+        }
+      } catch (error) {
+        Swal.fire('Error', '로그인 실패: ', 'error').then(() => {
           navigate('/login', { replace: true });
         });
-      });
-  }, []);
+      }
+    };
+
+    fetchToken();
+  }, [navigate]);
 
   return (
     <SpinnerOverlay>

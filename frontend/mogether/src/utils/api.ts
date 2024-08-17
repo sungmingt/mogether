@@ -115,27 +115,27 @@ export const loginApi = async (email: string, password: string) => {
   return response;  //api.ts에서 이미 localStorage에 accessToken, refreshToken을 저장했기 때문에 return response만 해주면 됨
 };
 
-export const GoogleLoginApi = async () => {
-  const response = await axios.get('https://api.mo-gether.site/oauth2/authorization/google');
-  const accessToken = response.headers['accessToken'].split(' ')[1];
-  const refreshToken = response.headers['refreshToken'].split(' ')[1];
-  const userId = response.headers['userId'];
-  localStorage.setItem('accessToken', accessToken);
-  localStorage.setItem('refreshToken', refreshToken);
-  localStorage.setItem('userId', userId);
-  return response;
-}
+// export const GoogleLoginApi = async () => {
+//   const response = await axios.get('https://api.mo-gether.site/oauth2/authorization/google');
+//   const accessToken = response.headers['accessToken'].split(' ')[1];
+//   const refreshToken = response.headers['refreshToken'].split(' ')[1];
+//   const userId = response.headers['userId'];
+//   localStorage.setItem('accessToken', accessToken);
+//   localStorage.setItem('refreshToken', refreshToken);
+//   localStorage.setItem('userId', userId);
+//   return response;
+// }
 
-export const KakaoLoginApi = async () => {
-  const response = await axios.get('https://api.mo-gether.site/oauth2/authorization/kakao');
-  const accessToken = response.headers['accessToken'].split(' ')[1];
-  const refreshToken = response.headers['refreshToken'].split(' ')[1];
-  const userId = response.headers['userId'];
-  localStorage.setItem('accessToken', accessToken);
-  localStorage.setItem('refreshToken', refreshToken);
-  localStorage.setItem('userId', userId);
-  return response;
-}
+// export const KakaoLoginApi = async () => {
+//   const response = await axios.get('https://api.mo-gether.site/oauth2/authorization/kakao');
+//   const accessToken = response.headers['accessToken'].split(' ')[1];
+//   const refreshToken = response.headers['refreshToken'].split(' ')[1];
+//   const userId = response.headers['userId'];
+//   localStorage.setItem('accessToken', accessToken);
+//   localStorage.setItem('refreshToken', refreshToken);
+//   localStorage.setItem('userId', userId);
+//   return response;
+// }
 
 export const registerApi = async (registerFormData: any) => {  //register 호출 시 registerFormData라는 객체 데이터를 받아옴
   const response = await api2.post('/user/join', registerFormData);
