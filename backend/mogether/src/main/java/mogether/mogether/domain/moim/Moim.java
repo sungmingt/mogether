@@ -83,4 +83,12 @@ public class Moim {
         this.createdAt = createdAt;
         this.expireAt = expireAt;
     }
+
+    public Moim(User host, String title, String content, List<String> imageUrls, Address address) {
+        this.host = host;
+        this.title = title;
+        this.content = content;
+        this.imageUrls = imageUrls;
+        this.address = address;
+    }
 }
