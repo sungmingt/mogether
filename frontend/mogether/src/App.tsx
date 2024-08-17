@@ -53,8 +53,8 @@ const App = () => {
         <Route path="/interestedBungae" element={<MyInterestedBungae />} />
         <Route path="/usercreatedMoim/:id" element={<UserCreateMoim />} />
         <Route path="/usercreatedBungae/:id" element={<UserCreateBungae />} />
-        <Route path="/social/login/kakao" element={<KakaoRedirectUrlPage />} />
-        <Route path="/social/login/google" element={<GoogleRedirectUrlPage />} />
+        <Route path="/login/social/kakao" element={<KakaoRedirectUrlPage />} />
+        <Route path="/login/social/google" element={<GoogleRedirectUrlPage />} />
         <Route path="/law/privacy" element={<PrivacyLaw />} />
       </Routes>
     </Router>

@@ -18,7 +18,7 @@ const SpinnerOverlay = styled.div`
 `;
 
 const Spinner = styled.div`
-  border: 16px solid #7848f4; 
+  border: 16px solid #f3f3f3; 
   border-top: 16px solid #7848f4; 
   border-radius: 50%;
   width: 120px;
