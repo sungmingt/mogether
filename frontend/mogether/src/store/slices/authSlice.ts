@@ -42,7 +42,7 @@ export const login = createAsyncThunk(
     async ({ email, password }: { email: string; password: string }, thunkAPI) => {
         try {
             const response = await loginApi(email, password);
-            if (response.status === 200) {
+            if (response.status === 200 || response.status === 201) {
                 return response.data;  //아래 extrareducers에서 action.payload로 들어감
 
             }
@@ -57,7 +57,7 @@ export const register = createAsyncThunk(
     async (registerFormData, thunkAPI) => {
         try {
             const response = await registerApi(registerFormData);
-            if (response.status === 200) {
+            if (response.status === 200 || response.status === 201) {
                 return response.data;
             };
         } catch (error) {
