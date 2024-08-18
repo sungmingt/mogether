@@ -141,17 +141,12 @@ const Login: React.FC = () => {
     // catch (error) {
     //   Swal.fire('error', '잘못된 요청입니다', 'error');
     // }
-    navigate('https://api.mo-gether.site/oauth2/authorization/kakao');
+    window.location.href='https://api.mo-gether.site/oauth2/authorization/kakao';
   };
 
   const handleGoogle = () => {
-    // try {
-    //   navigate('/social/login?google');
-    // }
-    // catch (error) {
-    //   Swal.fire('error', '잘못된 요청입니다', 'error');
-    // }
-    navigate('https://api.mo-gether.site/oauth2/authorization/google');
+    
+    window.location.href='https://api.mo-gether.site/oauth2/authorization/google';
   };
 
   useEffect(() => {
