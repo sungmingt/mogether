@@ -14,9 +14,6 @@ import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 
-import static mogether.mogether.domain.token.TokenInfo.ACCESS_TOKEN;
-import static mogether.mogether.domain.token.TokenInfo.REFRESH_TOKEN;
-
 @RequiredArgsConstructor
 @Slf4j
 @Component
