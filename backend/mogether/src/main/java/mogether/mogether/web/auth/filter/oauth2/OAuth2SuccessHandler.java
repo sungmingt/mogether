@@ -43,6 +43,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         response.addHeader("userId", String.valueOf(userId));
         response.addHeader(ACCESS_TOKEN, token.getAccessToken());
         response.addHeader(REFRESH_TOKEN, token.getRefreshToken());
-        response.sendRedirect(baseURI + socialType);
+        response.sendRedirect(
+                baseURI + socialType + "?accessToken=" + token.getAccessToken() + "&refreshToken=" + token.getRefreshToken());
+
     }
 }
