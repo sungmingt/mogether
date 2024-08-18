@@ -1,10 +1,10 @@
 package mogether.mogether.config;
 
 import lombok.RequiredArgsConstructor;
-import mogether.mogether.web.auth.filter.oauth2.OAuth2FailureHandler;
-import mogether.mogether.web.auth.filter.oauth2.OAuth2SuccessHandler;
-import mogether.mogether.web.auth.filter.token.TokenAuthenticationFilter;
-import mogether.mogether.web.auth.filter.token.TokenExtractFilter;
+import mogether.mogether.web.oauth2.OAuth2FailureHandler;
+import mogether.mogether.web.oauth2.OAuth2SuccessHandler;
+import mogether.mogether.web.auth.filter.TokenAuthenticationFilter;
+import mogether.mogether.web.auth.filter.TokenExtractFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
