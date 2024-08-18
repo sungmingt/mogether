@@ -38,9 +38,8 @@ const KakaoRedirectUrlPage: React.FC = () => {
     const accessToken = urlParams.get('accessToken');
     const refreshToken = urlParams.get('refreshToken');
     const userId = urlParams.get('userId') || '';
-    const strippedAccessToken = accessToken.split('Bearer%20')[1] || '';
-    const strippedRefreshToken = refreshToken.split('Bearer%20')[1] || '';
-
+    const strippedAccessToken = accessToken ? accessToken.split('Bearer%20')[1] || '' : '';
+    const strippedRefreshToken = refreshToken ? refreshToken.split('Bearer%20')[1] || '' : '';
     if (accessToken === '' || refreshToken === '' || userId === '') {
       console.log(strippedAccessToken, strippedRefreshToken, userId);
       Swal.fire('Error', '유효하지 않은 접근입니다.', 'error').then(() => {
