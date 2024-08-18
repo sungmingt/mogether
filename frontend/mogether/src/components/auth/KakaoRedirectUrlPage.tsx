@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import styled from 'styled-components';
-import axios from 'axios';
 
 const SpinnerOverlay = styled.div`
   position: fixed;
@@ -35,37 +34,27 @@ const KakaoRedirectUrlPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchToken = async () => {
-      try {
-        // OAuth 인증 페이지로 리디렉션
-        const response = await axios.get('https://api.mo-gether.site/oauth2/authorization/kakao');
+    const urlParams = new URLSearchParams(window.location.search);
+    const accessToken = urlParams.get('accessToken');
+    const refreshToken = urlParams.get('refreshToken');
+    const userId = urlParams.get('userId');
+    const strippedAccessToken = accessToken?.split(' ')[1] ?? '';
+    const strippedRefreshToken = refreshToken?.split(' ')[1] ?? '';
 
-        // 응답 헤더에서 토큰과 사용자 ID를 추출
-        const accessToken = response.headers['accessToken'].split(' ')[1];
-        const refreshToken = response.headers['refreshToken'].split(' ')[1];
-        const userId = response.headers['userId'];
+    if (accessToken && refreshToken && userId) {
+      localStorage.setItem('accessToken', strippedAccessToken);
+      localStorage.setItem('refreshToken', strippedRefreshToken);
+      localStorage.setItem('userId', userId);
 
-        if (accessToken && refreshToken && userId) {
-          // 받은 토큰을 저장
-          localStorage.setItem('accessToken', accessToken);
-          localStorage.setItem('refreshToken', refreshToken);
-          localStorage.setItem('userId', userId);
-
-          // 로그인 성공 알림
-          Swal.fire('Success', '로그인 성공!', 'success').then(() => {
-            navigate('/');
-          });
-        } else {
-          throw new Error("Failed to retrieve tokens");
-        }
-      } catch (error) {
-        Swal.fire('Error', '로그인 실패: ', 'error').then(() => {
-          navigate('/login', { replace: true });
-        });
-      }
-    };
-
-    fetchToken();
+      // 로그인 성공 알림
+      Swal.fire('Success', '로그인 성공!', 'success').then(() => {
+        navigate('/');
+      });
+    } else {
+      Swal.fire('Error', '유효하지 않은 접근입니다.', 'error').then(() => {
+        navigate('/login', { replace: true });
+      });
+    }
   }, [navigate]);
 
   return (

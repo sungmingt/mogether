@@ -141,7 +141,7 @@ const Login: React.FC = () => {
     // catch (error) {
     //   Swal.fire('error', '잘못된 요청입니다', 'error');
     // }
-    navigate('/login/social/kakao');
+    navigate('https://api.mo-gether.site/oauth2/authorization/kakao');
   };
 
   const handleGoogle = () => {
@@ -151,7 +151,7 @@ const Login: React.FC = () => {
     // catch (error) {
     //   Swal.fire('error', '잘못된 요청입니다', 'error');
     // }
-    navigate('/login/social/google');
+    navigate('https://api.mo-gether.site/oauth2/authorization/google');
   };
 
   useEffect(() => {
