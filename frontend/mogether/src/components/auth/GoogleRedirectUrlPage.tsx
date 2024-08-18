@@ -48,6 +48,7 @@ const GoogleRedirectUrlPage: React.FC = () => {
         navigate('/login', { replace: true });
       });
     } else {
+      console.log(strippedAccessToken, strippedRefreshToken, userId);
       localStorage.setItem('accessToken', strippedAccessToken);
       localStorage.setItem('refreshToken', strippedRefreshToken);
       localStorage.setItem('userId', userId);
