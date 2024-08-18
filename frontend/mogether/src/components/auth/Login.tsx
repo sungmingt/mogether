@@ -151,7 +151,7 @@ const Login: React.FC = () => {
     // catch (error) {
     //   Swal.fire('error', '잘못된 요청입니다', 'error');
     // }
-    navigate('/locin/social/google');
+    navigate('/login/social/google');
   };
 
   useEffect(() => {
