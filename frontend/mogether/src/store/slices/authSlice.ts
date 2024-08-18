@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { loginApi, registerApi, logoutApi, kakaoRegisterApi, GoogleRegisterApi, GoogleLoginApi, KakaoLoginApi } from '../../utils/api';
+import { loginApi, registerApi, logoutApi, kakaoRegisterApi, GoogleRegisterApi } from '../../utils/api';
 import { RootState } from '../store';
 
 interface User {
@@ -108,33 +108,33 @@ export const googleRegister = createAsyncThunk(
     }
 ); 
 
-export const googleLogin = createAsyncThunk(
-    'auth/googleLogin',
-    async (_, thunkAPI) => {
-        try {
-            const response = await GoogleLoginApi();
-            if (response.status === 200 || response.status === 201) {
-                return response.data;
-            }
-        } catch (error) {
-            return thunkAPI.rejectWithValue('Google login failed');
-        }
-    }
-);
+// export const googleLogin = createAsyncThunk(
+//     'auth/googleLogin',
+//     async (_, thunkAPI) => {
+//         try {
+//             const response = await GoogleLoginApi();
+//             if (response.status === 200 || response.status === 201) {
+//                 return response.data;
+//             }
+//         } catch (error) {
+//             return thunkAPI.rejectWithValue('Google login failed');
+//         }
+//     }
+// );
 
-export const kakaoLogin = createAsyncThunk(
-    'auth/kakaoLogin',
-    async (_, thunkAPI) => {
-        try {
-            const response = await KakaoLoginApi();
-            if (response.status === 200 || response.status === 201) {
-                return response.data;
-            }
-        } catch (error) {
-            return thunkAPI.rejectWithValue('Kakao login failed');
-        }
-    }
-);
+// export const kakaoLogin = createAsyncThunk(
+//     'auth/kakaoLogin',
+//     async (_, thunkAPI) => {
+//         try {
+//             const response = await KakaoLoginApi();
+//             if (response.status === 200 || response.status === 201) {
+//                 return response.data;
+//             }
+//         } catch (error) {
+//             return thunkAPI.rejectWithValue('Kakao login failed');
+//         }
+//     }
+// );
 
 
 
@@ -171,30 +171,30 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload as string;  //action payload에 타입 지정
             })
-            .addCase(kakaoLogin.fulfilled, (state, action) => {
-                state.isAuthenticated = true;
-                // localStorage.setItem();
-                state.loading = false;
-                state.error = null;
-            })
-            .addCase(kakaoLogin.rejected, (state, action) => {
-                state.isAuthenticated = false;
-                state.user = null;
-                state.loading = false;
-                state.error = action.payload as string;  //action payload에 타입 지정
-            })
-            .addCase(googleLogin.fulfilled, (state, action) => {
-                state.isAuthenticated = true;
-                // localStorage.setItem();
-                state.loading = false;
-                state.error = null;
-            })
-            .addCase(googleLogin.rejected, (state, action) => {
-                state.isAuthenticated = false;
-                state.user = null;
-                state.loading = false;
-                state.error = action.payload as string;  //action payload에 타입 지정
-            })
+            // .addCase(kakaoLogin.fulfilled, (state, action) => {
+            //     state.isAuthenticated = true;
+            //     // localStorage.setItem();
+            //     state.loading = false;
+            //     state.error = null;
+            // })
+            // .addCase(kakaoLogin.rejected, (state, action) => {
+            //     state.isAuthenticated = false;
+            //     state.user = null;
+            //     state.loading = false;
+            //     state.error = action.payload as string;  //action payload에 타입 지정
+            // })
+            // .addCase(googleLogin.fulfilled, (state, action) => {
+            //     state.isAuthenticated = true;
+            //     // localStorage.setItem();
+            //     state.loading = false;
+            //     state.error = null;
+            // })
+            // .addCase(googleLogin.rejected, (state, action) => {
+            //     state.isAuthenticated = false;
+            //     state.user = null;
+            //     state.loading = false;
+            //     state.error = action.payload as string;  //action payload에 타입 지정
+            // })
             .addCase(logout.fulfilled, (state, action) => {
                 state.isAuthenticated = false;
                 state.user = null;

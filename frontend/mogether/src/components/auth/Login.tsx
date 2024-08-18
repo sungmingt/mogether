@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { login, selectAuthError, selectIsAuthenticated, googleLogin, kakaoLogin } from '../../store/slices/authSlice';
+import { login, selectAuthError, selectIsAuthenticated } from '../../store/slices/authSlice';
 import styled from 'styled-components';
 import { RootState, AppDispatch } from '../../store/store';
 import { useNavigate } from 'react-router-dom';
@@ -141,17 +141,12 @@ const Login: React.FC = () => {
     // catch (error) {
     //   Swal.fire('error', '잘못된 요청입니다', 'error');
     // }
-    navigate('/social/login/kakao');
+    window.location.href='https://api.mo-gether.site/oauth2/authorization/kakao';
   };
 
   const handleGoogle = () => {
-    // try {
-    //   navigate('/social/login?google');
-    // }
-    // catch (error) {
-    //   Swal.fire('error', '잘못된 요청입니다', 'error');
-    // }
-    navigate('/social/login/google');
+    
+    window.location.href='https://api.mo-gether.site/oauth2/authorization/google';
   };
 
   useEffect(() => {

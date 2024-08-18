@@ -67,6 +67,8 @@ const Footer: React.FC = () => {
     <FooterContainer>
       <FooterLeft>
         <p>&copy; 2024 Mogether Project</p>
+        <br></br>
+        <SocialLinks><a href="/law/privacy">개인정보 처리방침</a></SocialLinks>
       </FooterLeft>
       <FooterRight>
         <SocialLinks>

@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import Swal from "sweetalert2";
-import axios from "axios";
-import styled from "styled-components";
+import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import styled from 'styled-components';
 
 const SpinnerOverlay = styled.div`
   position: fixed;
@@ -18,8 +17,8 @@ const SpinnerOverlay = styled.div`
 `;
 
 const Spinner = styled.div`
-  border: 16px solid #7848f4; 
-  border-top: 16px solid #7848f4; 
+  border: 16px solid #f3f3f3;
+  border-top: 16px solid #3498db;
   border-radius: 50%;
   width: 120px;
   height: 120px;
@@ -35,38 +34,27 @@ const GoogleRedirectUrlPage: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const fetchToken = async () => {
-      try {
-        // 백엔드 API로 요청을 보내어 인가 코드를 통해 accessToken을 받음
-        const response = await axios.get(
-          "https://api.mo-gether.site/oauth2/authorization/google" // 또는 kakao
-        );
+    const urlParams = new URLSearchParams(window.location.search);
+    const accessToken = urlParams.get('accessToken');
+    const refreshToken = urlParams.get('refreshToken');
+    const userId = urlParams.get('userId');
+    const strippedAccessToken = accessToken?.split(' ')[1] ?? '';
+    const strippedRefreshToken = refreshToken?.split(' ')[1] ?? '';
 
-        // 응답에서 액세스 토큰을 추출
-        const accessToken = response.headers["accessToken"];
-        const refreshToken = response.headers["refreshToken"];
-        const userId = response.headers["userId"];
+    if (accessToken && refreshToken && userId) {
+      localStorage.setItem('accessToken', strippedAccessToken);
+      localStorage.setItem('refreshToken', strippedRefreshToken);
+      localStorage.setItem('userId', userId);
 
-        if (accessToken) {
-          // 받은 액세스 토큰을 저장
-          localStorage.setItem("accessToken", accessToken);
-          localStorage.setItem("refreshToken", refreshToken);
-          localStorage.setItem("userId", userId);
-
-          // 로그인 성공 알림
-          Swal.fire("Success", "로그인 성공!", "success").then(() => {
-            // 홈 페이지로 리디렉션
-            navigate("/");
-          });
-        } else {
-          throw new Error("AccessToken not found");
-        }
-      } catch (error) {
-        Swal.fire("Error", "유효하지 않은 접근입니다.", "error")
-      }
-    };
-
-    fetchToken();
+      // 로그인 성공 알림
+      Swal.fire('Success', '로그인 성공!', 'success').then(() => {
+        navigate('/');
+      });
+    } else {
+      Swal.fire('Error', '유효하지 않은 접근입니다.', 'error').then(() => {
+        navigate('/login', { replace: true });
+      });
+    }
   }, [navigate]);
 
   return (
