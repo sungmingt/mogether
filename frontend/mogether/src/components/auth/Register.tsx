@@ -201,7 +201,7 @@ const Register: React.FC = () => {
     if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
       setEmailError(null);
     } else {
-      setEmailError("Invalid email format");
+      setEmailError("올바르지 않은 이메일 형식입니다");
     }
   };
 
@@ -211,7 +211,7 @@ const Register: React.FC = () => {
     if (/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value)) {
       setPasswordError(null);
     } else {
-      setPasswordError("Password must be at least 8 characters long, including uppercase, lowercase, number, and special character");
+      setPasswordError("비밀번호는 8자 대소문자와 특수문자, 숫자의 조합으로 이루어져야 합니다");
     }
   };
 
@@ -221,7 +221,7 @@ const Register: React.FC = () => {
     if (value.length >= 2) {
       setNicknameError(null);
     } else {
-      setNicknameError("Nickname must be at least 2 characters");
+      setNicknameError("두 글자 이상 입력해주세요");
     }
   };
 
@@ -322,7 +322,7 @@ const Register: React.FC = () => {
             placeholder="Nickname"
             value={nickname}
             onChange={handleNicknameChange}
-            isValid={passwordError === null}
+            isValid={nicknameError === null}
           />
           <ErrorMessage>{nicknameError}</ErrorMessage>
         </InputWrapper>
