@@ -1,7 +1,7 @@
 import axios from 'axios';
 import userProfile from '../components/profile/userProfile';
 
-const API_BASE_URL = 'http://api.mo-gether.site:8080'; // 백엔드 서버의 기본 URL
+const API_BASE_URL = 'https://api.mo-gether.site:8080'; // 백엔드 서버의 기본 URL
 
 // Axios 인스턴스 생성
 export const api = axios.create({
