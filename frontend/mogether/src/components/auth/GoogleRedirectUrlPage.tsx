@@ -43,7 +43,7 @@ const GoogleRedirectUrlPage: React.FC = () => {
     const strippedRefreshToken = refreshToken?.startsWith('Bearer%20') ? refreshToken.split(' ')[1] : '';
 
     if (accessToken === '' || refreshToken === '' || userId === '') {
-      console.log(accessToken, refreshToken, userId);
+      console.log(strippedAccessToken, strippedRefreshToken, userId);
       Swal.fire('Error', '유효하지 않은 접근입니다.', 'error').then(() => {
         navigate('/login', { replace: true });
       });
