@@ -37,11 +37,15 @@ const GoogleRedirectUrlPage: React.FC = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const accessToken = urlParams.get('accessToken');
     const refreshToken = urlParams.get('refreshToken');
-    const userId = urlParams.get('userId');
-    const strippedAccessToken = accessToken?.split(' ')[1] ?? '';
-    const strippedRefreshToken = refreshToken?.split(' ')[1] ?? '';
+    const userId = urlParams.get('userId') || '';
+    const strippedAccessToken = accessToken?.split('%20')[1] || '';
+    const strippedRefreshToken = refreshToken?.split('%20')[1] || '';
 
-    if (accessToken && refreshToken && userId) {
+    if (accessToken === '' || refreshToken === '' || userId === '') {
+      Swal.fire('Error', '유효하지 않은 접근입니다.', 'error').then(() => {
+        navigate('/login', { replace: true });
+      });
+    } else {
       localStorage.setItem('accessToken', strippedAccessToken);
       localStorage.setItem('refreshToken', strippedRefreshToken);
       localStorage.setItem('userId', userId);
@@ -50,12 +54,8 @@ const GoogleRedirectUrlPage: React.FC = () => {
       Swal.fire('Success', '로그인 성공!', 'success').then(() => {
         navigate('/');
       });
-    } else {
-      Swal.fire('Error', '유효하지 않은 접근입니다.', 'error').then(() => {
-        navigate('/login', { replace: true });
-      });
     }
-  }, [navigate]);
+  }, [URLSearchParams]);
 
   return (
     <SpinnerOverlay>
