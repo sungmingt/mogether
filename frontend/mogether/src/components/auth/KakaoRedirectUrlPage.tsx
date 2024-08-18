@@ -46,7 +46,9 @@ const KakaoRedirectUrlPage: React.FC = () => {
         navigate('/login', { replace: true });
       });
     } else {
-      console.log(strippedAccessToken, strippedRefreshToken, userId);
+      console.log(userId);
+      console.log(strippedAccessToken);
+      console.log(strippedRefreshToken);
       localStorage.setItem('accessToken', strippedAccessToken);
       localStorage.setItem('refreshToken', strippedRefreshToken);
       localStorage.setItem('userId', userId);
