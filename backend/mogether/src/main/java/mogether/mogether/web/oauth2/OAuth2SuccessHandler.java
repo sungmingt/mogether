@@ -34,17 +34,18 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         log.info("====== OAuth2SuccessHandler 진입 ======");
 
         AppUser appUser = (AppUser) authentication.getPrincipal();
+
         Long userId = appUser.getId();
         String socialType = appUser.getUser().getSocialType().toString().toLowerCase();
-
         Token token = authService.issueToken(userId);
 
-        // 프론트로 redirect
-        response.addHeader("userId", String.valueOf(userId));
-        response.addHeader(ACCESS_TOKEN, token.getAccessToken());
-        response.addHeader(REFRESH_TOKEN, token.getRefreshToken());
-        response.sendRedirect(
-                baseURI + socialType + "?accessToken=" + token.getAccessToken() + "&refreshToken=" + token.getRefreshToken());
+        response.sendRedirect(createRedirectURI(userId, socialType, token));
+    }
 
+    private String createRedirectURI(Long userId, String socialType, Token token) {
+        return baseURI + socialType
+                + "?userId=" + userId
+                + "&accessToken=" + token.getAccessToken()
+                + "&refreshToken=" + token.getRefreshToken();
     }
 }
