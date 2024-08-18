@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import styled from "styled-components";
 import { AppDispatch, RootState } from "../../store/store";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
 import { selectAuthLoading, selectIsAuthenticated, register } from '../../store/slices/authSlice';
 import {socialRegisterUser} from "../../store/slices/userProfileSlice";
@@ -186,7 +186,8 @@ const SocialRegister: React.FC = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const dispatch = useDispatch<AppDispatch>();
   const [profileImage, setProfileImage] = useState<File | null>(null);
-  const userId = Number(localStorage.getItem('userId')) || 0;
+  const { id } = useParams<{ id: string }>();
+  const userId = id ? parseInt(id, 10) : 0;
 
   useEffect(() => {
     if (isAuthenticated) {

@@ -45,7 +45,7 @@ const App = () => {
         <Route path="/forgotpassword" element={<ForgotPassword />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
-        <Route path="/socialregister" element={<SocialRegister />} />
+        <Route path="/user/:id/oauth2/info" element={<SocialRegister />} />
         <Route path="/mypage" element={<MyPage />} />
         <Route path="/createdMoim" element={<MyCreatedMoim />} />
         <Route path="/createdBungae" element={<MyCreatedBungae />} />

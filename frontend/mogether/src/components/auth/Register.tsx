@@ -413,16 +413,6 @@ const Register: React.FC = () => {
         </InputWrapper>
         <Button
           onClick={handleRegister}
-          disabled={
-            emailError !== null ||
-            passwordError !== null ||
-            email === "" ||
-            password === "" ||
-            nameError !== null ||
-            nicknameError !== null ||
-            name === ""||
-            nickname === ""
-          }
         >
           Register
         </Button>
