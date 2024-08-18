@@ -50,7 +50,6 @@ public class Moim {
 
     @Embedded
     private Address address;
-    private String descrpition;
     private LocalDate createdAt;
     private LocalDate expireAt;
 
@@ -69,17 +68,15 @@ public class Moim {
         this.content = newMoim.getContent();
         this.keyword = newMoim.getKeyword();
         this.address = newMoim.getAddress();
-        this.descrpition = newMoim.descrpition;
         this.createdAt = newMoim.getCreatedAt();
         this.expireAt = newMoim.getExpireAt();
     }
 
-    public Moim(String title, String content, Keyword keyword, Address address, String descrpition, LocalDate createdAt, LocalDate expireAt) {
+    public Moim(String title, String content, Keyword keyword, Address address, LocalDate createdAt, LocalDate expireAt) {
         this.title = title;
         this.content = content;
         this.keyword = keyword;
         this.address = address;
-        this.descrpition = descrpition;
         this.createdAt = createdAt;
         this.expireAt = expireAt;
     }

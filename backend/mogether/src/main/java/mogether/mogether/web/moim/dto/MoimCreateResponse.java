@@ -24,7 +24,6 @@ public class MoimCreateResponse {
     private String title;
     private String content;
     private Keyword keyword; ////
-    private String description; //
     private Address address;
 
     private LocalDate createdAt;
@@ -33,7 +32,7 @@ public class MoimCreateResponse {
     public static MoimCreateResponse of(Moim moim) {
         return new MoimCreateResponse(
                 moim.getId(), moim.getHost().getId(), moim.getImageUrls(),
-                moim.getTitle(), moim.getContent(), moim.getKeyword(), moim.getDescrpition(),
+                moim.getTitle(), moim.getContent(), moim.getKeyword(),
                 moim.getAddress(), moim.getCreatedAt(), moim.getExpireAt()
         );
     }

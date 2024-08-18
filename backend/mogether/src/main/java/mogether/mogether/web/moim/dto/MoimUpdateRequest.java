@@ -29,7 +29,6 @@ public class MoimUpdateRequest {
 
     @NotEmpty
     private Address address;
-    private String description; //
 
     @NotEmpty
     private LocalDate createdAt;
@@ -42,7 +41,6 @@ public class MoimUpdateRequest {
                 this.content,
                 Keyword.of(this.keyword),
                 this.address,
-                this.description,
                 this.createdAt,
                 this.expireAt
         );

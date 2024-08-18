@@ -36,7 +36,6 @@ public class MoimResponse {
     private String title;
     private String content;
     private Keyword keyword; ////
-    private String description; //
     private Address address;
 
     private LocalDate createdAt;
@@ -56,8 +55,7 @@ public class MoimResponse {
                 isJoined(requestUser, moimUserList), isInterested(requestUser, findMoim),
                 findMoim.getMoimInterestList().size(),
                 findMoim.getTitle(), findMoim.getContent(), findMoim.getKeyword(),
-                findMoim.getDescrpition(), findMoim.getAddress(),
-                findMoim.getCreatedAt(), findMoim.getExpireAt());
+                findMoim.getAddress(), findMoim.getCreatedAt(), findMoim.getExpireAt());
     }
 
 
@@ -91,7 +89,6 @@ public class MoimResponse {
                 false, false,
                 findMoim.getMoimInterestList().size(),
                 findMoim.getTitle(), findMoim.getContent(), findMoim.getKeyword(),
-                findMoim.getDescrpition(), findMoim.getAddress(),
-                findMoim.getCreatedAt(), findMoim.getExpireAt());
+                findMoim.getAddress(), findMoim.getCreatedAt(), findMoim.getExpireAt());
     }
 }

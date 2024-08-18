@@ -29,8 +29,6 @@ public class MoimCreateRequest {
     @NotEmpty
     private Address address;
 
-    private String description; //
-
     @NotEmpty
     private LocalDate createdAt;
     @NotEmpty
@@ -42,7 +40,6 @@ public class MoimCreateRequest {
                 this.content,
                 Keyword.of(this.keyword),
                 this.address,
-                this.description,
                 this.createdAt,
                 this.expireAt
         );

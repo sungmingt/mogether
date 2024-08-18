@@ -35,7 +35,6 @@ public class MoimListResponse {
     private String title;
     private String content;
     private Keyword keyword; ////
-    private String description;
     private Address address;
 
     private LocalDate createdAt;
@@ -65,7 +64,6 @@ public class MoimListResponse {
                         moim.getTitle(),
                         moim.getContent(),
                         moim.getKeyword(),
-                        moim.getDescrpition(),
                         moim.getAddress(),
                         moim.getCreatedAt(),
                         moim.getExpireAt()))
@@ -112,7 +110,6 @@ public class MoimListResponse {
                         moim.getTitle(),
                         moim.getContent(),
                         moim.getKeyword(),
-                        moim.getDescrpition(),
                         moim.getAddress(),
                         moim.getCreatedAt(),
                         moim.getExpireAt()))
