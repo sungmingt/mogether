@@ -39,8 +39,8 @@ const GoogleRedirectUrlPage: React.FC = () => {
     const accessToken = urlParams.get('accessToken');
     const refreshToken = urlParams.get('refreshToken');
     const userId = urlParams.get('userId') || '';
-    const strippedAccessToken = accessToken?.split('%20')[1] || '';
-    const strippedRefreshToken = refreshToken?.split('%20')[1] || '';
+    const strippedAccessToken = accessToken?.startsWith('Bearer%20') ? accessToken.split(' ')[1] : '';
+    const strippedRefreshToken = refreshToken?.startsWith('Bearer%20') ? refreshToken.split(' ')[1] : '';
 
     if (accessToken === '' || refreshToken === '' || userId === '') {
       console.log(accessToken, refreshToken, userId);
