@@ -227,6 +227,7 @@ const authSlice = createSlice({
                 state.user = null;
                 state.loading = false;
                 state.error = action.payload as string;
+                console.log('register failed' + action.payload);
             })
             .addCase(kakaoRegister.fulfilled, (state) => {
                 state.loading = false;
