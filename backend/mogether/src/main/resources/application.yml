@@ -1,10 +1,45 @@
 spring:
   config:
-    # activate:
-      # on-profile: local
+    activate:
+      on-profile: local
     import:
       - mogether-security/application.yml
-      # - security/application-datasource.yml
-      # - security/application-cloud.yml
-      # - security/application-mail.yml
-      # - security/application-auth.yml
+      - mogether-security/application-datasource.yml
+      - mogether-security/application-cloud.yml
+      - mogether-security/application-auth.yml
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: prod
+    import:
+      - mogether-security/application.yml
+      - mogether-security/application-datasource.yml
+      - mogether-security/application-cloud.yml
+      - mogether-security/application-auth.yml
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: local
+    import:
+      - mogether-security/application.yml
+      - mogether-security/application-datasource.yml
+      - mogether-security/application-cloud.yml
+      - mogether-security/application-auth.yml
+
+---
+
+spring:
+  config:
+    activate:
+      on-profile: test
+    import:
+      - mogether-security/application.yml
+      - mogether-security/application-datasource.yml
+      - mogether-security/application-cloud.yml
+      - mogether-security/application-auth.yml

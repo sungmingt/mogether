@@ -25,7 +25,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     //사용자 정보를 DB에 저장하고, 서비스 자체 액세스 토큰, 리프레시 토큰을 생성/저장
 
     private final AuthService authService;
-    private static final String URI = "http://frontend.mo-gether.site/login/oauth/redirect";
+    private static final String baseURI = "https://dfrv032cq0wgz.cloudfront.net/login/social/";
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -35,6 +35,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         AppUser appUser = (AppUser) authentication.getPrincipal();
         Long userId = appUser.getId();
+        String socialType = appUser.getUser().getSocialType().toString().toLowerCase();
 
         Token token = authService.issueToken(userId);
 
@@ -42,6 +43,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         response.addHeader("userId", String.valueOf(userId));
         response.addHeader(ACCESS_TOKEN, token.getAccessToken());
         response.addHeader(REFRESH_TOKEN, token.getRefreshToken());
-        response.sendRedirect(URI);
+        response.sendRedirect(
+                baseURI + socialType + "?accessToken=" + token.getAccessToken() + "&refreshToken=" + token.getRefreshToken());
+
     }
 }

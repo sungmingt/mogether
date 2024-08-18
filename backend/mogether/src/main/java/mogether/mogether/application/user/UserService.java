@@ -54,7 +54,7 @@ public class UserService {
         validateExpasswordSameness(findUser.getPassword(), encodePassword(passwordUpdateRequest.getExPassword()));
         checkPasswordPattern(passwordUpdateRequest.getNewPassword());
 
-        findUser.updatePassword(passwordUpdateRequest.getNewPassword());
+        findUser.updatePassword(encodePassword(passwordUpdateRequest.getNewPassword()));
     }
 
     //유저 정보 조회

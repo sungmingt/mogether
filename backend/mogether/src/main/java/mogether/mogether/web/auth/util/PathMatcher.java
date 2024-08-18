@@ -22,7 +22,7 @@ public class PathMatcher {
             "/configuration/ui", "/configuration/security", "/webjars/**",
             "/h2-console/**",
 
-            "/login/**", "/user/join", "/token", "/oauth2/**",
+            "/login/**", "/user/join", "/token", "/oauth2/**", "/login/oauth2/**"
     };
 
     public static final String[] forAnonymousURIs = {

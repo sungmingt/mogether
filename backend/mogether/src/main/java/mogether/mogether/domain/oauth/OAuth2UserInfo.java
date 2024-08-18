@@ -4,11 +4,9 @@ import lombok.Builder;
 import lombok.Getter;
 import mogether.mogether.domain.info.SocialType;
 import mogether.mogether.domain.user.User;
-import mogether.mogether.exception.ErrorCode;
 import mogether.mogether.exception.MogetherException;
 
 import java.util.Map;
-import java.util.Set;
 
 import static mogether.mogether.exception.ErrorCode.*;
 
@@ -48,7 +46,7 @@ public class OAuth2UserInfo {    //유저 정보 dto
                 .name((String) profile.get("nickname"))
                 .email((String) account.get("email"))
                 .socialType(SocialType.of(registrationId))
-                .socialId((String) attributes.get("id"))  ////
+                .socialId(String.valueOf(attributes.get("id")))  ////
 //                .profile((String) profile.get("profile_image_url"))
                 .build();
     }

@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import mogether.mogether.domain.ImgaeUrlsConverter;
 import mogether.mogether.domain.info.Address;
 import mogether.mogether.domain.info.Keyword;
 import mogether.mogether.domain.interest.moim.MoimInterest;
@@ -40,8 +41,14 @@ public class Moim {
 
     private String title;
     private String content;
+
+    @Convert(converter = ImgaeUrlsConverter.class)
     private List<String> imageUrls = new ArrayList<>();
+
+    @Enumerated(EnumType.STRING)
     private Keyword keyword;
+
+    @Embedded
     private Address address;
     private String descrpition;
     private LocalDate createdAt;
@@ -75,5 +82,13 @@ public class Moim {
         this.descrpition = descrpition;
         this.createdAt = createdAt;
         this.expireAt = expireAt;
+    }
+
+    public Moim(User host, String title, String content, List<String> imageUrls, Address address) {
+        this.host = host;
+        this.title = title;
+        this.content = content;
+        this.imageUrls = imageUrls;
+        this.address = address;
     }
 }

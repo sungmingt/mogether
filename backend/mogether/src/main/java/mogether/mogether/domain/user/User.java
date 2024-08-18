@@ -30,8 +30,6 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-//    private String username = "username"; ///////////////
-
     @OneToOne(fetch = LAZY, cascade = ALL, orphanRemoval = true)
     @JoinColumn(name = "image_id")
     private ProfileImage profileImage;
@@ -117,10 +115,11 @@ public class User {
         this.imageUrl = imageUrl;
     }
 
-    public User(Long id, String email, String password) {
+    public User(Long id, String email, String password, String nickname) {
         this.id = id;
         this.email = email;
         this.password = password;
+        this.nickname = nickname;
     }
 
     public User(String nickname, String email, SocialType socialType, String socialId) {

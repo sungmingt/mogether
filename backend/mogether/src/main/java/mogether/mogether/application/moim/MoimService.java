@@ -19,7 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 import static mogether.mogether.application.user.UserValidator.*;
-import static mogether.mogether.exception.ErrorCode.BUNGAE_NOT_FOUND;
+import static mogether.mogether.exception.ErrorCode.MOIM_NOT_FOUND;
 
 @Transactional
 @RequiredArgsConstructor
@@ -121,6 +121,6 @@ public class MoimService {
     @Transactional(readOnly = true)
     public Moim findById(Long moimId) {
         return moimRepository.findById(moimId)
-                .orElseThrow(() -> new MogetherException(BUNGAE_NOT_FOUND));
+                .orElseThrow(() -> new MogetherException(MOIM_NOT_FOUND));
     }
 }

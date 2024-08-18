@@ -19,8 +19,6 @@ public class UserJoinResponse {
     private String imageUrl;
     private String email;
     private SocialType socialType;
-    private String socialId;
-
     private String nickname;
 
     private Address address;
@@ -32,7 +30,7 @@ public class UserJoinResponse {
     public static UserJoinResponse of(User user) {
         return new UserJoinResponse(
                 user.getId(), user.getImageUrl(), user.getEmail(),
-                user.getSocialType(), user.getSocialId(), user.getNickname(),
+                user.getSocialType(), user.getNickname(),
                 user.getAddress(), user.getAge(), user.getGender(),
                 user.getIntro(), user.getPhoneNumber());
     }
