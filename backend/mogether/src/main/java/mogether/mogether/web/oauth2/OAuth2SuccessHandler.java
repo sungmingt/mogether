@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mogether.mogether.application.auth.AuthService;
 import mogether.mogether.domain.oauth.AppUser;
+import mogether.mogether.domain.user.User;
 import mogether.mogether.web.auth.dto.Token;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
@@ -18,8 +19,6 @@ import java.io.IOException;
 @Slf4j
 @Component
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
-    //OAuth2 인증 성공시 호출.
-    //사용자 정보를 DB에 저장하고, 서비스 자체 액세스 토큰, 리프레시 토큰을 생성/저장
 
     private final AuthService authService;
 //    private static final String baseURI = "https://dfrv032cq0wgz.cloudfront.net/login/social/";
@@ -34,15 +33,20 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         AppUser appUser = (AppUser) authentication.getPrincipal();
 
         Long userId = appUser.getId();
-        String socialType = appUser.getUser().getSocialType().toString().toLowerCase();
+        User user = appUser.getUser();
+        boolean signUp = user.getImageUrl() == null;
+
+        String socialType = user.getSocialType().toString().toLowerCase();
         Token token = authService.issueToken(userId);
 
-        response.sendRedirect(createRedirectURI(userId, socialType, token));
+        response.sendRedirect(createRedirectURI(userId, signUp, socialType, token));
     }
 
-    private String createRedirectURI(Long userId, String socialType, Token token) {
+    //todo: cookie로 수정
+    private String createRedirectURI(Long userId, Boolean signUp, String socialType, Token token) {
         return baseURI + socialType
                 + "?userId=" + userId
+                + "&signUp=" + signUp
                 + "&accessToken=" + token.getAccessToken()
                 + "&refreshToken=" + token.getRefreshToken();
     }
