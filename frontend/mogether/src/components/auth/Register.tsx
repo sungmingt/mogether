@@ -178,7 +178,7 @@ const Register: React.FC = () => {
     gu: string;
     details: string;
   }>({ city: "", gu: "", details: "" });
-  const [age, setAge] = useState<number>();
+  const [age, setAge] = useState<number>(0);
   const [gender, setGender] = useState<string>("");
   const [intro, setIntro] = useState<string>("");
   const [phoneNumber, setphoneNumber] = useState<string>("");
@@ -248,10 +248,10 @@ const Register: React.FC = () => {
       registerFormData.append('dto', new Blob([JSON.stringify(registerForm)], { type: 'application/json' }));
 
       if (profileImage) {
-        registerFormData.append('images', profileImage);
+        registerFormData.append('image', profileImage);
 	    }
 	    else {
-	      registerFormData.append('images', null as any);
+	      registerFormData.append('image', null as any);
 	    };
       try {
         const response = await dispatch(registerUser(registerFormData)).unwrap();
