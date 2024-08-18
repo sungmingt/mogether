@@ -156,6 +156,7 @@ const authSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(login.fulfilled, (state, action) => {
+                console.log('login success' + action.payload);
                 state.isAuthenticated = true;
                 // localStorage.setItem();
                 state.loading = false;
@@ -219,6 +220,7 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.error = null;
                 state.user.userId = action.payload.userId;
+                console.log('register success' + action.payload);
             })   //auth부분은 더 연구해야함
             .addCase(register.rejected, (state, action) => {
                 state.isAuthenticated = false;
