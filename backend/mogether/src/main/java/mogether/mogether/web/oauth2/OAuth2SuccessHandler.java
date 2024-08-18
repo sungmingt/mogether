@@ -25,7 +25,8 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     //사용자 정보를 DB에 저장하고, 서비스 자체 액세스 토큰, 리프레시 토큰을 생성/저장
 
     private final AuthService authService;
-    private static final String baseURI = "https://dfrv032cq0wgz.cloudfront.net/login/social/";
+//    private static final String baseURI = "https://dfrv032cq0wgz.cloudfront.net/login/social/";
+    private static final String baseURI = "https://mo-gether.site/login/social/";
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,

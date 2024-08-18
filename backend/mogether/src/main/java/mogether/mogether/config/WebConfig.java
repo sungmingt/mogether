@@ -13,7 +13,7 @@ public class WebConfig implements WebMvcConfigurer {
     public void addCorsMappings(CorsRegistry registry) {
         registry.addMapping("/**")
                 .allowCredentials(true)
-                .allowedOriginPatterns("*")
+                .allowedOriginPatterns("mo-gether.site")
                 .allowedMethods("*")
                 .allowedHeaders("userId", "accessToken", "refreshToken")
                 .exposedHeaders("userId", "accessToken", "refreshToken")
