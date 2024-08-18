@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import styled from 'styled-components';
+import { access } from 'fs';
 
 const SpinnerOverlay = styled.div`
   position: fixed;
@@ -42,6 +43,7 @@ const GoogleRedirectUrlPage: React.FC = () => {
     const strippedRefreshToken = refreshToken?.split('%20')[1] || '';
 
     if (accessToken === '' || refreshToken === '' || userId === '') {
+      console.log(accessToken, refreshToken, userId);
       Swal.fire('Error', '유효하지 않은 접근입니다.', 'error').then(() => {
         navigate('/login', { replace: true });
       });

@@ -42,6 +42,7 @@ const KakaoRedirectUrlPage: React.FC = () => {
     const strippedRefreshToken = refreshToken?.split('%20')[1] || '';
 
     if (accessToken === '' || refreshToken === '' || userId === '') {
+      console.log(accessToken, refreshToken, userId);
       Swal.fire('Error', '유효하지 않은 접근입니다.', 'error').then(() => {
         navigate('/login', { replace: true });
       });
