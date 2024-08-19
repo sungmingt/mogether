@@ -1,5 +1,4 @@
 import axios from 'axios';
-import userProfile from '../components/profile/userProfile';
 
 const API_BASE_URL = "https://api.mo-gether.site"; // 백엔드 서버의 기본 URL
 

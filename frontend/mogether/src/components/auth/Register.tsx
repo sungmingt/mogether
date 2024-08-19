@@ -256,9 +256,12 @@ const Register: React.FC = () => {
       try {
         const response = await dispatch(registerUser(registerFormData)).unwrap();
         navigate("/Login");
-      }
-      catch (error) {
-        Swal.fire('error', '잘못된 요청입니다', 'error');
+      } catch (error: any) {
+        if (error.response && error.response.status === 409) {
+          Swal.fire('Conflict', '이미 존재하는 계정입니다.', 'error');
+        } else {
+          Swal.fire('error', '잘못된 요청 형식', 'error');
+        }
       }
     }
     else {
