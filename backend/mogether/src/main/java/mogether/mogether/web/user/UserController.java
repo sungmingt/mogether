@@ -21,7 +21,6 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
     private final UserService userService;
-    private final BungaeInterestService bungaeInterestService;
 
     @Operation(summary = "일반 유저 회원가입", description = "일반 유저의 회원가입 요청",
             responses = {

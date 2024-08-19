@@ -21,7 +21,6 @@ import java.io.IOException;
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final AuthService authService;
-//    private static final String baseURI = "https://dfrv032cq0wgz.cloudfront.net/login/social/";
     private static final String baseURI = "https://mo-gether.site/login/social/";
 
     @Override
@@ -31,19 +30,18 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
         log.info("====== OAuth2SuccessHandler 진입 ======");
 
         AppUser appUser = (AppUser) authentication.getPrincipal();
-
-        Long userId = appUser.getId();
         User user = appUser.getUser();
-        boolean signUp = user.getImageUrl() == null;
 
         String socialType = user.getSocialType().toString().toLowerCase();
+        Long userId = user.getId();
+        boolean signUp = user.getImageUrl() == null;
         Token token = authService.issueToken(userId);
 
-        response.sendRedirect(createRedirectURI(userId, signUp, socialType, token));
+        response.sendRedirect(createRedirectURI(socialType, userId, signUp, token));
     }
 
     //todo: cookie로 수정
-    private String createRedirectURI(Long userId, Boolean signUp, String socialType, Token token) {
+    private String createRedirectURI(String socialType, Long userId, Boolean signUp, Token token) {
         return baseURI + socialType
                 + "?userId=" + userId
                 + "&signUp=" + signUp
