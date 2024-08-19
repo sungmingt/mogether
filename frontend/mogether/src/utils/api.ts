@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = "https://api.mo-gether.site"; // 백엔드 서버의 기본 URL
+const API_BASE_URL = "/api"; // 백엔드 서버의 기본 URL
 
 // Axios 인스턴스 생성
 export const api = axios.create({
