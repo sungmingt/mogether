@@ -52,19 +52,19 @@ export const login = createAsyncThunk(
     }
 );
 
-export const register = createAsyncThunk(
-    'auth/register',
-    async (registerFormData: FormData, thunkAPI) => {
-        try {
-            const response = await registerApi(registerFormData);
-            if (response.status === 200 || response.status === 201) {
-                return response.data;
-            };
-        } catch (error) {
-            return thunkAPI.rejectWithValue('Registration failed');
-        }
-    }
-);
+// export const register = createAsyncThunk(
+//     'auth/register',
+//     async (registerFormData: FormData, thunkAPI) => {
+//         try {
+//             const response = await registerApi(registerFormData);
+//             if (response.status === 200 || response.status === 201) {
+//                 return response.data;
+//             };
+//         } catch (error) {
+//             return thunkAPI.rejectWithValue('Registration failed');
+//         }
+//     }
+// );
 
 export const logout = createAsyncThunk(
     'auth/logout',
@@ -210,25 +210,25 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload as string;  //action payload에 타입 지정
             })
-            .addCase(register.pending, (state) => {
-                state.loading = true;
-                state.error = null;
-            })
-            .addCase(register.fulfilled, (state, action: PayloadAction<User>) => {
-                state.isAuthenticated = true;
-                state.user = action.payload;
-                state.loading = false;
-                state.error = null;
-                state.user.userId = action.payload.userId;
-                console.log('register success' + action.payload);
-            })   //auth부분은 더 연구해야함
-            .addCase(register.rejected, (state, action) => {
-                state.isAuthenticated = false;
-                state.user = null;
-                state.loading = false;
-                state.error = action.payload as string;
-                console.log('register failed' + action.payload);
-            })
+            // .addCase(register.pending, (state) => {
+            //     state.loading = true;
+            //     state.error = null;
+            // })
+            // .addCase(register.fulfilled, (state, action: PayloadAction<User>) => {
+            //     state.isAuthenticated = true;
+            //     state.user = action.payload;
+            //     state.loading = false;
+            //     state.error = null;
+            //     state.user.userId = action.payload.userId;
+            //     console.log('register success' + action.payload);
+            // })   //auth부분은 더 연구해야함
+            // .addCase(register.rejected, (state, action) => {
+            //     state.isAuthenticated = false;
+            //     state.user = null;
+            //     state.loading = false;
+            //     state.error = action.payload as string;
+            //     console.log('register failed' + action.payload);
+            // })
             .addCase(kakaoRegister.fulfilled, (state) => {
                 state.loading = false;
                 state.error = null;

@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { AppDispatch, RootState } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { selectAuthLoading, selectIsAuthenticated, register, kakaoRegister, googleRegister } from '../../store/slices/authSlice';
+import { selectAuthLoading, selectIsAuthenticated, kakaoRegister, googleRegister } from '../../store/slices/authSlice';
 import {registerUser} from "../../store/slices/userProfileSlice";
 import { FaCamera } from "react-icons/fa";
 import GoogleRedirectUrlPage from "./GoogleRedirectUrlPage";

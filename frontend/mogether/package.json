@@ -72,6 +72,5 @@
     "@types/react-dates": "^21.8.6",
     "@types/react-image-gallery": "^1.2.4",
     "@types/react-toggle": "^4.0.5"
-  },
-  "proxy": "https://api.mo-gether.site"
+  }
 }
