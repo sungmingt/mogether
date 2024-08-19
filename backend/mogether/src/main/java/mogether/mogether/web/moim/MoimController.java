@@ -52,7 +52,7 @@ public class MoimController {
     @ResponseStatus(CREATED)
     @PostMapping
     public MoimCreateResponse create(@AuthenticationPrincipal AppUser appUser,
-                                     @RequestPart(name = "images") List<MultipartFile> images,
+                                     @RequestPart(name = "images", required = false) List<MultipartFile> images,
                                      @RequestPart(name = "dto") MoimCreateRequest moimCreateRequest) {
         return moimService.create(appUser, images, moimCreateRequest);
     }
@@ -64,7 +64,7 @@ public class MoimController {
     @PatchMapping("/{moimId}")
     public MoimUpdateResponse update(@PathVariable Long moimId,
                                      @AuthenticationPrincipal AppUser appUser,
-                                     @RequestPart(name = "images") List<MultipartFile>images,
+                                     @RequestPart(name = "images", required = false) List<MultipartFile>images,
                                      @RequestPart(name = "dto") MoimUpdateRequest moimUpdateRequest) {
         return moimService.update(moimId, appUser, images, moimUpdateRequest);
     }

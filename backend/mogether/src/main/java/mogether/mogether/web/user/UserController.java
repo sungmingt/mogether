@@ -28,7 +28,7 @@ public class UserController {
                     @ApiResponse(responseCode = "201", description = "유저의 회원가입 성공"),
             })
     @PostMapping("/join")
-    public UserJoinResponse join(@RequestPart(name = "image") MultipartFile image,
+    public UserJoinResponse join(@RequestPart(name = "image", required = false) MultipartFile image,
                                  @RequestPart(name = "dto") UserJoinRequest userJoinRequest) {
         return userService.join(userJoinRequest, image);
     }
@@ -39,7 +39,7 @@ public class UserController {
             })
     @PatchMapping("/{userId}")
     public UserUpdateResponse update(@PathVariable("userId") Long userId,
-                                     @RequestPart(name = "image") MultipartFile image,
+                                     @RequestPart(name = "image", required = false) MultipartFile image,
                                      @RequestPart(name = "dto") UserUpdateRequest userUpdateRequest,
                                      @AuthenticationPrincipal AppUser appUser) {
         return userService.update(userId, appUser, userUpdateRequest, image);

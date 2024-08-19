@@ -11,7 +11,6 @@ import mogether.mogether.domain.user.User;
 import mogether.mogether.exception.ErrorCode;
 import mogether.mogether.exception.MogetherException;
 import mogether.mogether.web.bungae.dto.*;
-import mogether.mogether.web.moim.dto.MoimListResponse;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
