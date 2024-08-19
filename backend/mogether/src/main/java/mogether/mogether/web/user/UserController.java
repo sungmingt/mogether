@@ -84,7 +84,8 @@ public class UserController {
     @PostMapping("/{userId}/oauth2/info")
     public UserJoinResponse addInfoAfterOAuthSignUp(@PathVariable Long userId,
                                                     @AuthenticationPrincipal AppUser appUser,
-                                                    @RequestBody AfterOAuthSignUpRequest afterOAuthSignUpRequest) {
-        return userService.addInfoAfterOAuthSignUp(userId, appUser, afterOAuthSignUpRequest);
+                                                    @RequestPart(name = "image", required = false) MultipartFile image,
+                                                    @RequestPart(name = "dto") AfterOAuthSignUpRequest afterOAuthSignUpRequest) {
+        return userService.addInfoAfterOAuthSignUp(userId, appUser, image, afterOAuthSignUpRequest);
     }
 }
