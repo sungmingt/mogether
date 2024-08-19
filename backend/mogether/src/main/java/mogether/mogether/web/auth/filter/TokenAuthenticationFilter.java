@@ -8,7 +8,6 @@ import lombok.extern.slf4j.Slf4j;
 import mogether.mogether.domain.oauth.AppUser;
 import mogether.mogether.domain.token.TokenProvider;
 import mogether.mogether.domain.token.redis.BlackListTokenRepository;
-import mogether.mogether.domain.user.User;
 import mogether.mogether.exception.MogetherException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -19,7 +18,6 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import java.io.IOException;
 import java.util.*;
 
-import static mogether.mogether.domain.token.TokenInfo.*;
 import static mogether.mogether.exception.ErrorCode.*;
 import static mogether.mogether.web.auth.util.ErrorResponseSender.sendErrorResponse;
 import static mogether.mogether.web.auth.util.PathMatcher.isForAnonymousURI;
@@ -49,8 +47,6 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
 
-        System.out.println("uri 통과 실패 ");
-
         try {
             String accessToken = getTokenfromRequest(request);
 
@@ -72,7 +68,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
 
     private void setAuthentication(String accessToken) {
         Long userId = tokenProvider.getIdFromToken(accessToken);
-        AppUser appUser = new AppUser(new User(userId), Map.of(), "attributeKey");
+        AppUser appUser = new AppUser(userId);
 
         Authentication authentication = new UsernamePasswordAuthenticationToken(appUser, null, List.of());
         SecurityContextHolder.getContext().setAuthentication(authentication);
