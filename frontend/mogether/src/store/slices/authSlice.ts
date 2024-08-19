@@ -54,7 +54,7 @@ export const login = createAsyncThunk(
 
 export const register = createAsyncThunk(
     'auth/register',
-    async (registerFormData, thunkAPI) => {
+    async (registerFormData: FormData, thunkAPI) => {
         try {
             const response = await registerApi(registerFormData);
             if (response.status === 200 || response.status === 201) {

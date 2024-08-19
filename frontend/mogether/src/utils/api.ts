@@ -136,7 +136,7 @@ export const loginApi = async (email: string, password: string) => {
 //   return response;
 // }
 
-export const registerApi = async (registerFormData: any) => {  //register 호출 시 registerFormData라는 객체 데이터를 받아옴
+export const registerApi = async (registerFormData: FormData) => {  //register 호출 시 registerFormData라는 객체 데이터를 받아옴
   const response = await api2.post('/user/join', registerFormData);
   // localStorage.setItem('accessToken', response.data.accessToken);
   // localStorage.setItem('refreshToken', response.data.refreshToken);
