@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { loginApi, registerApi, logoutApi, kakaoRegisterApi, GoogleRegisterApi } from '../../utils/api';
+import { loginApi, logoutApi, kakaoRegisterApi, GoogleRegisterApi } from '../../utils/api';
 import { RootState } from '../store';
 
 interface User {

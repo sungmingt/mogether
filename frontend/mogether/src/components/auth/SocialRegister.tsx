@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { AppDispatch, RootState } from "../../store/store";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import { selectAuthLoading, selectIsAuthenticated, register } from '../../store/slices/authSlice';
+import { selectAuthLoading, selectIsAuthenticated } from '../../store/slices/authSlice';
 import {socialRegisterUser} from "../../store/slices/userProfileSlice";
 import { FaCamera } from "react-icons/fa";
 
