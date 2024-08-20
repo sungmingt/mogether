@@ -69,7 +69,7 @@ public class AppUser implements OAuth2User, UserDetails {
 
     @Override
     public String getUsername() {
-        return user.getNickname();
+        return "user.getNickname()";
     }
 
     @Override
