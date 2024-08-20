@@ -85,7 +85,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("https://mo-gether.site"));
+        configuration.setAllowedOrigins(Arrays.asList(
+                "https://mo-gether.site",
+                "http://mo-gether-front.s3-website.ap-northeast-2.amazonaws.com",
+                "https://dfrv032cq0wgz.cloudfront.net")
+        );
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("userId", "accessToken", "refreshToken"));
         configuration.setExposedHeaders(Arrays.asList("userId", "accessToken", "refreshToken"));

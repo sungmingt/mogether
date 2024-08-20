@@ -21,7 +21,9 @@ import java.io.IOException;
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
     private final AuthService authService;
-    private static final String baseURI = "https://mo-gether.site/login/social/";
+    private static final String BASE_URI = "https://mo-gether.site";
+    private static final String LOGIN_ENDPOINT = "/social/login/";
+    private static final String REGISTER_ENDPOINT = "/socail/register";
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
@@ -34,18 +36,31 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
         String socialType = user.getSocialType().toString().toLowerCase();
         Long userId = user.getId();
-        boolean signUp = user.getImageUrl() == null;
         Token token = authService.issueToken(userId);
 
-        response.sendRedirect(createRedirectURI(socialType, userId, signUp, token));
+        if (isRegister(user)) {
+            response.sendRedirect(createRegisterRedirectURI(userId, token));
+        }else {
+            response.sendRedirect(createLoginRedirectURI(socialType, userId, token));
+        }
+    }
+
+    private String createLoginRedirectURI(String socialType, Long userId, Token token) {
+        return BASE_URI + LOGIN_ENDPOINT + socialType
+                + "?userId=" + userId
+                + "&accessToken=" + token.getAccessToken()
+                + "&refreshToken=" + token.getRefreshToken();
     }
 
     //todo: cookie로 수정
-    private String createRedirectURI(String socialType, Long userId, Boolean signUp, Token token) {
-        return baseURI + socialType
+    private String createRegisterRedirectURI(Long userId, Token token) {
+        return BASE_URI + REGISTER_ENDPOINT
                 + "?userId=" + userId
-                + "&signUp=" + signUp
                 + "&accessToken=" + token.getAccessToken()
                 + "&refreshToken=" + token.getRefreshToken();
+    }
+
+    private boolean isRegister(User user) {
+        return user.getImageUrl() == null;
     }
 }
