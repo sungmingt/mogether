@@ -151,7 +151,7 @@ class UserServiceTest {
         given(userRepository.findById(user.getId())).willReturn(Optional.of(user));
 
         //when
-        UserJoinResponse resposne = userService.addInfoAfterOAuthSignUp(user.getId(), appUser, request);
+        UserJoinResponse resposne = userService.addInfoAfterOAuthSignUp(user.getId(), appUser, image, request);
 
         //then
         assertThat(resposne.getGender()).isEqualTo(Gender.of(request.getGender()));
