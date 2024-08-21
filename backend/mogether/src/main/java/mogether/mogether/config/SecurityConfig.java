@@ -5,6 +5,7 @@ import mogether.mogether.web.oauth2.OAuth2FailureHandler;
 import mogether.mogether.web.oauth2.OAuth2SuccessHandler;
 import mogether.mogether.web.auth.filter.TokenAuthenticationFilter;
 import mogether.mogether.web.auth.filter.TokenExtractFilter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -30,6 +31,9 @@ import static mogether.mogether.web.auth.util.PathMatcher.*;
 @EnableMethodSecurity
 @Configuration
 public class SecurityConfig {
+
+    @Value("${cors.allowed-origins}")
+    private String[] allowedOrigins;
 
     private final OAuth2UserService oAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
@@ -85,11 +89,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(
-                "https://mo-gether.site",
-                "http://mo-gether-front.s3-website.ap-northeast-2.amazonaws.com",
-                "https://dfrv032cq0wgz.cloudfront.net")
-        );
+        configuration.setAllowedOrigins(Arrays.asList(allowedOrigins));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("userId", "accessToken", "refreshToken"));
         configuration.setExposedHeaders(Arrays.asList("userId", "accessToken", "refreshToken"));

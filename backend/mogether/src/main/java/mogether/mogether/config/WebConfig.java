@@ -1,6 +1,7 @@
 package mogether.mogether.config;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -9,11 +10,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private static final String[] allowedOrigins = {
-            "https://mo-gether.site",
-            "http://mo-gether-front.s3-website.ap-northeast-2.amazonaws.com",
-            "https://dfrv032cq0wgz.cloudfront.net"
-    };
+    @Value("${cors.allowed-origins}")
+    private String[] allowedOrigins;
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
