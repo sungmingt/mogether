@@ -23,7 +23,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     private final AuthService authService;
     private static final String BASE_URI = "https://mo-gether.site";
     private static final String LOGIN_ENDPOINT = "/social/login/";
-    private static final String REGISTER_ENDPOINT = "/socail/register";
+    private static final String REGISTER_ENDPOINT = "/social/register";
 
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request,
