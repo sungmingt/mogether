@@ -5,9 +5,9 @@ const API_BASE_URL = "https://api.mo-gether.site"; // 백엔드 서버의 기본
 // Axios 인스턴스 생성
 export const api = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
-    withCredentials: true,
   },
 });
 
@@ -57,9 +57,9 @@ api.interceptors.response.use(
 //content-type: multipart/form-data로 보내기 위한 설정
 export const api2 = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true,
   headers: {
     'Content-Type': 'multipart/form-data',
-    withCredentials: true,
   },
 });
 
