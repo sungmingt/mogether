@@ -273,7 +273,7 @@ const Header: React.FC = () => {
         {isOpen ? <FaTimes /> : <FaBars />}
       </MenuIcon>
       <Nav>
-        <NavLink to="/"><img src={require("../assets/somoim_icon.svg")} alt="somoim logo" /></NavLink>
+        <NavLink to="/"><img src={require("../assets/somoim_icon.png")} /></NavLink>
         <NavLink to="/moim/list">소모임</NavLink>
         <NavLink to="/bungae/list">번개</NavLink>
         <NavLink to="/mypage">마이페이지</NavLink>
