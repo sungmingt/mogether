@@ -278,21 +278,11 @@ const Register: React.FC = () => {
   };
 
   const handleKakaoRegister = async () => {
-    try {
-      const response = await dispatch(kakaoRegister()).unwrap();
-      navigate('/SocialRegister');
-    } catch (error) {
-      Swal.fire('error', '잘못된 요청입니다', 'error');
-    }
+    window.location.href='https://api.mo-gether.site/oauth2/authorization/kakao';
   }
 
   const handleGoogleRegister = async () => {
-    try {
-      const response = await dispatch(googleRegister()).unwrap();
-      navigate('/SocialRegister');
-    } catch (error) {
-      Swal.fire('error', '잘못된 요청입니다', 'error');
-    }
+    window.location.href='https://api.mo-gether.site/oauth2/authorization/google';
   }
 
   return (
