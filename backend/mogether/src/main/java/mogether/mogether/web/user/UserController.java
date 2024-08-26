@@ -21,14 +21,13 @@ import org.springframework.web.multipart.MultipartFile;
 public class UserController {
 
     private final UserService userService;
-    private final BungaeInterestService bungaeInterestService;
 
     @Operation(summary = "일반 유저 회원가입", description = "일반 유저의 회원가입 요청",
             responses = {
                     @ApiResponse(responseCode = "201", description = "유저의 회원가입 성공"),
             })
     @PostMapping("/join")
-    public UserJoinResponse join(@RequestPart(name = "image") MultipartFile image,
+    public UserJoinResponse join(@RequestPart(name = "image", required = false) MultipartFile image,
                                  @RequestPart(name = "dto") UserJoinRequest userJoinRequest) {
         return userService.join(userJoinRequest, image);
     }
@@ -39,7 +38,7 @@ public class UserController {
             })
     @PatchMapping("/{userId}")
     public UserUpdateResponse update(@PathVariable("userId") Long userId,
-                                     @RequestPart(name = "image") MultipartFile image,
+                                     @RequestPart(name = "image", required = false) MultipartFile image,
                                      @RequestPart(name = "dto") UserUpdateRequest userUpdateRequest,
                                      @AuthenticationPrincipal AppUser appUser) {
         return userService.update(userId, appUser, userUpdateRequest, image);
@@ -84,7 +83,8 @@ public class UserController {
     @PostMapping("/{userId}/oauth2/info")
     public UserJoinResponse addInfoAfterOAuthSignUp(@PathVariable Long userId,
                                                     @AuthenticationPrincipal AppUser appUser,
-                                                    @RequestBody AfterOAuthSignUpRequest afterOAuthSignUpRequest) {
-        return userService.addInfoAfterOAuthSignUp(userId, appUser, afterOAuthSignUpRequest);
+                                                    @RequestPart(name = "image", required = false) MultipartFile image,
+                                                    @RequestPart(name = "dto") AfterOAuthSignUpRequest afterOAuthSignUpRequest) {
+        return userService.addInfoAfterOAuthSignUp(userId, appUser, image, afterOAuthSignUpRequest);
     }
 }

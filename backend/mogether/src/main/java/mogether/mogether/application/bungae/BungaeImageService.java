@@ -36,12 +36,12 @@ public class BungaeImageService {
     private String defaultImageUrl;
 
     public void save(Bungae bungae, List<MultipartFile> multipartFiles) {
-        for (MultipartFile multipartFile : multipartFiles) {
-            if(multipartFile.isEmpty()){
-                bungae.setImageUrls(List.of(defaultImageUrl));
-                return;
-            }
+        if (multipartFiles == null || multipartFiles.isEmpty()) {
+            bungae.setImageUrls(List.of(defaultImageUrl));
+            return;
+        }
 
+        for (MultipartFile multipartFile : multipartFiles) {
             BungaeImage bungaeImage = uploadToS3(multipartFile);
             bungaeImage.setBungae(bungae);
             bungae.getImageUrls().add(bungaeImage.getFileUrl());

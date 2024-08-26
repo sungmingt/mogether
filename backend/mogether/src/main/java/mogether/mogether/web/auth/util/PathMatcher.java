@@ -1,6 +1,7 @@
 package mogether.mogether.web.auth.util;
 
 import jakarta.servlet.http.HttpServletRequest;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
@@ -8,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+@Slf4j
 public class PathMatcher {
 
     private PathMatcher(){}
@@ -22,7 +24,7 @@ public class PathMatcher {
             "/configuration/ui", "/configuration/security", "/webjars/**",
             "/h2-console/**",
 
-            "/login/**", "/user/join", "/token", "/oauth2/**", "/login/oauth2/**"
+            "/login", "/login/**", "/user/join", "/token", "/oauth2/**", "/login/oauth2/**"
     };
 
     public static final String[] forAnonymousURIs = {
@@ -55,7 +57,6 @@ public class PathMatcher {
         }
 
         for (RequestMatcher matcher : forAnonymousURIMatcher) {
-            System.out.println(matcher.toString());
             if (matcher.matches(request)) {
                 return true;
             }

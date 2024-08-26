@@ -12,7 +12,6 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.Map;
-import java.util.Set;
 
 @RequiredArgsConstructor
 @Service
@@ -25,8 +24,6 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
     @Transactional
     @Override
     public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {
-        System.out.println("==================== OAuth2UserService 진입");
-
         // 1. 유저 정보(attributes) 가져오기
         Map<String, Object> oAuth2UserAttributes = super.loadUser(userRequest).getAttributes();
 
@@ -40,19 +37,14 @@ public class PrincipalOAuth2UserService extends DefaultOAuth2UserService {
         // 4. 유저 정보 dto 생성
         OAuth2UserInfo oAuth2UserInfo = OAuth2UserInfo.of(registrationId, oAuth2UserAttributes);
 
-        // 5. 회원가입 또는 로그인(회원 정보 update)
-        User user = saveOrUpdateUserInfo(oAuth2UserInfo);
-
-        //todo: provider, providerId 등을 User에 입력하는 것만 하면 된다!!
-        //todo: 버튼 클릭시 로그인, DB저장, 프론트 토큰 리다이렉트까지 성공
-        //todo: 필터 작동만 확인하면 됨
+        // 5. 회원가입 또는 로그인
+        User user = saveOrCreateUser(oAuth2UserInfo);
 
         // 6. OAuth2User로 반환
         return new AppUser(user, oAuth2UserAttributes, userNameAttributeName);
     }
 
-    private User saveOrUpdateUserInfo(OAuth2UserInfo oAuth2UserInfo) {
-        //기존 유저라면 그대로 toEntity()로 return, 신규 가입 유저라면 정보 입력
+    private User saveOrCreateUser(OAuth2UserInfo oAuth2UserInfo) {
         User findUser = userRepository.findByEmail(oAuth2UserInfo.getEmail())
                 .orElse(oAuth2UserInfo.toEntity());
         return userRepository.save(findUser);

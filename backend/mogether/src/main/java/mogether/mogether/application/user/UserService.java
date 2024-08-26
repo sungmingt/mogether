@@ -70,13 +70,15 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-    public UserJoinResponse addInfoAfterOAuthSignUp(Long userId, AppUser appUser, AfterOAuthSignUpRequest request) {
+    public UserJoinResponse addInfoAfterOAuthSignUp(Long userId, AppUser appUser, MultipartFile image, AfterOAuthSignUpRequest request) {
         validateUser(userId, appUser.getId());
 
         User findUser = findById(userId);
         findUser.update(
                 findUser.getNickname(), request.getAddress(), request.getAge(),
-                Gender.of(request.getGender()), request.getIntro(), request.getPhoneNumber());
+                Gender.of(request.getGender()), request.getIntro(), request.getPhoneNumber()
+        );
+        profileImageService.save(findUser, image);
 
         return UserJoinResponse.of(findUser);
     }

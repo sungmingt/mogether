@@ -41,6 +41,11 @@ public class AppUser implements OAuth2User, UserDetails {
         this.attributeKey = attributeKey;
     }
 
+    //일반 요청
+    public AppUser(Long userId) {
+        this.id = userId;
+    }
+
     @Override
     public String getName() {
         return attributes.get(attributeKey).toString();
