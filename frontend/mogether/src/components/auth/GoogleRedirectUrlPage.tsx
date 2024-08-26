@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import styled from 'styled-components';
+import { access } from 'fs';
 
 const SpinnerOverlay = styled.div`
   position: fixed;
@@ -37,11 +38,19 @@ const GoogleRedirectUrlPage: React.FC = () => {
     const urlParams = new URLSearchParams(window.location.search);
     const accessToken = urlParams.get('accessToken');
     const refreshToken = urlParams.get('refreshToken');
-    const userId = urlParams.get('userId');
-    const strippedAccessToken = accessToken?.split(' ')[1] ?? '';
-    const strippedRefreshToken = refreshToken?.split(' ')[1] ?? '';
+    const userId = urlParams.get('userId') || '';
+    const strippedAccessToken = accessToken ? accessToken.split('Bearer%20')[1] || '' : '';
+    const strippedRefreshToken = refreshToken ? refreshToken.split('Bearer%20')[1] || '' : '';
 
-    if (accessToken && refreshToken && userId) {
+    if (accessToken === '' || refreshToken === '' || userId === '') {
+      console.log(strippedAccessToken, strippedRefreshToken, userId);
+      Swal.fire('Error', '유효하지 않은 접근입니다.', 'error').then(() => {
+        navigate('/login', { replace: true });
+      });
+    } else {
+      console.log(userId);
+      console.log(strippedAccessToken);
+      console.log(strippedRefreshToken);
       localStorage.setItem('accessToken', strippedAccessToken);
       localStorage.setItem('refreshToken', strippedRefreshToken);
       localStorage.setItem('userId', userId);
@@ -50,12 +59,8 @@ const GoogleRedirectUrlPage: React.FC = () => {
       Swal.fire('Success', '로그인 성공!', 'success').then(() => {
         navigate('/');
       });
-    } else {
-      Swal.fire('Error', '유효하지 않은 접근입니다.', 'error').then(() => {
-        navigate('/login', { replace: true });
-      });
     }
-  }, [navigate]);
+  }, [URLSearchParams]);
 
   return (
     <SpinnerOverlay>

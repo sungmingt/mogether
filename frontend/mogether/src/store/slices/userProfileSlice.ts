@@ -126,9 +126,11 @@ const userProfileSlice = createSlice({
         });
         builder.addCase(registerUser.fulfilled, (state, action: PayloadAction<UserProfile>) => {
             state.userProfiles[action.payload.userId] = action.payload;
+            console.log('register success' + action.payload);
         });
         builder.addCase(registerUser.rejected, (state, action: PayloadAction<any>) => {
             state.error = action.payload as string;
+            console.log('register failed' + action.payload);
         });
         builder.addCase(socialRegisterUser.fulfilled, (state, action: PayloadAction<UserProfile>) => {
             state.userProfiles[action.payload.userId] = action.payload;

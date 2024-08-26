@@ -4,7 +4,7 @@ import styled from "styled-components";
 import { AppDispatch, RootState } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { selectAuthLoading, selectIsAuthenticated, register, kakaoRegister, googleRegister } from '../../store/slices/authSlice';
+import { selectAuthLoading, selectIsAuthenticated, kakaoRegister, googleRegister } from '../../store/slices/authSlice';
 import {registerUser} from "../../store/slices/userProfileSlice";
 import { FaCamera } from "react-icons/fa";
 import GoogleRedirectUrlPage from "./GoogleRedirectUrlPage";
@@ -178,7 +178,7 @@ const Register: React.FC = () => {
     gu: string;
     details: string;
   }>({ city: "", gu: "", details: "" });
-  const [age, setAge] = useState<number>();
+  const [age, setAge] = useState<number>(0);
   const [gender, setGender] = useState<string>("");
   const [intro, setIntro] = useState<string>("");
   const [phoneNumber, setphoneNumber] = useState<string>("");
@@ -201,7 +201,7 @@ const Register: React.FC = () => {
     if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
       setEmailError(null);
     } else {
-      setEmailError("Invalid email format");
+      setEmailError("올바르지 않은 이메일 형식입니다");
     }
   };
 
@@ -211,7 +211,7 @@ const Register: React.FC = () => {
     if (/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value)) {
       setPasswordError(null);
     } else {
-      setPasswordError("Password must be at least 8 characters long, including uppercase, lowercase, number, and special character");
+      setPasswordError("비밀번호는 8자 대소문자와 특수문자, 숫자의 조합으로 이루어져야 합니다");
     }
   };
 
@@ -221,7 +221,7 @@ const Register: React.FC = () => {
     if (value.length >= 2) {
       setNicknameError(null);
     } else {
-      setNicknameError("Nickname must be at least 2 characters");
+      setNicknameError("두 글자 이상 입력해주세요");
     }
   };
 
@@ -248,17 +248,20 @@ const Register: React.FC = () => {
       registerFormData.append('dto', new Blob([JSON.stringify(registerForm)], { type: 'application/json' }));
 
       if (profileImage) {
-        registerFormData.append('images', profileImage);
+        registerFormData.append('image', profileImage);
 	    }
 	    else {
-	      registerFormData.append('images', null as any);
+	      registerFormData.append('image', null as any);
 	    };
       try {
         const response = await dispatch(registerUser(registerFormData)).unwrap();
         navigate("/Login");
-      }
-      catch (error) {
-        Swal.fire('error', '잘못된 요청입니다', 'error');
+      } catch (error: any) {
+        if (error.response && error.response.status === 409) {
+          Swal.fire('Conflict', '이미 존재하는 계정입니다.', 'error');
+        } else {
+          Swal.fire('error', '잘못된 요청 형식', 'error');
+        }
       }
     }
     else {
@@ -322,7 +325,7 @@ const Register: React.FC = () => {
             placeholder="Nickname"
             value={nickname}
             onChange={handleNicknameChange}
-            isValid={passwordError === null}
+            isValid={nicknameError === null}
           />
           <ErrorMessage>{nicknameError}</ErrorMessage>
         </InputWrapper>
@@ -413,16 +416,6 @@ const Register: React.FC = () => {
         </InputWrapper>
         <Button
           onClick={handleRegister}
-          disabled={
-            emailError !== null ||
-            passwordError !== null ||
-            email === "" ||
-            password === "" ||
-            nameError !== null ||
-            nicknameError !== null ||
-            name === ""||
-            nickname === ""
-          }
         >
           Register
         </Button>

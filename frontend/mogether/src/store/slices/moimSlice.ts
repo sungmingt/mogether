@@ -67,7 +67,7 @@ export const clickPosts = createAsyncThunk(
   async (moimId: number, thunkAPI) => {
     try {
       const response = await MoimCardApi(moimId);  //애초에 api.ts에서 response.data를 값으로 넘겨줌
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         return response.data;
       }
       else {
@@ -84,7 +84,7 @@ export const clickInterest = createAsyncThunk(
   async (interest: any, thunkAPI) => {
     try {
       const response = await interestMoimApi(interest);
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         return {moimId: interest.moimId};
       }
       else {
@@ -102,7 +102,7 @@ export const deleteInterest = createAsyncThunk(
   async (interest: any, thunkAPI) => {
     try {
       const response = await interestMoimDeleteApi(interest);
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         return {moimId: interest.moimId};
       }
       else {
@@ -119,7 +119,7 @@ export const clickJoin = createAsyncThunk(
   async (join: any, thunkAPI) => {
     try {
       const response = await joinMoimApi(join);
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         return {moimId: join.moimId};
       }
       else {
@@ -137,7 +137,7 @@ export const quitJoin = createAsyncThunk(
   async (join: any, thunkAPI) => {
     try {
       const response = await joinQuitMoimApi(join);  // {userId: userId, moimId: moimId}
-      if (response.status === 200) {
+      if (response.status === 200 || response.status === 201) {
         return {moimId: join.moimId};
       }
       else {

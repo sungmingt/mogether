@@ -30,14 +30,16 @@ const Spinner = styled.div`
   }
 `;
 
-const KakaoRedirectUrlPage: React.FC = () => {
+const SocialRegisterRedirectUrl: React.FC = () => {
   const navigate = useNavigate();
+  let id = localStorage.getItem('userId');
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const accessToken = urlParams.get('accessToken');
     const refreshToken = urlParams.get('refreshToken');
     const userId = urlParams.get('userId') || '';
+    const signUp = urlParams.get('signUp') || '';
     const strippedAccessToken = accessToken ? accessToken.split('Bearer%20')[1] || '' : '';
     const strippedRefreshToken = refreshToken ? refreshToken.split('Bearer%20')[1] || '' : '';
     if (accessToken === '' || refreshToken === '' || userId === '') {
@@ -49,13 +51,15 @@ const KakaoRedirectUrlPage: React.FC = () => {
       console.log(userId);
       console.log(strippedAccessToken);
       console.log(strippedRefreshToken);
+      console.log(signUp);
       localStorage.setItem('accessToken', strippedAccessToken);
       localStorage.setItem('refreshToken', strippedRefreshToken);
       localStorage.setItem('userId', userId);
+      id = localStorage.getItem('userId');
 
-      // 로그인 성공 알림
-      Swal.fire('Success', '로그인 성공!', 'success').then(() => {
-        navigate('/');
+      // 회원가입 성공 알림
+      Swal.fire('Success', '회원가입 성공!', 'success').then(() => {
+        navigate(`/user/${id}/oauth2/info`);
       });
     }
   }, [URLSearchParams]);
@@ -67,4 +71,4 @@ const KakaoRedirectUrlPage: React.FC = () => {
   );
 };
 
-export default KakaoRedirectUrlPage;
+export default SocialRegisterRedirectUrl;

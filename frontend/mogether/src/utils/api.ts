@@ -1,7 +1,6 @@
 import axios from 'axios';
-import userProfile from '../components/profile/userProfile';
 
-const API_BASE_URL = 'http://api.mo-gether.site:8080'; // 백엔드 서버의 기본 URL
+const API_BASE_URL = "https://api.mo-gether.site"; // 백엔드 서버의 기본 URL
 
 // Axios 인스턴스 생성
 export const api = axios.create({
@@ -105,7 +104,7 @@ api2.interceptors.response.use(
 
 // API 요청 함수들
 export const loginApi = async (email: string, password: string) => {
-  const response = await api.post('/auth/login', { email, password });
+  const response = await api.post('/login', { email, password });
   const accessToken = response.headers['accessToken'].split(' ')[1];
   const refreshToken = response.headers['refreshToken'].split(' ')[1];
   const userId = response.headers['userId'];
@@ -137,7 +136,7 @@ export const loginApi = async (email: string, password: string) => {
 //   return response;
 // }
 
-export const registerApi = async (registerFormData: any) => {  //register 호출 시 registerFormData라는 객체 데이터를 받아옴
+export const registerApi = async (registerFormData: FormData) => {  //register 호출 시 registerFormData라는 객체 데이터를 받아옴
   const response = await api2.post('/user/join', registerFormData);
   // localStorage.setItem('accessToken', response.data.accessToken);
   // localStorage.setItem('refreshToken', response.data.refreshToken);
@@ -207,7 +206,7 @@ export const deleteBungaeCardApi = async (bungaeId: number) => {
 }
 
 export const interestMoimApi = async (interest: any) => {
-  const response = await api.post('/interest/moim/${interest.moimId}', interest);
+  const response = await api.post(`/interest/moim/${interest.moimId}`, interest);
   return response;  // moim 관심 등록
 }
 
@@ -218,7 +217,7 @@ export const interestMoimDeleteApi = async (interest: any) => {
 
 
 export const interestBungaeApi = async (interest: any) => {
-  const response = await api.post(`'/interest/bungae/${interest.bungaeId}'`, interest);
+  const response = await api.post(`/interest/bungae/${interest.bungaeId}`, interest);
   return response;
 }
 
@@ -269,12 +268,12 @@ export const logoutApi = async () => {
 }
 
 export const MyCreateMoimListApi = async (userId: number) => {
-  const response = await api.get(`'/user/${userId}/host/moim'`);
+  const response = await api.get(`/user/${userId}/host/moim`);
   return response;  //내가 등록한 모임 리스트
 }
 
 export const MyCreateBungaeListApi = async (userId: number) => {
-  const response = await api.get(`'/user/${userId}/host/bungae'`);
+  const response = await api.get(`/user/${userId}/host/bungae`);
   return response;
 }
 
@@ -294,7 +293,7 @@ export const joinMoimApi = async (join: any) => {
 } 
 
 export const joinQuitMoimApi = async (join: any) => {
-  const response = await api.delete(`'/moim/${join.moimId}/quit'`);
+  const response = await api.delete(`/moim/${join.moimId}/quit`);
   return response;
 }
 
