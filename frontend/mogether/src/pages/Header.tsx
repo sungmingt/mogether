@@ -46,9 +46,8 @@ const NavLink = styled(Link)`
   font-size: 18px;
   position: relative;
   img {
-     margin-right: 8px;
-     width: 20px;
-     height: 20px;
+     width: 50px;
+     height: 50px;
   }
 
   &:hover {
