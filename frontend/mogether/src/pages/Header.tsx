@@ -25,8 +25,8 @@ const HeaderContainer = styled.header`
   margin-bottom: 30px;
   img {
     margin-right: 8px;
-    width: 50px;
-    height: 50px;
+    width: 20px;
+    height: 20px;
   }
 `;
 
