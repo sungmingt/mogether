@@ -7,7 +7,7 @@ import Swal from "sweetalert2";
 import { selectAuthLoading, selectIsAuthenticated } from '../../store/slices/authSlice';
 import {socialRegisterUser} from "../../store/slices/userProfileSlice";
 import { FaCamera } from "react-icons/fa";
-
+//social register -> 2차 인증 페이지
 
 const RegisterContainer = styled.div`
   display: flex;
