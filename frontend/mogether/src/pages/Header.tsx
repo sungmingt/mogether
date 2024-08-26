@@ -23,11 +23,11 @@ const HeaderContainer = styled.header`
   border-bottom: 2px solid #7848f4;
   z-index: 1000;
   margin-bottom: 30px;
-  img {
-    margin-right: 8px;
-    width: 20px;
-    height: 20px;
-  }
+  // img {
+  //   margin-right: 8px;
+  //   width: 20px;
+  //   height: 20px;
+  // }
 `;
 
 const Nav = styled.nav`
@@ -45,6 +45,11 @@ const NavLink = styled(Link)`
   text-decoration: none;
   font-size: 18px;
   position: relative;
+  img {
+     margin-right: 8px;
+     width: 20px;
+     height: 20px;
+  }
 
   &:hover {
     color: #7848f4;
@@ -267,8 +272,8 @@ const Header: React.FC = () => {
       <MenuIcon className={isOpen ? "open" : ""} onClick={toggleMenu}>
         {isOpen ? <FaTimes /> : <FaBars />}
       </MenuIcon>
-      <img src={require("../assets/somoim_icon.svg")} alt="somoim logo" />
       <Nav>
+        <NavLink to="/"><img src={require("../assets/somoim_icon.svg")} alt="somoim logo" /></NavLink>
         <NavLink to="/moim/list">소모임</NavLink>
         <NavLink to="/bungae/list">번개</NavLink>
         <NavLink to="/mypage">마이페이지</NavLink>
