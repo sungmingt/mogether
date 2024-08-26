@@ -7,6 +7,7 @@ import {selectIsAuthenticated, logout} from '../store/slices/authSlice';
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from '../store/store';
 import Swal from "sweetalert2";
+import icon from "../assets/somoim_icon.svg"
 
 const HeaderContainer = styled.header`
   top: 0;
@@ -22,6 +23,11 @@ const HeaderContainer = styled.header`
   border-bottom: 2px solid #7848f4;
   z-index: 1000;
   margin-bottom: 30px;
+  img {
+    margin-right: 8px;
+    width: 50px;
+    height: 50px;
+  }
 `;
 
 const Nav = styled.nav`
@@ -261,6 +267,7 @@ const Header: React.FC = () => {
       <MenuIcon className={isOpen ? "open" : ""} onClick={toggleMenu}>
         {isOpen ? <FaTimes /> : <FaBars />}
       </MenuIcon>
+      <img src={require("../assets/somoim_icon.svg")} alt="somoim logo" />
       <Nav>
         <NavLink to="/moim/list">소모임</NavLink>
         <NavLink to="/bungae/list">번개</NavLink>
