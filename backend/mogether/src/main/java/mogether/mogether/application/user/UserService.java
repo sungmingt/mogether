@@ -76,8 +76,8 @@ public class UserService {
                 findUser.getNickname(), request.getAddress(), request.getAge(),
                 Gender.of(request.getGender()), request.getIntro(), request.getPhoneNumber()
         );
-        profileImageService.save(findUser, image);
 
+        profileImageService.save(findUser, image);
         return UserJoinResponse.of(findUser);
     }
 
