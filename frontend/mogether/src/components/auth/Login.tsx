@@ -109,7 +109,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState<string>('');
   const error = useSelector((state: RootState) => selectAuthError(state));
   const isAuthenticated = useSelector((state: RootState) => selectIsAuthenticated(state));
-  const allProfiles = useSelector(selectAllUserProfiles);
+  const allProfiles = useSelector((state: RootState) => selectAllUserProfiles(state));
   // const [userId, setUserId] = useState<number>(0);
   // const userId = useSelector(selectCurrentUserProfile)?.userId;
 
@@ -119,10 +119,12 @@ const Login: React.FC = () => {
       try {
         const response = await dispatch(login({ email: email, password: password })).unwrap();
         // response.status === 200일때 dispatch로 인해 isAuthenticated 값이 갱신된다(useSelector에 의해서)
+        console.log(response);
         navigate('/');
 
       }
       catch (error) {
+        console.log(error);
         Swal.fire('error', '잘못된 요청입니다', 'error');
       }
     }

@@ -65,9 +65,9 @@ const FindPassword:React.FC = () => {
     const isAuthenticated = useSelector(selectIsAuthenticated);
     const navigate = useNavigate();
 
-    const allProfiles = useSelector((state: RootState) => {
-      return { ...state.userProfile.userProfiles };});    
-      // let allProfiles = useSelector((state: RootState) => state.userProfile.userProfiles)
+    // const allProfiles = useSelector((state: RootState) => {
+    //   return { ...state.userProfile.userProfiles };});    
+    let allProfiles = useSelector((state: RootState) => state.userProfile.userProfiles)
     useEffect(() => {
         if (isAuthenticated) {
             navigate('/');

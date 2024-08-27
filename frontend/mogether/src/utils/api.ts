@@ -18,9 +18,6 @@ api.interceptors.request.use(
     if (accessToken) {
       config.headers['accessToken'] = `${accessToken}`;
     }
-    else {
-      config.headers['accessToken'] = null;
-    }
     return config;
   },
   (error) => {
@@ -73,9 +70,6 @@ api2.interceptors.request.use(
     if (accessToken) {
       config.headers['accessToken'] = `${accessToken}`;
     }
-    else {
-      config.headers['accessToken'] = null;
-    }
     return config;
   },
   (error) => {
@@ -112,10 +106,11 @@ api2.interceptors.response.use(
 
 // API 요청 함수들
 export const loginApi = async (email: string, password: string) => {
-  const response = await api.post('/login', { email, password });
+  const response = await api.post('/login', { email: email, password: password });
   const accessToken = response.headers['accessToken'].split(' ')[1];
   const refreshToken = response.headers['refreshToken'].split(' ')[1];
   const userId = response.headers['userId'];
+  console.log(accessToken, refreshToken, userId);
   localStorage.setItem('accessToken', accessToken);
   localStorage.setItem('refreshToken', refreshToken);
   localStorage.setItem('userId', userId);

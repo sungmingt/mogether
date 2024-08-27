@@ -171,6 +171,7 @@ const authSlice = createSlice({
                 state.user = null;
                 state.loading = false;
                 state.error = action.payload as string;  //action payload에 타입 지정
+                console.log('login failed' + action.payload);
             })
             // .addCase(kakaoLogin.fulfilled, (state, action) => {
             //     state.isAuthenticated = true;
