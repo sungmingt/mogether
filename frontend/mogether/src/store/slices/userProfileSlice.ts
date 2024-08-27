@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from "../store";
 import { userApi, registerApi, changeUserProfile, socialRegisterApi, changePasswordApi } from '../../utils/api';
+import userProfile from '../../components/profile/userProfile';
 
 interface Address {
     city: string;
@@ -126,8 +127,11 @@ const userProfileSlice = createSlice({
         builder.addCase(registerUser.fulfilled, (state, action: PayloadAction<UserProfile>) => {
             state.userProfiles[action.payload.userId] = action.payload;
             console.log('register success' + action.payload);
+            console.log(action.payload);
+            console.log(action.payload.userId);
             console.log(action.payload.nickname);
             console.log(action.payload.email);
+            console.log(state.userProfiles[action.payload.userId])
         });
         builder.addCase(registerUser.rejected, (state, action: PayloadAction<any>) => {
             state.error = action.payload as string;
