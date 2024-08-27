@@ -58,14 +58,14 @@ public class AuthService {
         String newAccessToken = tokenProvider.createAccessToken(userId);
         String newRefreshToken = tokenProvider.createRefreshToken(userId);
         refreshTokenRepository.save(userId, newRefreshToken);
-        return new Token(newAccessToken, newRefreshToken);
+        return new Token(newAccessToken, newRefreshToken, userId);
     }
 
     public Token issueToken(Long userId) {
         String accessToken = tokenProvider.createAccessToken(userId);
         String refreshToken = tokenProvider.createRefreshToken(userId);
         refreshTokenRepository.save(userId, refreshToken);
-        return new Token(accessToken, refreshToken);
+        return new Token(accessToken, refreshToken, userId);
     }
 
     private void validateStoredRefreshToken(String refreshToken, Long userId) {
