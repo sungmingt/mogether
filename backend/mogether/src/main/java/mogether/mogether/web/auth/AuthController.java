@@ -23,7 +23,7 @@ public class AuthController {
         Token token = authService.login(loginRequest);
         response.setHeader(ACCESS_TOKEN, token.getAccessToken());
         response.setHeader(REFRESH_TOKEN, token.getRefreshToken());
-        response.setHeader(USER_ID, token.getRefreshToken());
+        response.setHeader(USER_ID, String.valueOf(token.getUserId()));
         return HttpStatus.OK;
     }
 
