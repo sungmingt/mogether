@@ -1,4 +1,4 @@
-import {selectAllUserProfiles, selectAllUserProfilesArray} from '../../store/slices/userProfileSlice';
+import {selectAllUserProfiles} from '../../store/slices/userProfileSlice';
 import {useSelector, useDispatch} from 'react-redux';
 import {RootState} from '../../store/store';
 import React, {useState, useEffect} from 'react';
@@ -65,7 +65,7 @@ const FindPassword:React.FC = () => {
     const navigate = useNavigate();
 
     // const allProfiles = useSelector(selectAllUserProfiles); //갱신될 대마다 allProfiles에 들어가는 값이 달라짐
-    const allProfiles = selectAllUserProfilesArray;
+    const allProfiles = useSelector((state: RootState) => state.userProfile.userProfiles)
     useEffect(() => {
         if (isAuthenticated) {
             navigate('/');
