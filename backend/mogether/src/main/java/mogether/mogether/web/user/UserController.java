@@ -81,10 +81,9 @@ public class UserController {
                     @ApiResponse(responseCode = "200", description = "추가 정보 기입 성공"),
             })
     @PostMapping("/{userId}/oauth2/info")
-    public UserJoinResponse addInfoAfterOAuthSignUp(@PathVariable Long userId,
-                                                    @AuthenticationPrincipal AppUser appUser,
+    public UserJoinResponse addInfoAfterOAuthSignUp(@PathVariable("userId") Long userId,
                                                     @RequestPart(name = "image", required = false) MultipartFile image,
                                                     @RequestPart(name = "dto") AfterOAuthSignUpRequest afterOAuthSignUpRequest) {
-        return userService.addInfoAfterOAuthSignUp(userId, appUser, image, afterOAuthSignUpRequest);
+        return userService.addInfoAfterOAuthSignUp(userId, image, afterOAuthSignUpRequest);
     }
 }

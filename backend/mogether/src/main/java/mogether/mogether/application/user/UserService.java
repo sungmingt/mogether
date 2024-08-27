@@ -70,9 +70,7 @@ public class UserService {
         userRepository.deleteById(userId);
     }
 
-    public UserJoinResponse addInfoAfterOAuthSignUp(Long userId, AppUser appUser, MultipartFile image, AfterOAuthSignUpRequest request) {
-        validateUser(userId, appUser.getId());
-
+    public UserJoinResponse addInfoAfterOAuthSignUp(Long userId, MultipartFile image, AfterOAuthSignUpRequest request) {
         User findUser = findById(userId);
         findUser.update(
                 findUser.getNickname(), request.getAddress(), request.getAge(),
