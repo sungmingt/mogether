@@ -17,7 +17,6 @@ api.interceptors.request.use(
     const accessToken = localStorage.getItem('accessToken');
     if (accessToken) {
       config.headers['accessToken'] = `${accessToken}`;
-      config.headers['userId'] = localStorage.getItem('userId');
     }
     return config;
   },
@@ -70,7 +69,6 @@ api2.interceptors.request.use(
     const accessToken = localStorage.getItem('accessToken');
     if (accessToken) {
       config.headers['accessToken'] = `${accessToken}`;
-      config.headers['userId'] = localStorage.getItem('userId');
     }
     return config;
   },
