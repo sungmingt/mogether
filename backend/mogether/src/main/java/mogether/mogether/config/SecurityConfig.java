@@ -40,7 +40,6 @@ public class SecurityConfig {
     private final OAuth2FailureHandler oAuth2FailureHandler;
     private final TokenAuthenticationFilter tokenAuthenticationFilter;
     private final TokenExtractFilter tokenExtractFilter;
-    private final CorsConfigurationSource corsConfigurationSource;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
