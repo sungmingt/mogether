@@ -208,10 +208,10 @@ const Register: React.FC = () => {
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     setPassword(value.trim());
-    if (/^(?=.*[a-zA-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value)) {
+    if (/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value)) {
       setPasswordError(null);
     } else {
-      setPasswordError("비밀번호는 8자 영문자와 특수문자, 숫자의 조합으로 이루어져야 합니다");
+      setPasswordError("비밀번호는 8자 대소문자와 특수문자, 숫자의 조합으로 이루어져야 합니다");
     }
   };
 
@@ -261,7 +261,7 @@ const Register: React.FC = () => {
           Swal.fire('Conflict', '이미 존재하는 계정입니다.', 'error');
         }
         else {
-          Swal.fire('error', '회원가입에 실패했습니다.', 'error'); 
+          Swal.fire('error', '회원가입에 실패하였습니다.', 'error');
         }
       }
     }
