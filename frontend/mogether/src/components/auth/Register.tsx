@@ -255,6 +255,7 @@ const Register: React.FC = () => {
 	    };
       try {
         const response = await dispatch(registerUser(registerFormData)).unwrap();
+        Swal.fire('success', '회원가입에 성공하였습니다.', 'success');
         navigate("/Login");
       } catch (error: any) {
         if (error.response && error.response.status === 409) {

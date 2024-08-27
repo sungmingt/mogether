@@ -14,7 +14,6 @@ interface UserProfile {
     password: string;
     socialType?: string;
     providerId?: string;
-    name: string;
     nickname: string;
     imageUrl?: string;
     address?: Address;
@@ -127,6 +126,8 @@ const userProfileSlice = createSlice({
         builder.addCase(registerUser.fulfilled, (state, action: PayloadAction<UserProfile>) => {
             state.userProfiles[action.payload.userId] = action.payload;
             console.log('register success' + action.payload);
+            console.log(action.payload.nickname);
+            console.log(action.payload.email);
         });
         builder.addCase(registerUser.rejected, (state, action: PayloadAction<any>) => {
             state.error = action.payload as string;
