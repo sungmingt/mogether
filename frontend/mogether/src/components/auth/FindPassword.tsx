@@ -61,7 +61,7 @@ const FindPassword:React.FC = () => {
     const [nickname, setNickname] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string | null>(null);
-    const [isLoading, setIsLoading] = useState<boolean>(true);
+    // const [isLoading, setIsLoading] = useState<boolean>(true);
     const isAuthenticated = useSelector(selectIsAuthenticated);
     const navigate = useNavigate();
 
@@ -74,19 +74,19 @@ const FindPassword:React.FC = () => {
         }
     }, [isAuthenticated]);
 
-    useEffect(() => {
-      // allProfiles가 비어 있지 않으면 로딩 완료로 간주
-      if (Object.keys(allProfiles).length > 0) {
-        setIsLoading(false);
-      }
-    }, [allProfiles]);
+    // useEffect(() => {
+    //   // allProfiles가 비어 있지 않으면 로딩 완료로 간주
+    //   if (Object.keys(allProfiles).length > 0) {
+    //     setIsLoading(false);
+    //   }
+    // }, [allProfiles]);
 
-    useEffect(() => {
-      if (isLoading) {
-        Swal.fire('Info', '로드 중입니다.', 'info');
-        return;
-      }
-    })
+    // useEffect(() => {
+    //   if (isLoading) {
+    //     Swal.fire('Info', '로드 중입니다.', 'info');
+    //     return;
+    //   }
+    // })
 
     const handleFindPassword = () => {
         
