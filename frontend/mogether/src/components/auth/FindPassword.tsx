@@ -73,6 +73,7 @@ const FindPassword:React.FC = () => {
     }, [isAuthenticated]);
 
     const handleFindPassword = () => {
+        console.log(allProfiles);
         const profile = Object.values(allProfiles).find(
           (profile) => profile.email == email && profile.nickname == nickname
         );
