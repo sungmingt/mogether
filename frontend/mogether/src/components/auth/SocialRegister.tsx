@@ -217,10 +217,10 @@ const SocialRegister: React.FC = () => {
     const socialRegisterFormData = new FormData();
     socialRegisterFormData.append('dto', new Blob([JSON.stringify(socialRegisterForm)], { type: 'application/json' }));
     if (profileImage) {
-      socialRegisterFormData.append('images', profileImage);
+      socialRegisterFormData.append('image', profileImage);
     }
     else {
-      socialRegisterFormData.append('images', null as any);
+      socialRegisterFormData.append('image', null as any);
     };
     try {
       const response = await dispatch(socialRegisterUser({socialRegisterFormData, userId})).unwrap();
