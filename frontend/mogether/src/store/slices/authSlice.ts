@@ -152,13 +152,15 @@ const authSlice = createSlice({
         //     localStorage.removeItem('userId');
         //     state.userId = 0;
         // },
+        setAuthenticated: (state, action: PayloadAction<boolean>) => {
+            state.isAuthenticated = action.payload;
+        },
     },
     extraReducers: (builder) => {
         builder
             .addCase(login.fulfilled, (state, action) => {
                 console.log('login success' + action.payload);
                 state.isAuthenticated = true;
-                // localStorage.setItem();
                 state.loading = false;
                 state.error = null;
             })
@@ -233,6 +235,8 @@ const authSlice = createSlice({
             .addCase(kakaoRegister.fulfilled, (state) => {
                 state.loading = false;
                 state.error = null;
+                // console.log(state);
+                // state.isAuthenticated = true;
             })
             .addCase(kakaoRegister.rejected, (state, action) => {
                 state.loading = false;
@@ -253,5 +257,5 @@ export const selectAuthLoading = (state: RootState) => state.auth.loading;
 export const selectAuthError = (state: RootState) => state.auth.error;
 export const selectIsAuthenticated = (state: RootState) => state.auth.isAuthenticated; //slice의 name을 통해 접근
 export const selectUserId = (state: RootState) => state.auth.userId;
-
+export const { setAuthenticated } = authSlice.actions;
 export default authSlice.reducer;

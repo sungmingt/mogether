@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { login, selectAuthError, selectIsAuthenticated } from '../../store/slices/authSlice';
+import { login, selectAuthError, selectIsAuthenticated, setAuthenticated } from '../../store/slices/authSlice';
 import styled from 'styled-components';
 import { RootState, AppDispatch } from '../../store/store';
 import { useNavigate } from 'react-router-dom';
@@ -120,6 +120,7 @@ const Login: React.FC = () => {
         const response = await dispatch(login({ email: email, password: password })).unwrap();
         // response.status === 200일때 dispatch로 인해 isAuthenticated 값이 갱신된다(useSelector에 의해서)
         console.log(response);
+        dispatch(setAuthenticated(true));
         navigate('/');
 
       }

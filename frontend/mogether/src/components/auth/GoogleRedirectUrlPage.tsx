@@ -3,6 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import styled from 'styled-components';
 import { access } from 'fs';
+import { selectIsAuthenticated, setAuthenticated } from '../../store/slices/authSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { RootState } from '../../store/store';
 
 const SpinnerOverlay = styled.div`
   position: fixed;
@@ -33,6 +36,8 @@ const Spinner = styled.div`
 
 const GoogleRedirectUrlPage: React.FC = () => {
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const isAuthenticated = useSelector((state: RootState) => selectIsAuthenticated(state)); 
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
@@ -48,19 +53,19 @@ const GoogleRedirectUrlPage: React.FC = () => {
         navigate('/login', { replace: true });
       });
     } else {
-      console.log(userId);
-      console.log(strippedAccessToken);
-      console.log(strippedRefreshToken);
       localStorage.setItem('accessToken', strippedAccessToken);
       localStorage.setItem('refreshToken', strippedRefreshToken);
       localStorage.setItem('userId', userId);
+      console.log(userId);
+      console.log(strippedAccessToken);
+      console.log(strippedRefreshToken);
 
-      // 로그인 성공 알림
+      dispatch(setAuthenticated(true)); 
       Swal.fire('Success', '로그인 성공!', 'success').then(() => {
         navigate('/');
       });
     }
-  }, [URLSearchParams]);
+  }, [dispatch, navigate]);
 
   return (
     <SpinnerOverlay>
