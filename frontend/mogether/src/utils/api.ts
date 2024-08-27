@@ -107,8 +107,8 @@ api2.interceptors.response.use(
 // API 요청 함수들
 export const loginApi = async (email: string, password: string) => {
   const response = await api.post('/login', { email: email, password: password });
-  const accessToken = response.headers['AccessToken'].split(' ')[1];
-  const refreshToken = response.headers['RefreshToken'].split(' ')[1];
+  const accessToken = response.headers['accessToken'];
+  const refreshToken = response.headers['refreshToken'];
   const userId = response.headers['userId'];
   console.log(accessToken, refreshToken, userId);
   localStorage.setItem('accessToken', accessToken);

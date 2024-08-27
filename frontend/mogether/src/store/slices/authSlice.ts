@@ -43,8 +43,8 @@ export const login = createAsyncThunk(
         try {
             const response = await loginApi(email, password);
             if (response.status === 200 || response.status === 201) {
+                console.log(response.status);
                 return response.data;  //아래 extrareducers에서 action.payload로 들어감
-
             }
         } catch (error) {
             return thunkAPI.rejectWithValue('Login failed');

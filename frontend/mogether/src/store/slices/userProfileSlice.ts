@@ -86,6 +86,8 @@ export const registerUser = createAsyncThunk(
         try {
             const response = await registerApi(registerFormData);
             if (response.status === 200 || response.status === 201) {
+                console.log(response.status);
+                console.log(response.data);
                 return response.data;
             } else {
                 return thunkAPI.rejectWithValue('Failed to register');
