@@ -2,6 +2,7 @@ import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from "../store";
 import { userApi, registerApi, changeUserProfile, socialRegisterApi, changePasswordApi } from '../../utils/api';
 import userProfile from '../../components/profile/userProfile';
+import { useSelector } from 'react-redux';
 
 interface Address {
     city: string;
@@ -132,6 +133,7 @@ const userProfileSlice = createSlice({
             console.log(action.payload.nickname);
             console.log(action.payload.email);
             console.log(state.userProfiles[action.payload.userId])
+            console.log(selectAllUserProfiles)
         });
         builder.addCase(registerUser.rejected, (state, action: PayloadAction<any>) => {
             state.error = action.payload as string;
@@ -157,5 +159,5 @@ const userProfileSlice = createSlice({
 
 export const selectUserProfile = (state: RootState, userId: number) => state.userProfile.userProfiles[userId]; // 특정 사용자의 프로필 불러오기
 export const selectAllUserProfiles = (state: RootState) => state.userProfile.userProfiles;
-
+export const selectAllUserProfilesArray = useSelector((state: RootState) => {return state.userProfile.userProfiles})
 export default userProfileSlice.reducer;

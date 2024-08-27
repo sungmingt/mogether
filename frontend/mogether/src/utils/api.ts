@@ -18,6 +18,9 @@ api.interceptors.request.use(
     if (accessToken) {
       config.headers['accessToken'] = `${accessToken}`;
     }
+    else {
+      config.headers['accessToken'] = null;
+    }
     return config;
   },
   (error) => {
@@ -69,6 +72,9 @@ api2.interceptors.request.use(
     const accessToken = localStorage.getItem('accessToken');
     if (accessToken) {
       config.headers['accessToken'] = `${accessToken}`;
+    }
+    else {
+      config.headers['accessToken'] = null;
     }
     return config;
   },
