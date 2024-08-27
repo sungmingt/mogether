@@ -260,6 +260,9 @@ const Register: React.FC = () => {
         if (error.response && error.response.status === 409) {
           Swal.fire('Conflict', '이미 존재하는 계정입니다.', 'error');
         }
+        else {
+          Swal.fire('error', '회원가입에 실패했습니다.', 'error'); 
+        }
       }
     }
     else {
