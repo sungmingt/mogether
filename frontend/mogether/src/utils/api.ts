@@ -68,7 +68,7 @@ api2.interceptors.request.use(
   (config) => {
     const accessToken = localStorage.getItem('accessToken');
     if (accessToken) {
-      config.headers['Authorization'] = `Bearer ${accessToken}`;
+      config.headers['accessToken'] = `${accessToken}`;
     }
     return config;
   },
@@ -92,7 +92,7 @@ api2.interceptors.response.use(
         const newAccessToken = data.accessToken.split(' ')[1];  //`Bearer ${} 이런 식을 보내지면
 
         localStorage.setItem('accessToken', newAccessToken);
-        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+        originalRequest.headers['accessToken'] = `${newAccessToken}`;
 
         return axios(originalRequest);
       } catch (err) {
