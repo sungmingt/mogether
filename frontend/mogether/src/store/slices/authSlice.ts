@@ -52,19 +52,6 @@ export const login = createAsyncThunk(
     }
 );
 
-// export const register = createAsyncThunk(
-//     'auth/register',
-//     async (registerFormData: FormData, thunkAPI) => {
-//         try {
-//             const response = await registerApi(registerFormData);
-//             if (response.status === 200 || response.status === 201) {
-//                 return response.data;
-//             };
-//         } catch (error) {
-//             return thunkAPI.rejectWithValue('Registration failed');
-//         }
-//     }
-// );
 
 export const logout = createAsyncThunk(
     'auth/logout',

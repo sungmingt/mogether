@@ -6,6 +6,7 @@ import { selectIsAuthenticated } from '../../store/slices/authSlice';
 import { RootState } from '../../store/store';
 import { useSelector, useDispatch } from 'react-redux';
 import { setAuthenticated } from '../../store/slices/authSlice';
+import { access } from 'fs';
 
 const SpinnerOverlay = styled.div`
   position: fixed;
@@ -43,20 +44,20 @@ const KakaoRedirectUrlPage: React.FC = () => {
     const accessToken = urlParams.get('accessToken');
     const refreshToken = urlParams.get('refreshToken');
     const userId = urlParams.get('userId') || '';
-    const strippedAccessToken = accessToken ? accessToken.split('Bearer%20')[1] || '' : '';
-    const strippedRefreshToken = refreshToken ? refreshToken.split('Bearer%20')[1] || '' : '';
+    // const strippedAccessToken = accessToken ? accessToken.split('Bearer%20')[1] || '' : '';
+    // const strippedRefreshToken = refreshToken ? refreshToken.split('Bearer%20')[1] || '' : '';
     if (accessToken === '' || refreshToken === '' || userId === '') {
-      console.log(strippedAccessToken, strippedRefreshToken, userId);
+      console.log(accessToken, refreshToken, userId);
       Swal.fire('Error', '유효하지 않은 접근입니다.', 'error').then(() => {
         navigate('/login', { replace: true });
       });
     } else {
-      localStorage.setItem('accessToken', strippedAccessToken);
-      localStorage.setItem('refreshToken', strippedRefreshToken);
+      localStorage.setItem('accessToken', accessToken ?? '');
+      localStorage.setItem('refreshToken', refreshToken ?? '');
       localStorage.setItem('userId', userId);
       console.log(userId);
-      console.log(strippedAccessToken);
-      console.log(strippedRefreshToken);
+      console.log(accessToken);
+      console.log(refreshToken);
 
       // 로그인 성공 알림
       dispatch(setAuthenticated(true));

@@ -137,12 +137,7 @@ const Login: React.FC = () => {
   };
 
   const handleKakao = () => {
-    // try {
-    //   navigate('/social/login?kakao');
-    // }
-    // catch (error) {
-    //   Swal.fire('error', '잘못된 요청입니다', 'error');
-    // }
+
     window.location.href='https://api.mo-gether.site/oauth2/authorization/kakao';
   };
 
