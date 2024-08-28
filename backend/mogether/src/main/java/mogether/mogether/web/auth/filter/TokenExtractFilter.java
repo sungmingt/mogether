@@ -49,11 +49,11 @@ public class TokenExtractFilter extends OncePerRequestFilter {
                         throw new MogetherException(ErrorCode.REQUIRED_TOKEN_MISSING);
                     }
 
-                    String modifiedToken = TokenProvider.replaceBearerToToken(super.getHeader(name));
-                    if (modifiedToken != null) {
-                        customHeaders.put(name, modifiedToken);
-                        return modifiedToken;
-                    }
+//                    String modifiedToken = TokenProvider.replaceBearerToToken(super.getHeader(name));
+//                    if (modifiedToken != null) {
+//                        customHeaders.put(name, modifiedToken);
+//                        return modifiedToken;
+//                    }
                 }
 
                 return super.getHeader(name);
