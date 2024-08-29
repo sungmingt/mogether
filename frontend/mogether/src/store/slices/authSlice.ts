@@ -59,9 +59,9 @@ export const logout = createAsyncThunk(
         try {
             const response = await logoutApi();
             if (response.status === 200 || response.status === 201) {
-                localStorage.removeItem('accessToken');
-                localStorage.removeItem('refreshToken');
-                localStorage.removeItem('userId');
+                // localStorage.removeItem('accessToken');
+                // localStorage.removeItem('refreshToken');
+                // localStorage.removeItem('userId');
                 console.log(response.data);
                 return response.data;
             }

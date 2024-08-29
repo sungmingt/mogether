@@ -120,7 +120,19 @@ const Login: React.FC = () => {
         const response = await dispatch(login({ email: email, password: password })).unwrap();
         // response.status === 200일때 dispatch로 인해 isAuthenticated 값이 갱신된다(useSelector에 의해서)
         console.log(response);
-        dispatch(setAuthenticated(true));  //reducer에서 액션 등록 후 동기적으로 액션을 수행할 수 있다.
+        const accessToken = response.headers['accessToken'];
+        const refreshToken = response.headers['refreshToken'];
+        const userId = response.headers['userId'];
+        console.log(accessToken, refreshToken, userId);
+        if (accessToken !== undefined && refreshToken !== undefined && userId !== undefined) {
+          localStorage.setItem('accessToken', accessToken);
+          localStorage.setItem('refreshToken', refreshToken);
+          localStorage.setItem('userId', userId);
+          dispatch(setAuthenticated(true));  //reducer에서 액션 등록 후 동기적으로 액션을 수행할 수 있다.
+        }
+        else {
+          dispatch(setAuthenticated(false));
+        }
         navigate('/');
       }
       catch (error) {

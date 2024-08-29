@@ -175,6 +175,8 @@ const HomePage: React.FC = () => {
     if (userId > 0) {
       try {
         const response = dispatch(fetchProfile(userId));  //userSlice의 fetchProfile로 정보가 들어감
+        console.log(localStorage.getItem('accessToken'));
+        console.log(localStorage.getItem('refreshToken'));
       }
       catch (error) {
         console.error(error);

@@ -3,7 +3,7 @@ import styled, { keyframes } from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import { FaBars, FaTimes, FaBell, FaUserCircle } from "react-icons/fa";
 import axios from "axios";
-import { selectIsAuthenticated, logout } from "../store/slices/authSlice";
+import { selectIsAuthenticated, logout, selectUserId } from "../store/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState, AppDispatch } from "../store/store";
 import Swal from "sweetalert2";
@@ -176,6 +176,7 @@ const Header: React.FC = () => {
   const isAuthenticated = useSelector((state: RootState) => selectIsAuthenticated(state));
   const dispatch = useDispatch<AppDispatch>();
   const accessToken = localStorage.getItem("accessToken");
+  const userId = Number(localStorage.getItem("userId")) || 0;  
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -214,10 +215,10 @@ const Header: React.FC = () => {
   }, [isOpen]);
 
   useEffect(() => {
-    if (accessToken) {
+    if (userId > 0) {
       dispatch(setAuthenticated(true));
     }
-  }, [dispatch, accessToken]); 
+  }, [dispatch, userId]); 
 
   const handleLogout = async () => {
     try {

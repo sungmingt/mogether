@@ -107,13 +107,6 @@ api2.interceptors.response.use(
 // API 요청 함수들
 export const loginApi = async (email: string, password: string) => {
   const response = await api.post('/login', { email: email, password: password });
-  const accessToken = response.headers['accessToken'];
-  const refreshToken = response.headers['refreshToken'];
-  const userId = response.headers['userId'];
-  console.log(accessToken, refreshToken, userId);
-  localStorage.setItem('accessToken', accessToken);
-  localStorage.setItem('refreshToken', refreshToken);
-  localStorage.setItem('userId', userId);
   return response;  //api.ts에서 이미 localStorage에 accessToken, refreshToken을 저장했기 때문에 return response만 해주면 됨
 };
 
@@ -245,25 +238,6 @@ export const changePasswordApi = async (passwordData: {userId: number, oldPasswo
   return response;
 };
 
-// export const googleLoginApi = async (response: GoogleLoginResponse) => {
-//   const { tokenId } = response;
-//   const res = await api.post('/auth/google-login', { tokenId });
-//   const accessToken = res.headers['accessToken'].split(' ')[1];
-//   const refreshToken = res.headers['refreshToken'].split(' ')[1];
-//   localStorage.setItem('accessToken', accessToken);
-//   localStorage.setItem('refreshToken', refreshToken);
-//   return res;
-// };
-
-// export const kakaoLoginApi = async (response: any) => {
-//   const { accessToken } = response;
-//   const res = await api.post('/auth/kakao-login', { accessToken });
-//   const newAccessToken = res.headers['accessToken'].split(' ')[1];
-//   const newRefreshToken = res.headers['refreshToken'].split(' ')[1];
-//   localStorage.setItem('accessToken', newAccessToken);
-//   localStorage.setItem('refreshToken', newRefreshToken);
-//   return res;
-// };
 
 export const logoutApi = async () => {
   const response = await api.post('/logout');
