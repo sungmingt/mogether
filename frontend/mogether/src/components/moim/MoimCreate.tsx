@@ -268,9 +268,11 @@ const MoimCreate = () => {
   const [additionalFocusedInput, setAdditionalFocusedInput] = useState<FocusedInputShape | null>(null);
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const userId = Number(localStorage.getItem('userId')) || 0;
+  const accessToken = localStorage.getItem('accessToken');
+  const refreshToken = localStorage.getItem('refreshToken');
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!accessToken) {
       navigate('/login');   //userProfile이 존재 x -> 가져옴
     }
   }, [dispatch, isAuthenticated]);

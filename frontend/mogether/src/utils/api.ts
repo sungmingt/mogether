@@ -177,13 +177,13 @@ export const fetchBungaeApi = async () => {
   return response;
 };
 
-export const createMoimApi = async (postData: any) => {
-  const response = await api.post('/moim', postData);
+export const createMoimApi = async (postData: FormData) => {
+  const response = await api2.post('/moim', postData);
   return response;
 };
 
-export const createBungaeApi = async (postData: any) => {
-  const response = await api.post('/bungae', postData);
+export const createBungaeApi = async (postData: FormData) => {
+  const response = await api2.post('/bungae', postData);
   return response;
 }
 
