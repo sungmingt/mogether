@@ -215,8 +215,11 @@ const Header: React.FC = () => {
   }, [isOpen]);
 
   useEffect(() => {
-    if (userId > 0) {
+    if (userId > 0 && accessToken) {
       dispatch(setAuthenticated(true));
+    }
+    else {
+      dispatch(setAuthenticated(false));
     }
   }, [dispatch, userId]); 
 

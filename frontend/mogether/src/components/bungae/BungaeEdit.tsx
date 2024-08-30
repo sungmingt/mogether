@@ -10,7 +10,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCalendarAlt } from "@fortawesome/free-solid-svg-icons";
 import Datetime from "react-datetime";
 import "react-datetime/css/react-datetime.css";
-import { createMoim, createBungae, EditMoim } from '../../store/slices/userSlice';
+import { createMoim, createBungae, EditMoim, EditBungae } from '../../store/slices/userSlice';
 import { RootState, AppDispatch } from '../../store/store';
 import { selectIsAuthenticated, selectUserId } from "../../store/slices/authSlice";
 import { useNavigate, useParams } from 'react-router-dom';
@@ -352,7 +352,7 @@ const BungaeEdit = () => {
 
     if (category === "moim") {
       const moimData = {
-        userId: userProfile?.userId,
+        userId: userId,
         title: title,
         content: content,
         keyword: keywords,
@@ -380,6 +380,7 @@ const BungaeEdit = () => {
       try {
         const moimFormDataMoimId = {moimId: moimId, moimFormData: moimFormData};
         const response = await dispatch(EditMoim(moimFormDataMoimId)).unwrap();
+        navigate('/moim/list')
       }
       catch (error) {
         Swal.fire({
@@ -419,7 +420,8 @@ const BungaeEdit = () => {
 	    };
       try {
         const bungaeFormDataBungaeId = {bungaeId: bungaeId, bungaeFormData: bungaeFormData};
-        const response = await dispatch(createBungae(bungaeFormDataBungaeId)).unwrap();
+        const response = await dispatch(EditBungae(bungaeFormDataBungaeId)).unwrap();
+        navigate('/bungae/list')
       }
       catch (error) {
         Swal.fire({
@@ -466,7 +468,7 @@ const BungaeEdit = () => {
             Category<RequiredIcon>*</RequiredIcon>
           </Label>
           <ButtonGroup>
-            {["bungae", "study", "gathering"].map((cat) => (
+            {["bungae", "moim"].map((cat) => (
               <Button
                 key={cat}
                 selected={category === cat}
@@ -500,7 +502,7 @@ const BungaeEdit = () => {
             Keywords<RequiredIcon>*</RequiredIcon>
           </Label>
           <ButtonGroup>
-            {["Art", "Music", "Travel", "Sports"].map((keyword) => (
+            {["파티", "자기계발", "취미", "여행", "술", "음식", "스포츠", "액티비티", "게임", "문화", "스터디", "언어"].map((keyword) => (
               <Button
                 key={keyword}
                 selected={keywords.includes(keyword)}

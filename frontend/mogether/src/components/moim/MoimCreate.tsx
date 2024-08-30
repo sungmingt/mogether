@@ -248,6 +248,7 @@ const MoimCreate = () => {
   const [location, setLocation] = useState("");
   const [subLocation, setSubLocation] = useState("");
   const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [imageFile, setImageFile] = useState<File[] | null>(null);
   const [dateRange, setDateRange] = useState<{ startDate: string | null, endDate: string | null }>({
     startDate: null,
     endDate: null,
@@ -296,11 +297,14 @@ const MoimCreate = () => {
     const fileArray = Array.from(files || []);
     const newUrls = fileArray.map((file) => URL.createObjectURL(file));
     setImageUrls((prev) => [...prev, ...newUrls]);
+    setImageFile((prev) => (prev ? [...prev, ...fileArray] : fileArray));
   };
 
   const handleImageRemove = (index: number) => {
     setImageUrls((prev) => prev.filter((_, i) => i !== index));
+    setImageFile((prev) => prev ? prev.filter((_, i) => i !== index) : null);
   };
+
   const handleMeetingTimeChange = (date: moment.Moment | string) => {
     if (date && typeof date !== 'string') {
       setMeetingStartTime(date.format('YYYY-MM-DD HH:mm'));
@@ -330,7 +334,6 @@ const MoimCreate = () => {
       title: title,
       content: content,
       keyword: keyword,
-      images: imageUrls,
       address: {
         city: location,
         gu: subLocation,
@@ -345,7 +348,6 @@ const MoimCreate = () => {
       title: title,
       content: content,
       keyword: keyword,
-      images: imageUrls,
       address: {
         city: location,
         gu: subLocation,
@@ -358,8 +360,21 @@ const MoimCreate = () => {
     };
     
     if (category === "moim") {
+      const moimFormData = new FormData();
+      moimFormData.append('dto', new Blob([JSON.stringify(moimData)], { type: 'application/json' }));
+
+      if (imageFile) {   //imageFile이 null(이미지가 올라간 게 없을 경우)
+        imageFile.forEach((file) => {
+        moimFormData.append('images', file);
+        });
+	    }
+	    else {
+	      moimFormData.append('images', null as any);
+	    };
       try {
-        const response = await dispatch(createMoim(moimData)).unwrap();
+        const response = await dispatch(createMoim(moimFormData)).unwrap();
+        console.log(response);
+        navigate('/moim/list')
       }
       catch (error) {
         Swal.fire({
@@ -371,8 +386,20 @@ const MoimCreate = () => {
       }
     }
     else {
+      const bungaeFormData = new FormData();
+      bungaeFormData.append('dto', new Blob([JSON.stringify(bungaeData)], { type: 'application/json' }));
+      if (imageFile) {   //imageFile이 null(이미지가 올라간 게 없을 경우)
+        imageFile.forEach((file) => {
+        bungaeFormData.append('images', file);
+        });
+	    }
+	    else {
+	      bungaeFormData.append('images', null as any);
+	    };
       try {
         const response = await dispatch(createBungae(bungaeData)).unwrap();
+        console.log(response);
+        navigate('/bungae/list')
       }
       catch (error) {
         Swal.fire({

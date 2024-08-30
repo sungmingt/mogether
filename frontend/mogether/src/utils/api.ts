@@ -1,4 +1,5 @@
 import axios from 'axios';
+import { forgotPassword } from '../store/slices/authSlice';
 
 const API_BASE_URL = "https://api.mo-gether.site"; // 백엔드 서버의 기본 URL
 
@@ -109,6 +110,11 @@ export const loginApi = async (email: string, password: string) => {
   const response = await api.post('/login', { email: email, password: password });
   return response;  //api.ts에서 이미 localStorage에 accessToken, refreshToken을 저장했기 때문에 return response만 해주면 됨
 };
+
+export const forgotPasswordApi = async (email: string, nickname: string) => {
+  const response = await api.post('/forgot-password', { email: email, nickname: nickname });
+  return response;
+}
 
 // export const GoogleLoginApi = async () => {
 //   const response = await axios.get('https://api.mo-gether.site/oauth2/authorization/google');

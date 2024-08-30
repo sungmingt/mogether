@@ -353,7 +353,7 @@ const MoimEdit = () => {
 
     if (category === "moim") {
       const moimData = {
-        userId: userProfile?.userId,
+        userId: userId,
         title: title,
         content: content,
         keyword: keywords,
@@ -393,7 +393,7 @@ const MoimEdit = () => {
     }
     else {
       const bungaeData = {
-        userId: userProfile?.userId,
+        userId: userId,
         title: title,
         content: content,
         keyword: keywords,
@@ -467,7 +467,7 @@ const MoimEdit = () => {
             Category<RequiredIcon>*</RequiredIcon>
           </Label>
           <ButtonGroup>
-            {["bungae", "gathering"].map((cat) => (
+            {["bungae", "moim"].map((cat) => (
               <Button
                 key={cat}
                 selected={category === cat}

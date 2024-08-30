@@ -62,9 +62,11 @@ export const createMoim = createAsyncThunk(
     try {
       const response = await createMoimApi(postData);
       if (response.status === 200 || response.status === 201) {
+        console.log(response.data);
         return response.data;
       }
     } catch (error) {
+      console.log(error);
       return rejectWithValue('Failed to create post');  //rejectWithValue는 reject시 해당 값을 반환
     }   //반환값 확인하면서 고치기
   }
@@ -196,6 +198,9 @@ const userSlice = createSlice({  //store와 action의 역할을 동시에 함
   extraReducers: (builder) => {
     builder.addCase(createMoim.fulfilled, (state, action: PayloadAction<any>) => { //그냥 객체 타입 -> any로 지정해줌
       state.posts.push(action.payload);
+    });
+    builder.addCase(createMoim.rejected, (state, action: PayloadAction<any>) => {
+      state.error = action.payload as string;
     });
     builder.addCase(MyInterestedMoim.fulfilled, (state, action: PayloadAction<Post[]>) => {
       state.MyInterestedMoim = action.payload;

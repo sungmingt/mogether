@@ -1,11 +1,13 @@
 import {selectAllUserProfiles} from '../../store/slices/userProfileSlice';
 import {useSelector, useDispatch} from 'react-redux';
-import {RootState} from '../../store/store';
+import { RootState, AppDispatch } from '../../store/store';
 import React, {useState, useEffect} from 'react';
 import styled from 'styled-components';
 import Swal from 'sweetalert2';
-import { selectIsAuthenticated } from '../../store/slices/authSlice';
+import { selectIsAuthenticated, forgotPassword } from '../../store/slices/authSlice';
 import { useNavigate } from 'react-router-dom';
+import emailjs from 'emailjs-com';
+// useSelector는 store에서 state를 가져오는 함수이지, 갱신하는 함수가 아님 -> 갱신은 dispatch를 이용해서 하기!
 
 
 
@@ -64,6 +66,7 @@ const FindPassword:React.FC = () => {
     // const [isLoading, setIsLoading] = useState<boolean>(true);
     const isAuthenticated = useSelector(selectIsAuthenticated);
     const navigate = useNavigate();
+    const dispatch = useDispatch<AppDispatch>();
 
     // const allProfiles = useSelector((state: RootState) => {
     //   return { ...state.userProfile.userProfiles };});    
@@ -76,21 +79,35 @@ const FindPassword:React.FC = () => {
 
 
 
-    const handleFindPassword = () => {
-        
-        console.log(allProfiles);
-        const profile = Object.values(allProfiles).find(
-          (profile) => profile.email == email && profile.nickname == nickname
-        );
-        
-        if (profile) {
-            setPassword(profile.password);
-        }
-        else {
-            Swal.fire('error', '일치하는 정보가 없습니다', 'error');
-            setPassword(null);
-            return;
-        }
+    const handleFindPassword = async () => {
+      try {
+        // 서버에 POST 요청을 보내어 이메일과 비밀번호를 받음
+        const response = await dispatch(forgotPassword({email: email, nickname: nickname})).unwrap(); 
+        const { password } = response.password;
+  
+          // EmailJS를 사용하여 이메일 전송
+        const templateParams = {
+            to_email: email,
+            nickname: nickname,
+            password: password
+        };
+  
+        emailjs.send(
+            'service_3rz4xds',          // 서비스 ID
+            'template_poluvh4',         // 템플릿 ID
+            templateParams,
+            'W76vSCKi3IpSoBN0I'         // Public Key
+        )
+        .then(() => {
+          Swal.fire('Success', '이메일로 비밀번호가 전송되었습니다.', 'success');
+        }, 
+        (error) => {
+          console.error(error);
+          Swal.fire('Error', '이메일 전송에 실패했습니다.', 'error');
+        });
+      } catch (error) {
+        Swal.fire('Error', '일치하는 정보가 없습니다.', 'error');
+      }
     };
 
 

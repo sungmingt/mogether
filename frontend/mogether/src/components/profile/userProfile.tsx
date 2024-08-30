@@ -83,6 +83,7 @@ const userProfile: React.FC = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
         try {
+            console.log(userId);
             const response = dispatch(fetchProfile(userId)).unwrap();  //dispatch로 인해 profile 변경 -> useSelector로 변경값 갱신 -> 그걸 가져옴
             setFormData(response);
             console.log(response);

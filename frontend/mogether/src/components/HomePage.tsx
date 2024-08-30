@@ -172,7 +172,10 @@ const HomePage: React.FC = () => {
   }, []);
 
   useEffect(() => {
-    if (userId > 0) {
+    console.log(userId);
+    console.log(localStorage.getItem('accessToken'));
+    console.log(localStorage.getItem('refreshToken'));
+    if (userId > 0 && localStorage.getItem('accessToken') && localStorage.getItem('refreshToken')) {
       try {
         const response = dispatch(fetchProfile(userId));  //userSlice의 fetchProfile로 정보가 들어감
         console.log(localStorage.getItem('accessToken'));
