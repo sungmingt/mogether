@@ -32,9 +32,7 @@ public class AuthService {
     public Token login(LoginRequest loginRequest) {
         User user = findByEmail(loginRequest.getEmail());
         checkPassword(loginRequest.getPassword(), user.getPassword());
-
-        Long userId = user.getId();
-        return issueToken(userId);
+        return issueToken(user.getId());
     }
 
     public void logout(String accessToken) {
