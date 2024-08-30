@@ -301,6 +301,14 @@ const MoimCreate = () => {
   const handleImageRemove = (index: number) => {
     setImageUrls((prev) => prev.filter((_, i) => i !== index));
   };
+  const handleMeetingTimeChange = (date: moment.Moment | string) => {
+    if (date && typeof date !== 'string') {
+      setMeetingStartTime(date.format('YYYY-MM-DD HH:mm'));
+    }
+    else {
+      setMeetingStartTime(null);
+    }
+  };
 
   const handleSubmit = async () => {
     if (
@@ -411,7 +419,7 @@ const MoimCreate = () => {
             Category<RequiredIcon>*</RequiredIcon>
           </Label>
           <ButtonGroup>
-            {["bungae", "study", "gathering"].map((cat) => (
+            {["bungae", "moim"].map((cat) => (
               <Button
                 key={cat}
                 selected={category === cat}
@@ -432,8 +440,8 @@ const MoimCreate = () => {
               Meeting Start Time<RequiredIcon>*</RequiredIcon>
             </DateLabel>
             <Datetime
-              value={meetingStartTime || ""}  //왼쪽값이 false인 경우 -> 오른쪽값 반환
-              onChange={(date) => setMeetingStartTime(date ? date.toString() : null)}
+              value={meetingStartTime ? moment(meetingStartTime) : ""}  //왼쪽값이 false인 경우 -> 오른쪽값 반환
+              onChange={handleMeetingTimeChange}
               inputProps={{ placeholder: "Select Date and Time" }}
               dateFormat="YYYY-MM-DD"
               timeFormat="HH:mm"
@@ -445,7 +453,7 @@ const MoimCreate = () => {
             Keywords<RequiredIcon>*</RequiredIcon>
           </Label>
           <ButtonGroup>
-            {["Art", "Music", "Travel", "Sports"].map((key) => (
+            {["파티", "자기계발", "취미", "여행", "술", "음식", "스포츠", "액티비티", "게임", "문화", "스터디", "언어"].map((key) => (
               <Button
                 key={key}
                 selected={keyword===key}
@@ -482,6 +490,9 @@ const MoimCreate = () => {
           />
         </DateWrapper>
         <LocationWrapper>
+          <DateLabel>
+            지역 선택<RequiredIcon>*</RequiredIcon>
+          </DateLabel>
           <Select
             value={location}
             onChange={(e) => setLocation(e.target.value)}

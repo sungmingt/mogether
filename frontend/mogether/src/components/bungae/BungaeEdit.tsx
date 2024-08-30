@@ -325,6 +325,15 @@ const BungaeEdit = () => {
     setImageFile((prev) => prev ? prev.filter((_, i) => i !== index) : null);
   };
 
+  const handleMeetingTimeChange = (date: moment.Moment | string) => {
+    if (date && typeof date !== 'string') {
+      setMeetingStartTime(date.format('YYYY-MM-DD HH:mm'));
+    }
+    else {
+      setMeetingStartTime(null);
+    }
+  };
+
   const handleSubmit = async () => {
     if (
       !title ||
@@ -478,8 +487,8 @@ const BungaeEdit = () => {
               Meeting Start Time<RequiredIcon>*</RequiredIcon>
             </Label>
             <Datetime
-              value={meetingStartTime || ""}  //왼쪽값이 false인 경우 -> 오른쪽값 반환
-              onChange={(date) => setMeetingStartTime(date ? date.toString() : null)}
+              value={meetingStartTime ? moment(meetingStartTime) : ""}  //왼쪽값이 false인 경우 -> 오른쪽값 반환
+              onChange={handleMeetingTimeChange}
               inputProps={{ placeholder: "Select Date and Time" }}
               dateFormat="YYYY-MM-DD"
               timeFormat="HH:mm"

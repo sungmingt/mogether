@@ -325,6 +325,15 @@ const MoimEdit = () => {
     setImageFile((prev) => prev ? prev.filter((_, i) => i !== index) : null);
   };
 
+  const handleMeetingTimeChange = (date: moment.Moment | string) => {
+    if (date && typeof date !== 'string') {
+      setMeetingStartTime(date.format('YYYY-MM-DD HH:mm'));
+    }
+    else {
+      setMeetingStartTime(null);
+    }
+  };
+
   const handleSubmit = async () => {
     if (
       !title ||
@@ -334,7 +343,8 @@ const MoimEdit = () => {
       !dateRange.startDate ||
       !dateRange.endDate ||
       !location ||
-      !subLocation
+      !subLocation ||
+      (category === "bungae" && !meetingStartTime)
     ) {
       Swal.fire("Error", "필수 입력 항목을 모두 입력해주세요.", "error");
       return;
@@ -457,7 +467,7 @@ const MoimEdit = () => {
             Category<RequiredIcon>*</RequiredIcon>
           </Label>
           <ButtonGroup>
-            {["bungae", "study", "gathering"].map((cat) => (
+            {["bungae", "gathering"].map((cat) => (
               <Button
                 key={cat}
                 selected={category === cat}
@@ -478,8 +488,8 @@ const MoimEdit = () => {
               Meeting Start Time<RequiredIcon>*</RequiredIcon>
             </Label>
             <Datetime
-              value={meetingStartTime || ""}  //왼쪽값이 false인 경우 -> 오른쪽값 반환
-              onChange={(date) => setMeetingStartTime(date ? date.toString() : null)}
+              value={meetingStartTime ? moment(meetingStartTime) : ""}  //왼쪽값이 false인 경우 -> 오른쪽값 반환
+              onChange={handleMeetingTimeChange}
               inputProps={{ placeholder: "Select Date and Time" }}
               dateFormat="YYYY-MM-DD"
               timeFormat="HH:mm"
@@ -491,7 +501,7 @@ const MoimEdit = () => {
             Keywords<RequiredIcon>*</RequiredIcon>
           </Label>
           <ButtonGroup>
-            {["Art", "Music", "Travel", "Sports"].map((keyword) => (
+            {["파티", "자기계발", "취미", "여행", "술", "음식", "스포츠", "액티비티", "게임", "문화", "스터디", "언어"].map((keyword) => (
               <Button
                 key={keyword}
                 selected={keywords.includes(keyword)}
