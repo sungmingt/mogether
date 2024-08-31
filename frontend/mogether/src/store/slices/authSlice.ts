@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { loginApi, logoutApi, kakaoRegisterApi, GoogleRegisterApi, forgotPasswordApi } from '../../utils/api';
 import { RootState } from '../store';
+import { log } from 'console';
 
 interface User {
     email: string;
@@ -44,7 +45,10 @@ export const login = createAsyncThunk(
             const response = await loginApi(email, password);
             if (response.status === 200 || response.status === 201) {
                 console.log(response.status);
-                return response.data;  //아래 extrareducers에서 action.payload로 들어감
+                localStorage.setItem('accessToken', response.headers["accessToken"]);
+                localStorage.setItem('refreshToken', response.headers["refreshToken"]);
+                localStorage.setItem('userId', response.headers["userId"]);
+                return response;  //아래 extrareducers에서 action.payload로 들어감
             }
         } catch (error) {
             return thunkAPI.rejectWithValue('Login failed');
