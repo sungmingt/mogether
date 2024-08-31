@@ -27,7 +27,7 @@ public class UserService {
         checkEmailExists(userJoinRequest.getEmail());
         checkPasswordPattern(userJoinRequest.getPassword());
 
-        User user = (userJoinRequest.toUser());
+        User user = userJoinRequest.toUser();
         User savedUser = userRepository.save(user);
         profileImageService.save(user, image);
 
