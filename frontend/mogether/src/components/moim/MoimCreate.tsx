@@ -397,7 +397,7 @@ const MoimCreate = () => {
         bungaeFormData.append('images', "null");
       }
       try {
-        const response = await dispatch(createBungae(bungaeData)).unwrap();
+        const response = await dispatch(createBungae(bungaeFormData)).unwrap();
         console.log(response);
         navigate('/bungae/list')
       }
