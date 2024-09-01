@@ -369,6 +369,9 @@ const BungaeEdit = () => {
         moimFormData.append('images', file);
         });
 	    }
+      else {
+        moimFormData.append('images', 'null');
+      }
 	    
       try {
         const moimFormDataMoimId = {moimId: moimId, moimFormData: moimFormData};
@@ -407,6 +410,9 @@ const BungaeEdit = () => {
           bungaeFormData.append('images', file);
         });
 	    }
+      else {
+        bungaeFormData.append('images', 'null');
+      }
       try {
         const bungaeFormDataBungaeId = {bungaeId: bungaeId, bungaeFormData: bungaeFormData};
         const response = await dispatch(EditBungae(bungaeFormDataBungaeId)).unwrap();

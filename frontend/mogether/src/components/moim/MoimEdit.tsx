@@ -372,7 +372,7 @@ const MoimEdit = () => {
         });
 	    }
 	    else {
-	      moimFormData.append('images', null as any);
+	      moimFormData.append('images', 'null');
 	    };
       try {
         const moimFormDataMoimId = {moimId: moimId, moimFormData: moimFormData};
@@ -411,7 +411,7 @@ const MoimEdit = () => {
         });
 	    }
 	    else {
-	      bungaeFormData.append('images', null as any);
+	      bungaeFormData.append('images', 'null');
 	    };
       try {
         const bungaeFormDataBungaeId = {bungaeId: bungaeId, bungaeFormData: bungaeFormData};

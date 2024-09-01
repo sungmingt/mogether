@@ -364,11 +364,14 @@ const MoimCreate = () => {
       const moimFormData = new FormData();
       moimFormData.append('dto', new Blob([JSON.stringify(moimData)], { type: 'application/json' }));
 
-      if (imageFile) {   //imageFile이 null(이미지가 올라간 게 없을 경우)
+      if (imageFile && imageFile.length > 0) {   //imageFile이 null(이미지가 올라간 게 없을 경우)
         imageFile.forEach((file) => {
         moimFormData.append('images', file);
         });
 	    }
+      else {
+        moimFormData.append('images', "null")
+      }
       try {
         const response = await dispatch(createMoim(moimFormData)).unwrap();
         console.log(response);
@@ -385,10 +388,13 @@ const MoimCreate = () => {
     else {
       const bungaeFormData = new FormData();
       bungaeFormData.append('dto', new Blob([JSON.stringify(bungaeData)], { type: 'application/json' }));
-      if (imageFile) {   //imageFile이 null(이미지가 올라간 게 없을 경우)
+      if (imageFile && imageFile.length > 0) {   //imageFile이 null(이미지가 올라간 게 없을 경우)
         imageFile.forEach((file) => {
           bungaeFormData.append('images', file);
         });
+      }
+      else {
+        bungaeFormData.append('images', "null");
       }
       try {
         const response = await dispatch(createBungae(bungaeData)).unwrap();
