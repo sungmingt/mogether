@@ -94,11 +94,13 @@ api2.interceptors.response.use(
             'refreshToken': refreshToken,
           },
         });
-        const newAccessToken = response.headers['accessToken'];
-        const newRefreshToken = response.headers['refreshToken'];
+        const newAccessToken = response.data.accessToken;
+        const newRefreshToken = response.data.refreshToken;
+        const newUserId = response.data.userId;
 
         localStorage.setItem('accessToken', newAccessToken);
         localStorage.setItem('refreshToken', newRefreshToken);
+        localStorage.setIem('userId', newUserId); 
         originalRequest.headers['accessToken'] = `${newAccessToken}`;
 
         return axios(originalRequest);
