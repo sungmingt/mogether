@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { filterPostsByKeywords } from "../../store/slices/bungaeSlice";
 import styled from "styled-components";
+import { FaBars, FaTimes } from "react-icons/fa";
 
 const keywords = [
   "파티",
@@ -22,6 +23,7 @@ const LeftBar = () => {
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>(
     keywords.reduce((acc, keyword) => ({ ...acc, [keyword]: false }), {})
   );
+  const [isOpen, setIsOpen] = useState(false);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -42,33 +44,56 @@ const LeftBar = () => {
     dispatch(filterPostsByKeywords(selectedKeywords));
   };
 
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
+
   return (
-    <LeftBarContainer>
-      <FilterTitle>Filters</FilterTitle>
-      <FilterItems>
-        {keywords.map((key) => (
-          <FilterItem key={key}>
-            <input
-              type="checkbox"
-              checked={checkedItems[key]}
-              onChange={() => handleToggleChange(key)}
-            />
-            <label>{key}</label>
-          </FilterItem>
-        ))}
-      </FilterItems>
-      <SearchButton onClick={handleKeywordChange}>키워드 검색</SearchButton>
-    </LeftBarContainer>
+    <>
+      <MenuIcon onClick={toggleMenu}>
+        {isOpen ? <FaTimes /> : <FaBars />}
+      </MenuIcon>
+      <LeftBarContainer isOpen={isOpen}>
+        <FilterTitle>Filters</FilterTitle>
+        <FilterItems>
+          {keywords.map((key) => (
+            <FilterItem key={key}>
+              <input
+                type="checkbox"
+                checked={checkedItems[key]}
+                onChange={() => handleToggleChange(key)}
+              />
+              <label>{key}</label>
+            </FilterItem>
+          ))}
+        </FilterItems>
+        <SearchButton onClick={handleKeywordChange}>키워드 검색</SearchButton>
+      </LeftBarContainer>
+    </>
   );
 };
 
 export default LeftBar;
 
-const LeftBarContainer = styled.div`
-  position: absolute;
+const MenuIcon = styled.div`
+  cursor: pointer;
+  font-size: 24px;
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  z-index: 1000;
+  display: flex;
+
+  @media (min-width: 769px) {
+    display: none;
+  }
+`;
+
+const LeftBarContainer = styled.div<{ isOpen: boolean }>`
+  position: fixed;
   top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
+  left: ${({ isOpen }) => (isOpen ? "0" : "-100%")};
+  transform: translateY(-50%);
   width: 250px;
   max-width: 90%;
   background-color: #ffffff;
@@ -80,9 +105,17 @@ const LeftBarContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+  transition: left 0.3s ease;
 
   @media (max-width: 768px) {
     width: 200px;
+    position: fixed;
+  }
+
+  @media (min-width: 769px) {
+    position: absolute;
+    left: 0;
+    transform: translateY(-50%);
   }
 `;
 

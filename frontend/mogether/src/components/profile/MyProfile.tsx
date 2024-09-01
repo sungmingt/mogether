@@ -80,7 +80,7 @@ const MyProfile: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const userId = Number(localStorage.getItem('userId')) || 0;
   const [editMode, setEditMode] = useState(false);
-  const [formData, setFormData] = useState<any>(null);
+  const [formData, setFormData] = useState<any>({});
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const navigate = useNavigate();
   const accessToken = localStorage.getItem("accessToken");
