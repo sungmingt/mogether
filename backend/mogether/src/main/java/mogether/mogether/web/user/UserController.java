@@ -59,7 +59,7 @@ public class UserController {
             responses = {
                     @ApiResponse(responseCode = "200", description = "비밀번호 찾기 성공"),
             })
-    @GetMapping("/password")
+    @PostMapping("/password")
     public PasswordFindResponse findPassword(@AuthenticationPrincipal AppUser appUser,
                                             @RequestBody PasswordFindRequest passwordFindRequest) {
         return userService.findPassword(appUser, passwordFindRequest);
