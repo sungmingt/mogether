@@ -89,12 +89,16 @@ api2.interceptors.response.use(
 
     if (error.response.status === 401 && refreshToken) {  //refreshToken이 있을 때
       try {
-        const { data } = await axios.post(`${API_BASE_URL}/auth/refresh-token`, {
-          refreshToken,
+        const response = await axios.get(`${API_BASE_URL}/token`, {
+          headers: {
+            'refreshToken': refreshToken,
+          },
         });
-        const newAccessToken = data.accessToken.split(' ')[1];  //`Bearer ${} 이런 식을 보내지면
+        const newAccessToken = response.headers['accessToken'];
+        const newRefreshToken = response.headers['refreshToken'];
 
         localStorage.setItem('accessToken', newAccessToken);
+        localStorage.setItem('refreshToken', newRefreshToken);
         originalRequest.headers['accessToken'] = `${newAccessToken}`;
 
         return axios(originalRequest);
