@@ -79,9 +79,6 @@ const FileInput = styled.input`
 const MyProfile: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const userId = Number(localStorage.getItem('userId')) || 0;
-  const currentUserProfile = useSelector(
-    (state: RootState) => state.userProfile.userProfiles[userId]
-  );
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState<any>(null);
   const [profileImage, setProfileImage] = useState<File | null>(null);
@@ -92,7 +89,7 @@ const MyProfile: React.FC = () => {
     const fetchProfileData = async () => {
         try {
             const response = await dispatch(fetchProfile(userId)).unwrap();  //dispatch로 인해 profile 변경 -> useSelector로 변경값 갱신 -> 그걸 가져옴
-            setFormData(currentUserProfile);
+            setFormData(response);
             console.log(response);
         }
         catch (error) {
@@ -122,7 +119,7 @@ const MyProfile: React.FC = () => {
     }
   };
 
-  const handleUserDelete = async () => {
+  const handleUserDelete = async () => {  // 인자로 받는게 없음
     try {
       const response = await dispatch(DeleteUser(userId));
       Swal.fire("Success", "성공적으로 탈퇴되었습니다.", "success");
@@ -146,7 +143,7 @@ const MyProfile: React.FC = () => {
           patchData.append("image", profileImage);
         }
         else {
-          patchData.append("image", null as any);
+          patchData.append("image", "null");
         }
         patchData.append(
           "dto",
@@ -197,19 +194,6 @@ const MyProfile: React.FC = () => {
           />
         ) : (
           <Value>{formData.nickname}</Value>
-        )}
-      </ProfileItem>
-      <ProfileItem>
-        <Label>Name:</Label>
-        {editMode ? (
-          <Input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-          />
-        ) : (
-          <Value>{formData.name}</Value>
         )}
       </ProfileItem>
       <ProfileItem>

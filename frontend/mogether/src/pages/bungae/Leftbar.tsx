@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { filterPostsByKeywords } from "../../store/slices/moimSlice";
-import { FaBars, FaTimes } from "react-icons/fa";
+import { filterPostsByKeywords } from "../../store/slices/bungaeSlice";
 import styled from "styled-components";
 
 const keywords = [
@@ -20,7 +19,6 @@ const keywords = [
 ];
 
 const LeftBar = () => {
-  const [isOpen, setIsOpen] = useState(false);
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>(
     keywords.reduce((acc, keyword) => ({ ...acc, [keyword]: false }), {})
   );
@@ -29,10 +27,6 @@ const LeftBar = () => {
   useEffect(() => {
     handleKeywordChange();
   }, [checkedItems]);
-
-  const toggleMenu = () => {
-    setIsOpen(!isOpen);
-  };
 
   const handleToggleChange = (key: string) => {
     setCheckedItems((prev) => ({
@@ -49,60 +43,46 @@ const LeftBar = () => {
   };
 
   return (
-    <>
-      <MenuIcon onClick={toggleMenu}>
-        {isOpen ? <FaTimes /> : <FaBars />}
-      </MenuIcon>
-      <LeftBarContainer isOpen={isOpen}>
-        <FilterTitle>Filters</FilterTitle>
-        <FilterItems>
-          {keywords.map((key) => (
-            <FilterItem key={key}>
-              <input
-                type="checkbox"
-                checked={checkedItems[key]}
-                onChange={() => handleToggleChange(key)}
-              />
-              <label>{key}</label>
-            </FilterItem>
-          ))}
-        </FilterItems>
-        <SearchButton onClick={handleKeywordChange}>키워드 검색</SearchButton>
-      </LeftBarContainer>
-    </>
+    <LeftBarContainer>
+      <FilterTitle>Filters</FilterTitle>
+      <FilterItems>
+        {keywords.map((key) => (
+          <FilterItem key={key}>
+            <input
+              type="checkbox"
+              checked={checkedItems[key]}
+              onChange={() => handleToggleChange(key)}
+            />
+            <label>{key}</label>
+          </FilterItem>
+        ))}
+      </FilterItems>
+      <SearchButton onClick={handleKeywordChange}>키워드 검색</SearchButton>
+    </LeftBarContainer>
   );
 };
 
 export default LeftBar;
 
-// Styled Components
-const MenuIcon = styled.button`
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  background: none;
-  border: none;
-  font-size: 24px;
-  cursor: pointer;
-  z-index: 1000;
-`;
-
-const LeftBarContainer = styled.div<{ isOpen: boolean }>`
-  position: fixed;
-  top: 0;
-  left: ${({ isOpen }) => (isOpen ? "0" : "-250px")};
+const LeftBarContainer = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 250px;
-  height: 100%;
+  max-width: 90%;
   background-color: #ffffff;
-  border-right: 2px solid #e0e0e0;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e0e0e0;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   padding: 20px;
   box-sizing: border-box;
-  transition: left 0.3s ease;
-  z-index: 999;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 
   @media (max-width: 768px) {
-    width: 80%;
+    width: 200px;
   }
 `;
 
@@ -116,6 +96,7 @@ const FilterItems = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
+  width: 100%;
 `;
 
 const FilterItem = styled.div`
