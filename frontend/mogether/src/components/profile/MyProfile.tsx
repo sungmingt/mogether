@@ -182,7 +182,7 @@ const MyProfile: React.FC = () => {
   return (
     <ProfileContainer>
       <ProfileTitle>My Profile</ProfileTitle>
-      <ProfileImage src={formData.userProfileImage} alt="Profile" />
+      <ProfileImage src={formData.userProfileImage || "../../assets/user_default.png"} alt="Profile" />
       {editMode && (
         <FileInput type="file" accept="image/*" onChange={handleImageChange} />
       )}
