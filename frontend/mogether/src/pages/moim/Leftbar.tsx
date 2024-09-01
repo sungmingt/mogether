@@ -1,23 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { filterPostsByKeywords } from "../../store/slices/moimSlice";
-import {
-  Box,
-  Button,
-  Checkbox,
-  IconButton,
-  VStack,
-  useBreakpointValue,
-  useDisclosure,
-  Drawer,
-  DrawerBody,
-  DrawerHeader,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  Heading,
-} from "@chakra-ui/react";
-import { FaBars } from "react-icons/fa";
+import { FaBars, FaTimes } from "react-icons/fa";
+import styled from "styled-components";
 
 const keywords = [
   "파티",
@@ -35,17 +20,19 @@ const keywords = [
 ];
 
 const LeftBar = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const btnRef = React.useRef<HTMLButtonElement>(null);
+  const [isOpen, setIsOpen] = useState(false);
   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>(
     keywords.reduce((acc, keyword) => ({ ...acc, [keyword]: false }), {})
   );
   const dispatch = useDispatch();
-  const drawerSize = useBreakpointValue({ base: "full", md: "xs" });
 
   useEffect(() => {
     handleKeywordChange();
   }, [checkedItems]);
+
+  const toggleMenu = () => {
+    setIsOpen(!isOpen);
+  };
 
   const handleToggleChange = (key: string) => {
     setCheckedItems((prev) => ({
@@ -63,217 +50,97 @@ const LeftBar = () => {
 
   return (
     <>
-      <IconButton
-        ref={btnRef}
-        icon={<FaBars />}
-        aria-label="Open filter menu"
-        onClick={onOpen}
-        position="fixed"
-        top="20px"
-        left="20px"
-        zIndex={1000}
-      />
-      <Drawer
-        isOpen={isOpen}
-        placement="left"
-        onClose={onClose}
-        finalFocusRef={btnRef}
-        size={drawerSize}
-      >
-        <DrawerOverlay />
-        <DrawerContent>
-          <DrawerCloseButton />
-          <DrawerHeader>
-            <Heading size="md" color="purple.500">
-              Filters
-            </Heading>
-          </DrawerHeader>
-          <DrawerBody>
-            <VStack align="start" spacing={4}>
-              {keywords.map((key) => (
-                <Checkbox
-                  key={key}
-                  isChecked={checkedItems[key]}
-                  onChange={() => handleToggleChange(key)}
-                  size="lg"
-                  colorScheme="purple"
-                >
-                  {key}
-                </Checkbox>
-              ))}
-            </VStack>
-            <Button
-              colorScheme="purple"
-              variant="solid"
-              width="100%"
-              mt={4}
-              onClick={handleKeywordChange}
-            >
-              키워드 검색
-            </Button>
-          </DrawerBody>
-        </DrawerContent>
-      </Drawer>
+      <MenuIcon onClick={toggleMenu}>
+        {isOpen ? <FaTimes /> : <FaBars />}
+      </MenuIcon>
+      <LeftBarContainer isOpen={isOpen}>
+        <FilterTitle>Filters</FilterTitle>
+        <FilterItems>
+          {keywords.map((key) => (
+            <FilterItem key={key}>
+              <input
+                type="checkbox"
+                checked={checkedItems[key]}
+                onChange={() => handleToggleChange(key)}
+              />
+              <label>{key}</label>
+            </FilterItem>
+          ))}
+        </FilterItems>
+        <SearchButton onClick={handleKeywordChange}>키워드 검색</SearchButton>
+      </LeftBarContainer>
     </>
   );
 };
 
 export default LeftBar;
 
+// Styled Components
+const MenuIcon = styled.button`
+  position: fixed;
+  top: 20px;
+  left: 20px;
+  background: none;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  z-index: 1000;
+`;
 
-// import React, { useState, useEffect } from "react";
-// import styled, { keyframes } from "styled-components";
-// import { FaBars, FaTimes } from "react-icons/fa";
-// import Toggle from "react-toggle";
-// import "react-toggle"; 
-// import { useDispatch } from "react-redux";
-// import { filterPostsByKeywords } from '../../store/slices/moimSlice';
+const LeftBarContainer = styled.div<{ isOpen: boolean }>`
+  position: fixed;
+  top: 0;
+  left: ${({ isOpen }) => (isOpen ? "0" : "-250px")};
+  width: 250px;
+  height: 100%;
+  background-color: #ffffff;
+  border-right: 2px solid #e0e0e0;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+  box-sizing: border-box;
+  transition: left 0.3s ease;
+  z-index: 999;
 
-// const slideIn = keyframes`
-//   from {
-//     transform: translateX(-100%);
-//   }
-//   to {
-//     transform: translateX(0);
-//   }
-// `;
+  @media (max-width: 768px) {
+    width: 80%;
+  }
+`;
 
-// const slideOut = keyframes`
-//   from {
-//     transform: translateX(0);
-//   }
-//   to {
-//     transform: translateX(-100%);
-//   }
-// `;
+const FilterTitle = styled.h3`
+  margin: 0 0 20px;
+  font-size: 18px;
+  color: #7848f4;
+`;
 
-// const LeftBarContainer = styled.div<{ isOpen: boolean }>`
-//   position: fixed;
-//   top: 30%;
-//   left: 0;
-//   width: 200px;
-//   height: 40%;
-//   background-color: rgba(255, 255, 255, 0.8);
-//   border-right: 2px solid #e0e0e0;
-//   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-//   padding: 20px;
-//   box-sizing: border-box;
-//   transform: translateX(${({ isOpen }) => (isOpen ? "0" : "-100%")});
-//   animation: ${({ isOpen }) => (isOpen ? slideIn : slideOut)} 0.5s forwards;
+const FilterItems = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
 
-//   @media (max-width: 768px) {
-//     width: 30%;
-//   }
-// `;
+const FilterItem = styled.div`
+  display: flex;
+  align-items: center;
+  font-size: 16px;
+  color: #333;
 
-// const MenuIcon = styled.div`
-//   cursor: pointer;
-//   font-size: 24px;
-//   position: fixed;
-//   top: 30%;
-//   left: 0px;
-//   z-index: 1000;
-//   display: flex;
-// `;
+  input {
+    margin-right: 10px;
+  }
+`;
 
-// const FilterContainer = styled.div`
-//   margin-bottom: 20px;
-// `;
+const SearchButton = styled.button`
+  width: 100%;
+  padding: 10px;
+  background-color: #7848f4;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s;
 
-// const FilterTitle = styled.h3`
-//   margin-bottom: 10px;
-//   color: #7848f4;
-//   font-size: 18px;
-// `;
-
-// const FilterItem = styled.div`
-//   display: flex;
-//   align-items: center;
-//   margin-bottom: 10px;
-
-//   label {
-//     margin-left: 10px;
-//   }
-// `;
-
-// const StyledToggle = styled(Toggle)`
-//   .react-toggle-track {
-//     background-color: #7848f4;
-//   }
-//   .react-toggle-thumb {
-//     border-color: #ffffff;
-//   }
-// `;
-
-// const CheckButton = styled.button`
-//   padding: 10px;
-//   margin: 10px;
-//   background-color: #7848f4;
-//   color: #ffffff;
-//   border: 2px solid #7848f4;
-//   border-radius: 8px;
-//   cursor: pointer;
-//   font-size: 16px;
-//   transition: background-color 0.3s, color 0.3s, transform 0.3s;
-
-//   &:hover {
-//     background-color: #5630c6;
-//     color: #ffffff;
-//   }
-// `;
-
-// const LeftBar = () => {
-//   const [isOpen, setIsOpen] = useState(false);
-//   const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({
-//     Art: true,
-//     Music: true,
-//     Travel: true,
-//     Sports: true,
-//   });
-//   const dispatch = useDispatch();
-
-//   useEffect(() => {
-//     handleKeywordChange();
-//   }, [checkedItems]);
-
-//   const toggleMenu = () => {
-//     setIsOpen(!isOpen);
-//   };
-
-//   const handleToggleChange = (key: string) => {
-//     setCheckedItems((prev) => ({
-//       ...prev,
-//       [key]: !prev[key],  //true -> false, false -> true
-//     }));
-//   };
-
-//   const handleKeywordChange = () => {
-//     const selectedKeywords = Object.keys(checkedItems).filter((key) => checkedItems[key]);
-//     dispatch(filterPostsByKeywords(selectedKeywords));
-//   };
-
-//   return (
-//     <>
-//       <MenuIcon onClick={toggleMenu}>
-//         {isOpen ? <FaTimes /> : <FaBars />}
-//       </MenuIcon>
-//       <LeftBarContainer isOpen={isOpen}>
-//         <FilterContainer>
-//           <FilterTitle>Filters</FilterTitle>
-//           {Object.keys(checkedItems).map((key) => (
-//             <FilterItem key={key}>
-//               <StyledToggle
-//                 checked={checkedItems[key]}
-//                 onChange={() => handleToggleChange(key)}
-//               />
-//               <label>{key}</label>
-//             </FilterItem>
-//           ))}
-//         </FilterContainer>
-//         <CheckButton onClick={handleKeywordChange}>키워드 검색</CheckButton>
-//       </LeftBarContainer>
-//     </>
-//   );
-// };
-
-// export default LeftBar;
+  &:hover {
+    background-color: #5630c6;
+  }
+`;

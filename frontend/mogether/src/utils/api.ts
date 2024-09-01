@@ -110,10 +110,6 @@ api2.interceptors.response.use(
 // API 요청 함수들
 export const loginApi = async (email: string, password: string) => {
   const response = await api.post('/login', { email: email, password: password });
-  localStorage.setItem('accessToken', response.headers["Accesstoken"]);
-  localStorage.setItem('refreshToken', response.headers["Refreshtoken"]);
-  localStorage.setItem('userId', response.headers["Userid"]);
-  console.log(localStorage.getItem('accessToken'));
   return response;  //api.ts에서 이미 localStorage에 accessToken, refreshToken을 저장했기 때문에 return response만 해주면 됨
 };
 

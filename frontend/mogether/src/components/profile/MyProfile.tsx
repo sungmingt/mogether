@@ -86,12 +86,12 @@ const MyProfile: React.FC = () => {
   const [formData, setFormData] = useState<any>(null);
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const navigate = useNavigate();
-  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const accessToken = localStorage.getItem("accessToken");
 
   useEffect(() => {
     const fetchProfileData = async () => {
         try {
-            const response = dispatch(fetchProfile(userId)).unwrap();  //dispatch로 인해 profile 변경 -> useSelector로 변경값 갱신 -> 그걸 가져옴
+            const response = await dispatch(fetchProfile(userId)).unwrap();  //dispatch로 인해 profile 변경 -> useSelector로 변경값 갱신 -> 그걸 가져옴
             setFormData(currentUserProfile);
             console.log(response);
         }
@@ -101,13 +101,13 @@ const MyProfile: React.FC = () => {
         }
     }
     fetchProfileData();
-  }, [dispatch])
+  }, [dispatch, userId])
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!accessToken) {
       navigate("/login");
     }
-  }, [isAuthenticated, navigate]);
+  }, [accessToken, navigate]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -124,7 +124,7 @@ const MyProfile: React.FC = () => {
 
   const handleUserDelete = async () => {
     try {
-      await dispatch(DeleteUser(userId));
+      const response = await dispatch(DeleteUser(userId));
       Swal.fire("Success", "성공적으로 탈퇴되었습니다.", "success");
       navigate("/");
     } catch (error) {
@@ -168,6 +168,7 @@ const MyProfile: React.FC = () => {
       try {
         const response = await dispatch(PatchUserProfile(patchData)).unwrap();
         // window.location.reload();  //useEffect를 한번 더 실행?
+        Swal.fire('Success', '프로필이 수정되었습니다.', 'success'); 
       }
       catch (error) {
         console.error(error);
