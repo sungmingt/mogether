@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import { fetchProfile, selectUserProfile, PatchUserProfile } from "../../store/slices/userProfileSlice";
+import { fetchProfile, selectUserProfile, PatchUserProfile, DeleteUser } from "../../store/slices/userProfileSlice";
 import { RootState, AppDispatch } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -121,6 +121,17 @@ const MyProfile: React.FC = () => {
       setProfileImage(e.target.files[0]);
     }
   };
+
+  const handleUserDelete = async () => {
+    try {
+      await dispatch(DeleteUser(userId));
+      Swal.fire("Success", "성공적으로 탈퇴되었습니다.", "success");
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      Swal.fire("Error", error as string, "error");
+    }
+  }
 
   const handleToggleEdit = async () => {
     if (editMode) {  //editMode가 true인 경우
@@ -288,6 +299,7 @@ const MyProfile: React.FC = () => {
       <Button onClick={handleToggleEdit}>
         {editMode ? "Save Changes" : "Edit Profile"}
       </Button>
+      <Button onClick={handleUserDelete}>탈퇴하기</Button>
     </ProfileContainer>
   );
 };

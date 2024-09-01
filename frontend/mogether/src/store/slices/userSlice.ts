@@ -149,7 +149,7 @@ export const MyInterestedBungae = createAsyncThunk(
   }
 );
 
-export const MyCreatedMoim = createAsyncThunk(
+export const MyCreatedMoim = createAsyncThunk(  //내가 만든 소모임 리스트
   'user/MyCreatedMoim',
   async (userId: number, thunkAPI) => {
     try {
@@ -167,7 +167,7 @@ export const MyCreatedMoim = createAsyncThunk(
   }
 )
 
-export const MyCreatedBungae = createAsyncThunk(
+export const MyCreatedBungae = createAsyncThunk(  //내가 만든 번개모임 리스트
   'user/MyCreatedBungae',
   async (userId: number, thunkAPI) => {
     try {
@@ -184,6 +184,8 @@ export const MyCreatedBungae = createAsyncThunk(
     }
   }
 )
+
+
 
 
 

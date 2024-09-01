@@ -122,32 +122,9 @@ export const forgotPasswordApi = async (email: string, nickname: string) => {
   return response;
 }
 
-// export const GoogleLoginApi = async () => {
-//   const response = await axios.get('https://api.mo-gether.site/oauth2/authorization/google');
-//   const accessToken = response.headers['accessToken'].split(' ')[1];
-//   const refreshToken = response.headers['refreshToken'].split(' ')[1];
-//   const userId = response.headers['userId'];
-//   localStorage.setItem('accessToken', accessToken);
-//   localStorage.setItem('refreshToken', refreshToken);
-//   localStorage.setItem('userId', userId);
-//   return response;
-// }
-
-// export const KakaoLoginApi = async () => {
-//   const response = await axios.get('https://api.mo-gether.site/oauth2/authorization/kakao');
-//   const accessToken = response.headers['accessToken'].split(' ')[1];
-//   const refreshToken = response.headers['refreshToken'].split(' ')[1];
-//   const userId = response.headers['userId'];
-//   localStorage.setItem('accessToken', accessToken);
-//   localStorage.setItem('refreshToken', refreshToken);
-//   localStorage.setItem('userId', userId);
-//   return response;
-// }
 
 export const registerApi = async (registerFormData: FormData) => {  //register 호출 시 registerFormData라는 객체 데이터를 받아옴
   const response = await api2.post('/user/join', registerFormData);
-  // localStorage.setItem('accessToken', response.data.accessToken);
-  // localStorage.setItem('refreshToken', response.data.refreshToken);
   return response;
 };
 
@@ -308,6 +285,11 @@ export const EditMoimApi = async (moimId: number, editData: any) => {
 
 export const EditBungaeApi = async (bungaeId: number, editData: any) => {
   const response = await api2.patch(`/bungae/${bungaeId}`, editData);
+  return response;
+}
+
+export const DeleteUserApi = async (userId: number) => {
+  const response = await api.delete(`/user/${userId}`);
   return response;
 }
 

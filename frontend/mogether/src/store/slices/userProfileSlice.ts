@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from "../store";
-import { userApi, registerApi, changeUserProfile, socialRegisterApi, changePasswordApi } from '../../utils/api';
+import { userApi, registerApi, changeUserProfile, socialRegisterApi, changePasswordApi, DeleteUserApi } from '../../utils/api';
 
 interface Address {
     city: string;
@@ -114,6 +114,20 @@ export const socialRegisterUser = createAsyncThunk(
     }
 );
 
+export const DeleteUser = createAsyncThunk(
+    'user/DeleteUser',
+    async (userId: number, { rejectWithValue }) => {
+      try {
+        const response = await DeleteUserApi(userId);
+        if (response.status === 204) {
+          return response.data;
+        }
+      } catch (error) {
+        return rejectWithValue('Failed to delete user');
+      }
+    }
+  ) 
+
 const userProfileSlice = createSlice({
     name: 'userProfile',
     initialState,
@@ -153,6 +167,15 @@ const userProfileSlice = createSlice({
             state.error = action.payload as string;
         });
         builder.addCase(PatchUserPassword.rejected, (state, action: PayloadAction<any>) => {
+            state.error = action.payload as string;
+        });
+        builder.addCase(DeleteUser.fulfilled, (state, action: PayloadAction<any>) => {
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
+            localStorage.removeItem('userId');
+            state.error = null;
+        })
+        builder.addCase(DeleteUser.rejected, (state, action: PayloadAction<any>) => {
             state.error = action.payload as string;
         });
     },

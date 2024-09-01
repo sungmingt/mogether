@@ -102,6 +102,7 @@ const userProfile: React.FC = () => {
     }
   }, [isAuthenticated, navigate]);
 
+
 // 여기서 이미지는 오로지 url로만
   return (
     <ProfileContainer>

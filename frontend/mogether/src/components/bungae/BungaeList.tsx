@@ -373,8 +373,6 @@ const BungaeList = () => {
       </SortSelect>
       {loading ? (
         <p>Loading...</p>
-      ) : error ? (
-        <p>{error}</p>
       ) : (
         <>
           <PostGrid>
