@@ -45,9 +45,9 @@ export const login = createAsyncThunk(
             const response = await loginApi(email, password);
             if (response.status === 200 || response.status === 201) {
                 console.log(response.status);
-                localStorage.setItem('accessToken', response.headers["accessToken"]);
-                localStorage.setItem('refreshToken', response.headers["refreshToken"]);
-                localStorage.setItem('userId', response.headers["userId"]);
+                // localStorage.setItem('accessToken', response.headers["AccessToken"]);
+                // localStorage.setItem('refreshToken', response.headers["RefreshToken"]);
+                // localStorage.setItem('userId', response.headers["UserId"]);
                 return response;  //아래 extrareducers에서 action.payload로 들어감
             }
         } catch (error) {

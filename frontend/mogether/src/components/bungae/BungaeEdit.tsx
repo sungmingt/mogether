@@ -235,8 +235,8 @@ const BungaeEdit = () => {
   const userProfile = useSelector((state: RootState) => state.userProfile.userProfiles[userId]);  //rootState : store.ts에서 가져옴 -> store.ts는 각각 정의된 store에서 가져옴
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [category, setCategory] = useState<string | null>("bungae");
-  const [keywords, setKeywords] = useState<string[]>([]);
+  const [category, setCategory] = useState<string>("bungae");
+  const [keyword, setKeyword] = useState<string>("");
   const [location, setLocation] = useState("");
   const [subLocation, setSubLocation] = useState("");
   const [imageUrls, setImageUrls] = useState<string[]>([]);
@@ -269,12 +269,8 @@ const BungaeEdit = () => {
     }
   }, [dispatch, isAuthenticated]);
 
-  const handleKeywordChange = useCallback((keyword: string) => {  //이전과 동일한 참조값이 반환될 경우 -> 리렌더 x
-    setKeywords((prev) =>
-      prev.includes(keyword)
-        ? prev.filter((k) => k !== keyword)
-        : [...prev, keyword]
-    );
+  const handleKeywordChange = useCallback((keyword: string) => {
+    setKeyword(keyword);
   }, []);
 
   useEffect(() => {
@@ -283,7 +279,7 @@ const BungaeEdit = () => {
         const response = await dispatch(clickPosts(moimId)).unwrap();
         setTitle(response.title);
         setContent(response.content);
-        setKeywords(response.keyword);
+        setKeyword(response.keyword);
         setLocation(response.address.city);
         setSubLocation(response.address.gu);
         setDateRange({
@@ -338,7 +334,7 @@ const BungaeEdit = () => {
     if (
       !title ||
       !content ||
-      keywords.length === 0 ||
+      !keyword ||
       !category ||
       !dateRange.startDate ||
       !dateRange.endDate ||
@@ -355,7 +351,7 @@ const BungaeEdit = () => {
         userId: userId,
         title: title,
         content: content,
-        keyword: keywords,
+        keyword: keyword,
         address: {
           city: location,
           gu: subLocation,
@@ -374,9 +370,7 @@ const BungaeEdit = () => {
         moimFormData.append('images', file);
         });
 	    }
-	    else {
-	      moimFormData.append('images', null as any);
-	    };
+	    
       try {
         const moimFormDataMoimId = {moimId: moimId, moimFormData: moimFormData};
         const response = await dispatch(EditMoim(moimFormDataMoimId)).unwrap();
@@ -388,7 +382,6 @@ const BungaeEdit = () => {
           title: '게시글 생성 실패',
           text: '생성 중 오류가 발생했습니다. 다시 시도하세요.',
         });
-        window.location.reload();
       }
     }
     else {
@@ -396,7 +389,7 @@ const BungaeEdit = () => {
         userId: userProfile?.userId,
         title: title,
         content: content,
-        keyword: keywords,
+        keyword: keyword,
         address: {
           city: location,
           gu: subLocation,
@@ -415,9 +408,6 @@ const BungaeEdit = () => {
           bungaeFormData.append('images', file);
         });
 	    }
-	    else {
-	      bungaeFormData.append('images', null as any);
-	    };
       try {
         const bungaeFormDataBungaeId = {bungaeId: bungaeId, bungaeFormData: bungaeFormData};
         const response = await dispatch(EditBungae(bungaeFormDataBungaeId)).unwrap();
@@ -429,7 +419,6 @@ const BungaeEdit = () => {
           title: '게시글 생성 실패',
           text: '생성 중 오류가 발생했습니다. 다시 시도하세요.',
         });
-        window.location.reload();
       }
     }
 
@@ -502,14 +491,14 @@ const BungaeEdit = () => {
             Keywords<RequiredIcon>*</RequiredIcon>
           </Label>
           <ButtonGroup>
-            {["파티", "자기계발", "취미", "여행", "술", "음식", "스포츠", "액티비티", "게임", "문화", "스터디", "언어"].map((keyword) => (
+            {["파티", "자기계발", "취미", "여행", "술", "음식", "스포츠", "액티비티", "게임", "문화", "스터디", "언어"].map((key) => (
               <Button
-                key={keyword}
-                selected={keywords.includes(keyword)}
-                onClick={() => handleKeywordChange(keyword)}
-              >
-                {keyword}
-              </Button>
+              key={key}
+              selected={keyword===key}
+              onClick={() => handleKeywordChange(key)}
+            >
+              {key}
+            </Button>
             ))}
           </ButtonGroup>
         </div>

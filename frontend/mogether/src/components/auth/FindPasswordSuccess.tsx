@@ -20,7 +20,8 @@ const Message = styled.h1`
 const FindPasswordSuccess: React.FC = () => {
   return (
     <SuccessContainer>
-      <Message>비밀번호가 입력하신 이메일로 전송되었습니다</Message>
+      <Message>임시 비밀번호가 입력하신 이메일로 전송되었습니다</Message>
+      <Message>로그인 후, 비밀번호를 변경해주세요</Message>
     </SuccessContainer>
   );
 };

@@ -243,8 +243,8 @@ const MoimCreate = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [category, setCategory] = useState<string | null>("moim");
-  const [keyword, setKeyword] = useState<string | null>("Art");
+  const [category, setCategory] = useState<string>("moim");
+  const [keyword, setKeyword] = useState<string>("");
   const [location, setLocation] = useState("");
   const [subLocation, setSubLocation] = useState("");
   const [imageUrls, setImageUrls] = useState<string[]>([]);
@@ -320,7 +320,7 @@ const MoimCreate = () => {
     if (
       !title ||
       !content ||
-      keyword === "" ||
+      !keyword ||
       !category ||
       !dateRange.startDate ||
       !dateRange.endDate ||
@@ -370,9 +370,6 @@ const MoimCreate = () => {
         moimFormData.append('images', file);
         });
 	    }
-	    else {
-	      moimFormData.append('images', null as any);
-	    };
       try {
         const response = await dispatch(createMoim(moimFormData)).unwrap();
         console.log(response);
@@ -384,7 +381,6 @@ const MoimCreate = () => {
           title: '게시글 생성 실패',
           text: '생성 중 오류가 발생했습니다. 다시 시도하세요.',
         });
-        window.location.reload();
       }
     }
     else {
@@ -392,12 +388,9 @@ const MoimCreate = () => {
       bungaeFormData.append('dto', new Blob([JSON.stringify(bungaeData)], { type: 'application/json' }));
       if (imageFile) {   //imageFile이 null(이미지가 올라간 게 없을 경우)
         imageFile.forEach((file) => {
-        bungaeFormData.append('images', file);
+          bungaeFormData.append('images', file);
         });
-	    }
-	    else {
-	      bungaeFormData.append('images', null as any);
-	    };
+      }
       try {
         const response = await dispatch(createBungae(bungaeData)).unwrap();
         console.log(response);
@@ -409,7 +402,6 @@ const MoimCreate = () => {
           title: '게시글 생성 실패',
           text: '생성 중 오류가 발생했습니다. 다시 시도하세요.',
         });
-        window.location.reload();
       }
     }
 
