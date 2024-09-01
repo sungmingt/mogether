@@ -133,7 +133,7 @@ const MyProfile: React.FC = () => {
   const handleToggleEdit = async () => {
     if (editMode) {  //editMode가 true인 경우
       if (editMode) {
-        if (!formData.nickname || !formData.name) {
+        if (!formData.nickname) {
           Swal.fire("error", "Nickname and Name are required", "error");
           return;
         }
@@ -150,7 +150,6 @@ const MyProfile: React.FC = () => {
           new Blob(
             [
               JSON.stringify({
-                name: formData.name,
                 nickname: formData.nickname,
                 address: formData.address,
                 age: formData.age,
@@ -179,7 +178,7 @@ const MyProfile: React.FC = () => {
   return (
     <ProfileContainer>
       <ProfileTitle>My Profile</ProfileTitle>
-      <ProfileImage src={formData.userProfileImage || "../../assets/user_default.png"} alt="Profile" />
+      <ProfileImage src={formData.imageUrl || "../../assets/user_default.png"} alt="Profile" />
       {editMode && (
         <FileInput type="file" accept="image/*" onChange={handleImageChange} />
       )}
