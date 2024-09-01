@@ -269,7 +269,6 @@ const MoimCreate = () => {
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const userId = Number(localStorage.getItem('userId')) || 0;
   const accessToken = localStorage.getItem('accessToken');
-  const refreshToken = localStorage.getItem('refreshToken');
 
   useEffect(() => {
     if (!accessToken) {

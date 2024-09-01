@@ -232,7 +232,6 @@ const BungaeEdit = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const userId = Number(localStorage.getItem('userId')) || 0;
-  const userProfile = useSelector((state: RootState) => state.userProfile.userProfiles[userId]);  //rootState : store.ts에서 가져옴 -> store.ts는 각각 정의된 store에서 가져옴
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
   const [category, setCategory] = useState<string>("bungae");
@@ -258,16 +257,16 @@ const BungaeEdit = () => {
     meetingPeriodEnd: "",
   });
   const [additionalFocusedInput, setAdditionalFocusedInput] = useState<FocusedInputShape | null>(null);
-  const isAuthenticated = useSelector(selectIsAuthenticated);
   const {id} = useParams<{id: string}>();
   const moimId = id ? parseInt(id, 10) : 0;
   const bungaeId = id ? parseInt(id, 10) : 0;
+  const accessToken = localStorage.getItem('accessToken');
 
   useEffect(() => {
-    if (!isAuthenticated) {
-      navigate('/Login');   //userProfile이 존재 x -> 가져옴
+    if (!accessToken) {
+      navigate('/Login');  
     }
-  }, [dispatch, isAuthenticated]);
+  }, [dispatch, accessToken]);
 
   const handleKeywordChange = useCallback((keyword: string) => {
     setKeyword(keyword);
@@ -386,7 +385,7 @@ const BungaeEdit = () => {
     }
     else {
       const bungaeData = {
-        userId: userProfile?.userId,
+        userId: userId,
         title: title,
         content: content,
         keyword: keyword,
