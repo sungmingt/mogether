@@ -45,7 +45,7 @@ public class TokenProvider {
         Date issueDate = new Date();
         Date expireDate = new Date(issueDate.getTime() + timeToLive);
 
-        return PREFIX + Jwts.builder()
+        return  Jwts.builder()
                 .claim("id", id)
                 .issuedAt(issueDate)
                 .expiration(expireDate)

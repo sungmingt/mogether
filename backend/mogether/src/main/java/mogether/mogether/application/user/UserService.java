@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import static mogether.mogether.application.user.TemporaryPasswordGenerator.*;
 import static mogether.mogether.application.user.UserValidator.*;
 import static mogether.mogether.application.user.UserValidator.checkPasswordPattern;
 import static mogether.mogether.exception.ErrorCode.*;
@@ -22,19 +23,17 @@ public class UserService {
     private final UserRepository userRepository;
     private final ProfileImageService profileImageService;
 
-    //회원가입
     public UserJoinResponse join(UserJoinRequest userJoinRequest, MultipartFile image) {
         checkEmailExists(userJoinRequest.getEmail());
         checkPasswordPattern(userJoinRequest.getPassword());
 
-        User user = (userJoinRequest.toUser());
+        User user = userJoinRequest.toUser();
         User savedUser = userRepository.save(user);
         profileImageService.save(user, image);
 
         return UserJoinResponse.of(savedUser);
     }
 
-    //유저 정보 수정
     public UserUpdateResponse update(Long userId, AppUser appUser,
                                      UserUpdateRequest userUpdateRequest, MultipartFile image) {
         validateUser(userId, appUser.getId());
@@ -46,7 +45,6 @@ public class UserService {
         return UserUpdateResponse.of(findUser);
     }
 
-    //비밀번호 변경
     public void updatePassword(Long userId, AppUser appUser, PasswordUpdateRequest passwordUpdateRequest) {
         validateUser(userId, appUser.getId());
 
@@ -57,29 +55,36 @@ public class UserService {
         findUser.updatePassword(encodePassword(passwordUpdateRequest.getNewPassword()));
     }
 
-    //유저 정보 조회
+    public PasswordFindResponse findPassword(AppUser appUser, PasswordFindRequest request) {
+        User findUser = userRepository.findByEmailAndNickname(request.getEmail(), request.getNickname())
+                .orElseThrow(() -> new MogetherException(USER_NOT_FOUND));
+
+        validateUser(findUser.getId(), appUser.getId());
+
+        String temporaryPassword = generateTemporaryPassword();
+        findUser.updatePassword(encodePassword(temporaryPassword));
+        return PasswordFindResponse.of(temporaryPassword);
+    }
+
     @Transactional(readOnly = true)
     public UserResponse getUserInfo(Long userId) {
         User findUser = findById(userId);
         return UserResponse.of(findUser);
     }
 
-    //탈퇴
     public void quit(Long userId, AppUser appUser) {
         validateUser(userId, appUser.getId());
         userRepository.deleteById(userId);
     }
 
-    public UserJoinResponse addInfoAfterOAuthSignUp(Long userId, AppUser appUser, MultipartFile image, AfterOAuthSignUpRequest request) {
-        validateUser(userId, appUser.getId());
-
+    public UserJoinResponse addInfoAfterOAuthSignUp(Long userId, MultipartFile image, AfterOAuthSignUpRequest request) {
         User findUser = findById(userId);
         findUser.update(
                 findUser.getNickname(), request.getAddress(), request.getAge(),
                 Gender.of(request.getGender()), request.getIntro(), request.getPhoneNumber()
         );
-        profileImageService.save(findUser, image);
 
+        profileImageService.save(findUser, image);
         return UserJoinResponse.of(findUser);
     }
 

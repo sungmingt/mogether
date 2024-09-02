@@ -54,7 +54,7 @@ public class BungaeController {
     @ResponseStatus(CREATED)
     @PostMapping
     public BungaeCreateResponse create(@AuthenticationPrincipal AppUser appUser,
-                                       @RequestPart(name = "images") List<MultipartFile> images,
+                                       @RequestPart(name = "images", required = false) List<MultipartFile> images,
                                        @RequestPart(name = "dto") BungaeCreateRequest bungaeCreateRequest) {
         return bungaeService.create(appUser, images, bungaeCreateRequest);
     }
@@ -66,7 +66,7 @@ public class BungaeController {
     @PatchMapping("/{bungaeId}")
     public BungaeUpdateResponse update(@PathVariable("bungaeId") Long bungaeId,
                                        @AuthenticationPrincipal AppUser appUser,
-                                       @RequestPart(name = "images") List<MultipartFile> images,
+                                       @RequestPart(name = "images", required = false) List<MultipartFile> images,
                                        @RequestPart(name = "dto") BungaeUpdateRequest bungaeUpdateRequest) {
         return bungaeService.update(bungaeId, appUser, bungaeUpdateRequest, images);
     }
@@ -78,7 +78,6 @@ public class BungaeController {
     @GetMapping("/{bungaeId}")
     public BungaeResponse read(@PathVariable("bungaeId") Long bungaeId,
                                @AuthenticationPrincipal AppUser appUser) {
-
         return bungaeService.read(bungaeId, appUser);
     }
 

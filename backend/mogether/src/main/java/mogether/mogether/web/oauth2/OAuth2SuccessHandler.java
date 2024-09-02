@@ -21,10 +21,10 @@ import java.io.IOException;
 @Component
 public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
 
-    private final AuthService authService;
     @Value("${front.origin}")
     private String frontOrigin;
 
+    private final AuthService authService;
     private static final String LOGIN_ENDPOINT = "/social/login/";
     private static final String REGISTER_ENDPOINT = "/social/register";
 

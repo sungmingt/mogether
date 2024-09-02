@@ -9,8 +9,7 @@ import mogether.mogether.web.auth.dto.Token;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import static mogether.mogether.domain.token.TokenInfo.ACCESS_TOKEN;
-import static mogether.mogether.domain.token.TokenInfo.REFRESH_TOKEN;
+import static mogether.mogether.domain.token.TokenInfo.*;
 
 @RequiredArgsConstructor
 @Slf4j
@@ -20,11 +19,8 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public HttpStatus login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
-        Token token = authService.login(loginRequest);
-        response.setHeader(ACCESS_TOKEN, token.getAccessToken());
-        response.setHeader(REFRESH_TOKEN, token.getRefreshToken());
-        return HttpStatus.OK;
+    public Token login(@RequestBody LoginRequest loginRequest, HttpServletResponse response) {
+        return authService.login(loginRequest);
     }
 
     @PostMapping("/logout")
@@ -34,10 +30,7 @@ public class AuthController {
     }
 
     @GetMapping("/token")
-    public HttpStatus reissueToken(@RequestHeader String refreshToken, HttpServletResponse response) {
-        Token token = authService.reissueToken(refreshToken);
-        response.setHeader(ACCESS_TOKEN, token.getAccessToken());
-        response.setHeader(REFRESH_TOKEN, token.getRefreshToken());
-        return HttpStatus.OK;
+    public Token reissueToken(@RequestHeader String refreshToken, HttpServletResponse response) {
+        return authService.reissueToken(refreshToken);
     }
 }

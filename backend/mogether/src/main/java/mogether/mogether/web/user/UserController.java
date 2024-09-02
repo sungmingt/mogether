@@ -4,7 +4,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import mogether.mogether.application.interest.BungaeInterestService;
 import mogether.mogether.application.user.UserService;
 import mogether.mogether.domain.oauth.AppUser;
 import mogether.mogether.web.user.dto.*;
@@ -56,6 +55,16 @@ public class UserController {
         return HttpStatus.OK;
     }
 
+    @Operation(summary = "비밀번호 찾기", description = "유저의 비밀번호를 찾는다",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "비밀번호 찾기 성공"),
+            })
+    @PostMapping("/password")
+    public PasswordFindResponse findPassword(@AuthenticationPrincipal AppUser appUser,
+                                            @RequestBody PasswordFindRequest passwordFindRequest) {
+        return userService.findPassword(appUser, passwordFindRequest);
+    }
+
     @Operation(summary = "유저 정보 조회", description = "유저의 정보를 조회한다",
             responses = {
                     @ApiResponse(responseCode = "200", description = "유저 정보 조회 성공"),
@@ -81,10 +90,9 @@ public class UserController {
                     @ApiResponse(responseCode = "200", description = "추가 정보 기입 성공"),
             })
     @PostMapping("/{userId}/oauth2/info")
-    public UserJoinResponse addInfoAfterOAuthSignUp(@PathVariable Long userId,
-                                                    @AuthenticationPrincipal AppUser appUser,
+    public UserJoinResponse addInfoAfterOAuthSignUp(@PathVariable("userId") Long userId,
                                                     @RequestPart(name = "image", required = false) MultipartFile image,
                                                     @RequestPart(name = "dto") AfterOAuthSignUpRequest afterOAuthSignUpRequest) {
-        return userService.addInfoAfterOAuthSignUp(userId, appUser, image, afterOAuthSignUpRequest);
+        return userService.addInfoAfterOAuthSignUp(userId, image, afterOAuthSignUpRequest);
     }
 }
