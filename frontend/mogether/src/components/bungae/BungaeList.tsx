@@ -247,6 +247,20 @@ const KeywordButton = styled.button<{ selected: boolean }>`
   }
 `;
 
+const KeyowrdContainer = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  padding: 5px;
+  border: 1px solid #7848f4;
+  background-color: #7848f4;
+  white-space: nowrap;
+  color: "white";
+  margin: 3px;
+  width: auto;
+`;
+
 const BungaeList = () => {
   const dispatch: AppDispatch = useDispatch();
   const { visiblePosts, allPosts, loading, error } = useSelector(
@@ -258,7 +272,7 @@ const BungaeList = () => {
   const [subLocation, setSubLocation] = useState("");
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>(keywords); // 모든 키워드가 기본적으로 선택된 상태
 
-  const userId = localStorage.getItem("userId") || 0;
+  const userId = Number(localStorage.getItem("userId")) || 0;
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -465,6 +479,7 @@ const BungaeList = () => {
                       <span>{post.hostName}</span>
                     </HostInfo>
                     <MetaInfo>
+                      <KeyowrdContainer>{post.keyword}</KeyowrdContainer>
                       <span>
                         {post.createdAt} ~ {post.expireAt}
                       </span>

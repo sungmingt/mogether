@@ -264,6 +264,19 @@ const KeywordButton = styled.button<{ selected: boolean }>`
     color: #ffffff;
   }
 `;
+const KeyowrdContainer = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 20px;
+  padding: 5px;
+  border: 1px solid #7848f4;
+  background-color: #7848f4;
+  white-space: nowrap;
+  color: "white";
+  margin: 3px;
+  width: auto;
+`;
 
 const MoimList = () => {
   const dispatch: AppDispatch = useDispatch();
@@ -484,6 +497,7 @@ const MoimList = () => {
                       <span>{post.hostName}</span>
                     </HostInfo>
                     <MetaInfo>
+                      <KeyowrdContainer>{post.keyword}</KeyowrdContainer>
                       <span>
                         {post.createdAt} ~ {post.expireAt}
                       </span>

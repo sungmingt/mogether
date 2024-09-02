@@ -184,14 +184,14 @@ const postSlice = createSlice({   // 게시글 리스트의 상태와 액션을 
       state.allPosts.sort((a, b) => b.interestsCount - a.interestsCount);
       state.visiblePosts = state.allPosts.slice(0, 12);
     },
-    filterPostsByKeywords(state, action: PayloadAction<string[]>) {
-      const filteredPosts = state.allPosts.filter(post => 
+    filterPostsByKeywords(state, action: PayloadAction<string[]>) {  // keyword 배열
+      const filteredPosts = state.allPosts.filter(post =>  // fetchAllPosts로 관리
         action.payload.some(keyword => post.keyword.includes(keyword))
       );
       state.visiblePosts = filteredPosts.slice(0, 12);
     }
   },
-  extraReducers: (builder) => {
+  extraReducers: (builder) => {  //비동기 액션 관리
     builder
       .addCase(fetchPosts.pending, (state) => {
         state.loading = true;
