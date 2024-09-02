@@ -30,19 +30,17 @@ public class MoimInterestService {
 
 
     public void doInterest(Long moimId, AppUser appUser) {
-        Long userId = appUser.getUser().getId();
-        if(checkInterestExists(moimId, userId).isPresent()) return;
+        if(checkInterestExists(moimId, appUser.getId()).isPresent()) return;
 
         Moim findMoim = moimService.findById(moimId);
-        User findUser = userService.findById(userId);
+        User findUser = userService.findById(appUser.getId());
 
         MoimInterest moimInterest = new MoimInterest(findMoim, findUser);
         moimInterestRepository.save(moimInterest);
     }
 
     public void undoInterest(Long moimId, AppUser appUser) {
-        Long userId = appUser.getUser().getId();
-        checkInterestExists(moimId, userId)
+        checkInterestExists(moimId, appUser.getId())
                 .ifPresentOrElse(
                         moimInterestRepository::delete,
                         () -> {
