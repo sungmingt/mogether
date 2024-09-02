@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
 import { filterPostsByKeywords } from "../../store/slices/moimSlice";
-import styled from "styled-components";
-import { FaBars, FaTimes } from "react-icons/fa";
+import styled, { keyframes } from "styled-components";
+import somoimIcon from "../../assets/somoim_icon.png"; // Update the path to your icon file
 
 const keywords = [
   "파티",
@@ -50,9 +50,11 @@ const LeftBar = () => {
 
   return (
     <>
-      <MenuIcon onClick={toggleMenu}>
-        {isOpen ? <FaTimes /> : <FaBars />}
-      </MenuIcon>
+      {!isOpen && (
+        <CircleIcon onClick={toggleMenu}>
+          <IconImage src={somoimIcon} alt="somoim icon" />
+        </CircleIcon>
+      )}
       <LeftBarContainer isOpen={isOpen}>
         <FilterTitle>Filters</FilterTitle>
         <FilterItems>
@@ -75,18 +77,46 @@ const LeftBar = () => {
 
 export default LeftBar;
 
-const MenuIcon = styled.div`
-  cursor: pointer;
-  font-size: 24px;
-  position: fixed;
-  top: 20px;
-  left: 20px;
-  z-index: 1000;
-  display: flex;
-
-  @media (min-width: 769px) {
-    display: none;
+// Styled Components
+const slideIn = keyframes`
+  from {
+    left: -100%;
   }
+  to {
+    left: 0;
+  }
+`;
+
+const slideOut = keyframes`
+  from {
+    left: 0;
+  }
+  to {
+    left: -100%;
+  }
+`;
+
+const CircleIcon = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 0;
+  transform: translateY(-50%);
+  width: 50px;
+  height: 50px;
+  background-color: #fff;
+  border: 2px solid #7848f4;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+`;
+
+const IconImage = styled.img`
+  width: 30px;
+  height: 30px;
 `;
 
 const LeftBarContainer = styled.div<{ isOpen: boolean }>`
@@ -106,17 +136,7 @@ const LeftBarContainer = styled.div<{ isOpen: boolean }>`
   flex-direction: column;
   align-items: center;
   transition: left 0.3s ease;
-
-  @media (max-width: 768px) {
-    width: 200px;
-    position: fixed;
-  }
-
-  @media (min-width: 769px) {
-    position: absolute;
-    left: 0;
-    transform: translateY(-50%);
-  }
+  animation: ${({ isOpen }) => (isOpen ? slideIn : slideOut)} 0.3s forwards;
 `;
 
 const FilterTitle = styled.h3`
