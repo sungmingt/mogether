@@ -375,6 +375,7 @@ const MoimCreate = () => {
       try {
         const response = await dispatch(createMoim(moimFormData)).unwrap();
         console.log(response);
+        console.log(keyword);
         navigate('/moim/list')
       }
       catch (error) {
