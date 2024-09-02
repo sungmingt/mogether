@@ -16,7 +16,6 @@ const MoimListPage: React.FC = () => {
     <PageContainer>
       <Header />
       <MoimList />
-      <Leftbar />
       <Footer />
     </PageContainer>
   );

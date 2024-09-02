@@ -1,16 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState, AppDispatch } from '../../store/store';
-import { fetchPosts, loadMorePosts, sortPostsByLatest, sortPostsByLikes, clickInterest, deleteInterest } from '../../store/slices/moimSlice';
+import {
+  fetchPosts,
+  loadMorePosts,
+  sortPostsByLatest,
+  sortPostsByLikes,
+  clickInterest,
+  searchPosts,
+  filterPostsByKeywords,
+} from '../../store/slices/moimSlice';
 import styled from 'styled-components';
-import { FaHeart } from "react-icons/fa";
-import { IoSearch } from "react-icons/io5";
+import { FaHeart } from 'react-icons/fa';
+import { IoSearch } from 'react-icons/io5';
 import Swal from 'sweetalert2';
 import { locations } from '../../utils/location';
-import { searchPosts } from '../../store/slices/moimSlice';
-import {useNavigate} from "react-router-dom";
-import Select, {SingleValue} from "react-select";
+import { useNavigate } from 'react-router-dom';
+import Select, { SingleValue } from 'react-select';
 
+const keywords = [
+  '파티',
+  '자기계발',
+  '취미',
+  '여행',
+  '술',
+  '음식',
+  '스포츠',
+  '액티비티',
+  '게임',
+  '문화',
+  '스터디',
+  '언어',
+];
 
 const PostListContainer = styled.div`
   display: flex;
@@ -36,7 +57,7 @@ const PostCard = styled.div`
   flex-direction: column;
   align-items: center;
   position: relative;
-  cursor: pointer; // 클릭 가능하도록 커서 변경
+  cursor: pointer;
   transition: transform 0.2s ease-in-out;
 
   &:hover {
@@ -56,7 +77,7 @@ const HeartIcon = styled(FaHeart)<{ isInterested: boolean }>`
   position: absolute;
   top: 10px;
   right: 10px;
-  color: ${(props) => (props.isInterested ? "red" : "white")};
+  color: ${(props) => (props.isInterested ? 'red' : 'white')};
   cursor: pointer;
   font-size: 24px;
 `;
@@ -91,7 +112,7 @@ const HostInfo = styled.div`
   flex-direction: column;
   padding-top: 3px;
   gap: 5px;
-  white-space: nowrap; // 줄바꿈 방지
+  white-space: nowrap;
 
   img {
     width: 40px;
@@ -181,10 +202,6 @@ const SearchInputWrapper = styled.div`
   gap: 10px;
   width: 80%;
   z-index: 1;
-  // border: 1px solid #ccc;
-  padding: 5px;
-  // border-radius: 5px;
-  // background-color: lavender; /* 반투명 보라색 배경 */
 
   @media (max-width: 768px) {
     flex-direction: column;
@@ -198,7 +215,6 @@ const SearchInput = styled.input`
   flex: 1;
   min-width: 200px;
   position: relative;
-  white-space: nowrap; // 줄바꿈 방지
 `;
 
 const SearchButton = styled.button`
@@ -218,32 +234,66 @@ const SearchButton = styled.button`
     transform: translateY(-3px);
   }
 `;
+
 const MetaInfo = styled.div`
   display: flex;
   flex-direction: column;
 `;
 
+const KeywordFilterContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 10px;
+  margin-top: 10px;
+`;
+
+const KeywordButton = styled.button<{ selected: boolean }>`
+  padding: 10px 15px;
+  background-color: ${({ selected }) => (selected ? "#7848f4" : "#ffffff")};
+  color: ${({ selected }) => (selected ? "#ffffff" : "#000000")};
+  border: 2px solid #7848f4;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s, color 0.3s;
+
+  &:hover {
+    background-color: #5c3bbf;
+    color: #ffffff;
+  }
+`;
+
 const MoimList = () => {
   const dispatch: AppDispatch = useDispatch();
-  const { visiblePosts, allPosts, loading, error } = useSelector((state: RootState) => state.moim);
-  const [sortOrder, setSortOrder] = useState('latest');
-  const [searchTerm, setSearchTerm] = useState('');
-  const [location, setLocation] = useState('');
-  const [subLocation, setSubLocation] = useState('');
-  const userId = localStorage.getItem('userId') || 0;
+  const { visiblePosts, allPosts, loading, error } = useSelector(
+    (state: RootState) => state.moim
+  );
+  const [sortOrder, setSortOrder] = useState("latest");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [location, setLocation] = useState("");
+  const [subLocation, setSubLocation] = useState("");
+  const [selectedKeywords, setSelectedKeywords] = useState<string[]>(keywords); // 모든 키워드가 기본적으로 선택된 상태
+
+  const userId = localStorage.getItem("userId") || 0;
   const navigate = useNavigate();
-  
+
   useEffect(() => {
-    dispatch(fetchPosts());  // 여기서 posts는 그냥 전체 posts를 의미함
+    dispatch(fetchPosts());
   }, [dispatch]);
 
   useEffect(() => {
-    if (sortOrder === 'latest') {
+    if (sortOrder === "latest") {
       dispatch(sortPostsByLatest());
     } else {
       dispatch(sortPostsByLikes());
     }
   }, [sortOrder, dispatch]);
+
+  useEffect(() => {
+    dispatch(filterPostsByKeywords(selectedKeywords));
+  }, [selectedKeywords, dispatch]);
 
   const handleLoadMore = () => {
     dispatch(loadMorePosts());
@@ -251,13 +301,15 @@ const MoimList = () => {
 
   const handleToggleInterest = async (moimId: number, interested: boolean) => {
     try {
-      const response = await dispatch(clickInterest({ moimId: moimId, userId: userId })).unwrap();
+      const response = await dispatch(
+        clickInterest({ moimId: moimId, userId: userId })
+      ).unwrap();
       console.log(`Successfully toggled interest for post ${moimId}`);
     } catch (error) {
       Swal.fire({
-        icon: 'error',
-        title: 'Failed to toggle interest',
-        text: 'There was an error toggling interest.',
+        icon: "error",
+        title: "Failed to toggle interest",
+        text: "There was an error toggling interest.",
       });
     }
   };
@@ -265,20 +317,22 @@ const MoimList = () => {
   const handleSearch = async () => {
     if (!searchTerm && !location && !subLocation) {
       Swal.fire({
-        icon: 'warning',
-        title: '검색어를 입력하세요',
-        text: '이름, 시, 구 중 하나 이상을 입력하세요.',
+        icon: "warning",
+        title: "검색어를 입력하세요",
+        text: "이름, 시, 구 중 하나 이상을 입력하세요.",
       });
       return;
     }
 
     try {
-      await dispatch(searchPosts({ name: searchTerm, city: location, gu: subLocation })).unwrap();
+      await dispatch(
+        searchPosts({ name: searchTerm, city: location, gu: subLocation })
+      ).unwrap();
     } catch (error) {
       Swal.fire({
-        icon: 'error',
-        title: '검색 실패',
-        text: '검색 중 오류가 발생했습니다. 다시 시도하세요.',
+        icon: "error",
+        title: "검색 실패",
+        text: "검색 중 오류가 발생했습니다. 다시 시도하세요.",
       });
     }
   };
@@ -286,6 +340,19 @@ const MoimList = () => {
   const handleCardClick = (moimId: number) => {
     navigate(`/moim/${moimId}`);
   };
+
+  const handleKeywordClick = (keyword: string) => {
+    if (selectedKeywords.includes(keyword)) {
+      // 키워드가 이미 선택된 경우 제거
+      setSelectedKeywords((prev) =>
+        prev.filter((key) => key !== keyword)
+      );
+    } else {
+      // 키워드를 추가
+      setSelectedKeywords((prev) => [...prev, keyword]);
+    }
+  };
+
   const customStyles = {
     control: (provided: any) => ({
       ...provided,
@@ -320,7 +387,10 @@ const MoimList = () => {
     <PostListContainer>
       <SearchContainer>
         <SearchBackground>
-          <BackgroundImage src={require("../../assets/Computer.png")} alt="Background" />
+          <BackgroundImage
+            src={require("../../assets/Computer.png")}
+            alt="Background"
+          />
           <SearchInputWrapper>
             <SearchInput
               type="text"
@@ -336,9 +406,9 @@ const MoimList = () => {
               }))}
               placeholder="행정시를 선택하세요"
               value={location ? { value: location, label: location } : null}
-              onChange={(selectedOption: SingleValue<{ label: string; value: string }>) =>
-                setLocation(selectedOption?.value || "")  //만약 null이면 ""으로 설정
-              }
+              onChange={(
+                selectedOption: SingleValue<{ label: string; value: string }>
+              ) => setLocation(selectedOption?.value || "")}
             />
             <Select
               styles={customStyles}
@@ -353,9 +423,9 @@ const MoimList = () => {
               value={
                 subLocation ? { value: subLocation, label: subLocation } : null
               }
-              onChange={(selectedOption:SingleValue<{ label: string; value: string }>) =>
-                setSubLocation(selectedOption ? selectedOption.value : "")
-              }
+              onChange={(
+                selectedOption: SingleValue<{ label: string; value: string }>
+              ) => setSubLocation(selectedOption ? selectedOption.value : "")}
               isDisabled={!location}
             />
             <SearchButton onClick={handleSearch}>
@@ -364,78 +434,83 @@ const MoimList = () => {
           </SearchInputWrapper>
         </SearchBackground>
       </SearchContainer>
-      <SortSelect
-        value={sortOrder}
-        onChange={(e) => setSortOrder(e.target.value)}
-      >
+
+      <KeywordFilterContainer>
+        {keywords.map((keyword) => (
+          <KeywordButton
+            key={keyword}
+            selected={selectedKeywords.includes(keyword)}
+            onClick={() => handleKeywordClick(keyword)}
+          >
+            {keyword}
+          </KeywordButton>
+        ))}
+      </KeywordFilterContainer>
+
+      <SortSelect value={sortOrder} onChange={(e) => setSortOrder(e.target.value)}>
         <option value="latest">최신순</option>
         <option value="likes">좋아요순</option>
       </SortSelect>
+
       {loading ? (
         <p>Loading...</p>
       ) : (
         <>
           <PostGrid>
-          {visiblePosts.map((post) => (
-            <PostCard key={post.id} onClick={() => handleCardClick(post.id)}>
-              <PostImage
-                src={post.thumbnailUrl || "../../assets/default_image.png"}
-                alt={post.title}
-              />
-              <HeartIcon
-                isInterested={post.interested || false}
-                onClick={(e) => {
-                  e.stopPropagation(); // 카드 클릭 이벤트 전파 방지
-                  handleToggleInterest(post.id, post.interested || false);
-                }}
-              />
-              <PostInfo>
-                <PostTitle>{post.title}</PostTitle>
-                <PostMetaInfo>
-                  <HostInfo>
-                    <img
-                      src={
-                        post.hostProfileImageUrl ||
-                        "../../assets/user_default.png"
-                      }
-                      alt={post.hostName}
-                    />
-                    <span>{post.hostName}</span>
-                  </HostInfo>
-                  <MetaInfo>
-                    <span>
-                      {post.createdAt} ~ {post.expireAt}
-                    </span>
-                    <span>
-                      {post.address.city}, {post.address.gu}
-                    </span>
-                  </MetaInfo>
-                </PostMetaInfo>
-                <PostMeta>
-                  <div>
-                    <span>❤️ {post.interestsCount}</span>
-                    <span>👥 {post.participantsCount}</span>
-                  </div>
-                  <ParticipantsImages>
-                    {post.participantsImageUrls &&
-                      post.participantsImageUrls
-                        .slice(0, 6)
-                        .map((url, index) => (
-                          <img
-                            key={index}
-                            src={url}
-                            alt={`participant-${index}`}
-                          />
+            {visiblePosts.map((post) => (
+              <PostCard key={post.id} onClick={() => handleCardClick(post.id)}>
+                <PostImage
+                  src={post.thumbnailUrl || "../../assets/default_image.png"}
+                  alt={post.title}
+                />
+                <HeartIcon
+                  isInterested={post.interested || false}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleToggleInterest(post.id, post.interested || false);
+                  }}
+                />
+                <PostInfo>
+                  <PostTitle>{post.title}</PostTitle>
+                  <PostMetaInfo>
+                    <HostInfo>
+                      <img
+                        src={
+                          post.hostProfileImageUrl ||
+                          "../../assets/user_default.png"
+                        }
+                        alt={post.hostName}
+                      />
+                      <span>{post.hostName}</span>
+                    </HostInfo>
+                    <MetaInfo>
+                      <span>
+                        {post.createdAt} ~ {post.expireAt}
+                      </span>
+                      <span>
+                        {post.address.city}, {post.address.gu}
+                      </span>
+                    </MetaInfo>
+                  </PostMetaInfo>
+                  <PostMeta>
+                    <div>
+                      <span>❤️ {post.interestsCount}</span>
+                      <span>👥 {post.participantsCount}</span>
+                    </div>
+                    <ParticipantsImages>
+                      {post.participantsImageUrls &&
+                        post.participantsImageUrls.slice(0, 6).map((url, index) => (
+                          <img key={index} src={url} alt={`participant-${index}`} />
                         ))}
-                  </ParticipantsImages>
-                </PostMeta>
-              </PostInfo>
-            </PostCard>
-          ))}
-        </PostGrid>
-        {visiblePosts.length < allPosts.length && (
-          <LoadMoreButton onClick={handleLoadMore}>Load more</LoadMoreButton>
-        )}
+                    </ParticipantsImages>
+                  </PostMeta>
+                </PostInfo>
+              </PostCard>
+            ))}
+          </PostGrid>
+          {visiblePosts.length < allPosts.length && (
+            <LoadMoreButton onClick={handleLoadMore}>Load more</LoadMoreButton>
+          )}
         </>
       )}
     </PostListContainer>

@@ -56,7 +56,7 @@ const LeftBar = () => {
         </CircleIcon>
       )}
       <LeftBarContainer isOpen={isOpen}>
-        <FilterTitle>Filters</FilterTitle>
+        <FilterTitle>필터</FilterTitle>
         <FilterItems>
           {keywords.map((key) => (
             <FilterItem key={key}>
@@ -69,7 +69,7 @@ const LeftBar = () => {
             </FilterItem>
           ))}
         </FilterItems>
-        <SearchButton onClick={handleKeywordChange}>키워드 검색</SearchButton>
+        <SearchButton onClick={handleKeywordChange}>검색</SearchButton>
       </LeftBarContainer>
     </>
   );
@@ -121,11 +121,11 @@ const IconImage = styled.img`
 
 const LeftBarContainer = styled.div<{ isOpen: boolean }>`
   position: fixed;
-  top: 50%;
+  top: 60%;
   left: ${({ isOpen }) => (isOpen ? "0" : "-100%")};
   transform: translateY(-50%);
-  width: 250px;
-  max-width: 90%;
+  width: 200px;
+  max-width: 80%;
   background-color: #ffffff;
   border: 1px solid #e0e0e0;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
