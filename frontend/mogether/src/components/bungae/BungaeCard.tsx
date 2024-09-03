@@ -238,7 +238,7 @@ const JoinButton = styled.button<{ quit?: boolean }>`
   border: none;
   border-radius: 5px;
   padding: 10px 20px;
-  margin: 10px;
+  margin: 5px;
   cursor: pointer;
   font-size: 16px;
 
