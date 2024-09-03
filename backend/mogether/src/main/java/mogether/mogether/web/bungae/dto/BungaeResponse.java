@@ -8,13 +8,13 @@ import mogether.mogether.domain.info.Address;
 import mogether.mogether.domain.info.Keyword;
 import mogether.mogether.domain.bungae.Bungae;
 import mogether.mogether.domain.bungae.BungaeUser;
-import mogether.mogether.domain.moim.Moim;
-import mogether.mogether.domain.moim.MoimUser;
 import mogether.mogether.domain.user.User;
-import mogether.mogether.web.moim.dto.MoimResponse;
+import mogether.mogether.web.Participant;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import static mogether.mogether.web.Participant.*;
 
 @Getter
 @Setter
@@ -29,8 +29,9 @@ public class BungaeResponse {
     private String hostName;
     private String hostProfileImageUrl;
     private String hostIntro;
-    private List<String> participantsImageUrls;//
-    private int participantsCount;//
+
+    private List<Participant> participants;
+    private int participantsCount;
 
     private boolean isJoined;
     private boolean isInterested;
@@ -54,14 +55,14 @@ public class BungaeResponse {
     public static BungaeResponse of(Bungae findBungae, User requestUser) {
         User host = findBungae.getHost();
         List<BungaeUser> bungaeUserList = findBungae.getBungaeUserList();
-        List<String> participantsImageUrls = bungaeUserList.stream()
-                .map(bungaeUser -> bungaeUser.getUser().getImageUrl())
+        List<Participant> participants = bungaeUserList.stream()
+                .map(bungaeUser -> toParticipant(bungaeUser.getUser()))
                 .toList();
 
         return new BungaeResponse(
                 findBungae.getId(), findBungae.getImageUrls(), host.getId(),
                 host.getNickname(), host.getImageUrl(), host.getIntro(),
-                participantsImageUrls, bungaeUserList.size(),
+                participants, participants.size(),
                 isJoined(requestUser, bungaeUserList), isInterested(requestUser, findBungae),
                 findBungae.getTitle(), findBungae.getContent(), findBungae.getKeyword(),
                 findBungae.getAddress(), findBungae.getBungaeInterestList().size(),
@@ -90,14 +91,14 @@ public class BungaeResponse {
     public static BungaeResponse ofAnonymous(Bungae findBungae) {
         User host = findBungae.getHost();
         List<BungaeUser> bungaeUserList = findBungae.getBungaeUserList();
-        List<String> participantsImageUrls = bungaeUserList.stream()
-                .map(bungaeUser -> bungaeUser.getUser().getImageUrl())
+        List<Participant> participants = bungaeUserList.stream()
+                .map(bungaeUser -> toParticipant(bungaeUser.getUser()))
                 .toList();
 
         return new BungaeResponse(
                 findBungae.getId(), findBungae.getImageUrls(), host.getId(),
                 host.getNickname(), host.getImageUrl(), host.getIntro(),
-                participantsImageUrls, bungaeUserList.size(),
+                participants, participants.size(),
                 false, false,
                 findBungae.getTitle(), findBungae.getContent(), findBungae.getKeyword(),
                 findBungae.getAddress(), findBungae.getBungaeInterestList().size(),
