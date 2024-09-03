@@ -213,17 +213,7 @@ const MyInterestMoim: React.FC = () => {
         myInterestMoimList();
     }, [userId, dispatch]);
 
-    
-
-    
-    
-    // useEffect(() => {
-    //     if (sortOrder === 'latest') {
-    //       dispatch(sortPostsByLatest());
-    //     } else {
-    //       dispatch(sortPostsByLikes());
-    //     }
-    //   }, [sortOrder, dispatch]);
+  
     
       const handleLoadMore = () => {
         dispatch(loadMorePosts());

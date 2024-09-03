@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { selectBungaePost, clickPosts, clickInterest, clickJoin, deleteInterest } from '../../store/slices/bungaeSlice';
+import { selectBungaePost, clickPosts, clickInterest, clickJoin, deleteInterest, quitJoin } from '../../store/slices/bungaeSlice';
 import { RootState, AppDispatch } from '../../store/store';
 import { Bungae } from '../../store/slices/bungaeSlice';
 import Swal from "sweetalert2";
@@ -238,6 +238,7 @@ const JoinButton = styled.button<{ quit?: boolean }>`
   border: none;
   border-radius: 5px;
   padding: 10px 20px;
+  margin: 10px;
   cursor: pointer;
   font-size: 16px;
 
@@ -384,7 +385,7 @@ const BungaeCard = () => {
     }
     if (eventInfo) {
       try {
-        await dispatch(clickJoin({ bungaeId: eventInfo.id, userId })).unwrap();
+        await dispatch(quitJoin({ bungaeId: eventInfo.id, userId })).unwrap();
         setEventInfo({
           ...eventInfo,
           joined: false,

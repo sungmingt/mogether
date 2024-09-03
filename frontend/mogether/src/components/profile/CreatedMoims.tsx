@@ -202,6 +202,7 @@ const CreatedMoim: React.FC = () => {
             try {
                 const response = await dispatch(MyCreatedMoim(userId)).unwrap();
                 setMyCreatedMoim(response);
+                console.log(response);
                 setVisiblePosts(myCreatedMoim.slice(0, 12));    
             }
             catch (error) {

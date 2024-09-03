@@ -57,6 +57,15 @@ const Input = styled.input`
   border-radius: 5px;
 `;
 
+const Select = styled.select`
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+  box-sizing: border-box;
+`;
+
 const Button = styled.button`
   padding: 10px 20px;
   background-color: #7848f4;
@@ -88,7 +97,7 @@ const MyProfile: React.FC = () => {
   useEffect(() => {
     const fetchProfileData = async () => {
         try {
-            const response = await dispatch(fetchProfile(userId)).unwrap();  //dispatch로 인해 profile 변경 -> useSelector로 변경값 갱신 -> 그걸 가져옴
+            const response = await dispatch(fetchProfile(userId)).unwrap(); 
             setFormData(response);
             console.log(response);
         }
@@ -98,7 +107,7 @@ const MyProfile: React.FC = () => {
         }
     }
     fetchProfileData();
-  }, [dispatch, userId])
+  }, [dispatch, userId]);
 
   useEffect(() => {
     if (!accessToken) {
@@ -106,74 +115,70 @@ const MyProfile: React.FC = () => {
     }
   }, [accessToken, navigate]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
     });
   };
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setProfileImage(e.target.files[0]);
     }
   };
 
-  const handleUserDelete = async () => {  // 인자로 받는게 없음
+  const handleUserDelete = async () => {
     try {
       const response = await dispatch(DeleteUser(userId));
       Swal.fire("Success", "성공적으로 탈퇴되었습니다.", "success");
       navigate("/");
     } catch (error) {
       console.error(error);
-      Swal.fire("Error", error as string, "error");
+      Swal.fire("Error", error as string, 'error');
     }
   }
 
   const handleToggleEdit = async () => {
-    if (editMode) {  //editMode가 true인 경우
-      if (editMode) {
-        if (!formData.nickname) {
-          Swal.fire("error", "Nickname and Name are required", "error");
-          return;
-        }
+    if (editMode) {
+      if (!formData.nickname) {
+        Swal.fire("error", "Nickname is required", "error");
+        return;
+      }
   
-        const patchData = new FormData();
-        if (profileImage) {
-          patchData.append("image", profileImage);
-        }
-        else {
-          patchData.append("image", "null");
-        }
-        patchData.append(
-          "dto",
-          new Blob(
-            [
-              JSON.stringify({
-                nickname: formData.nickname,
-                address: formData.address,
-                age: formData.age,
-                gender: formData.gender,
-                intro: formData.intro,
-                phoneNumber: formData.phoneNumber,
-              }),
-            ],
-            { type: "application/json" }
-          )
-        );
+      const patchData = new FormData();
+      if (profileImage) {
+        patchData.append("image", profileImage);
+      } else {
+        patchData.append("image", "null");
+      }
+      patchData.append(
+        "dto",
+        new Blob(
+          [
+            JSON.stringify({
+              nickname: formData.nickname,
+              address: formData.address,
+              age: formData.age,
+              gender: formData.gender,
+              intro: formData.intro,
+              phoneNumber: formData.phoneNumber,
+            }),
+          ],
+          { type: "application/json" }
+        )
+      );
       try {
         const response = await dispatch(PatchUserProfile(patchData)).unwrap();
-        // window.location.reload();  //useEffect를 한번 더 실행?
         Swal.fire('Success', '프로필이 수정되었습니다.', 'success'); 
-      }
-      catch (error) {
+      } catch (error) {
         console.error(error);
         Swal.fire('error', error as string, 'error');
       }
     }
     setEditMode(!editMode);
-  }
-};
+  };
 
   return (
     <ProfileContainer>
@@ -244,12 +249,14 @@ const MyProfile: React.FC = () => {
       <ProfileItem>
         <Label>Gender:</Label>
         {editMode ? (
-          <Input
-            type="text"
+          <Select
             name="gender"
             value={formData.gender}
             onChange={handleInputChange}
-          />
+          >
+            <option value="MALE">MALE</option>
+            <option value="FEMALE">FEMALE</option>
+          </Select>
         ) : (
           <Value>{formData.gender}</Value>
         )}
@@ -289,5 +296,3 @@ const MyProfile: React.FC = () => {
 };
 
 export default MyProfile;
-
-

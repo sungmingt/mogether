@@ -5,11 +5,10 @@ import { AppDispatch, RootState } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { selectAuthLoading, selectIsAuthenticated, kakaoRegister, googleRegister } from '../../store/slices/authSlice';
-import {registerUser} from "../../store/slices/userProfileSlice";
+import { registerUser } from "../../store/slices/userProfileSlice";
 import { FaCamera } from "react-icons/fa";
 import GoogleRedirectUrlPage from "./GoogleRedirectUrlPage";
 import KakaoRedirectUrlPage from "./KakaoRedirectUrlPage";
-
 
 const RegisterContainer = styled.div`
   display: flex;
@@ -54,6 +53,18 @@ const Input = styled.input<{ isValid?: boolean }>`
   justify-content: center;
 `;
 
+const Select = styled.select<{ isValid?: boolean }>`
+  padding: 10px;
+  width: 100%;
+  border: 1px solid
+    ${({ isValid }) =>
+      isValid !== undefined ? (isValid ? "#ccc" : "red") : "#ccc"};
+  border-radius: 5px;
+  background-color: #fff;
+  appearance: none;
+  cursor: pointer;
+`;
+
 const Button = styled.button`
   padding: 10px 20px;
   background-color: #7848f4;
@@ -76,14 +87,6 @@ const SocialButtonsContainer = styled.div`
   margin-top: 10px;
   width: 100%;
   padding: 10px;
-`;
-
-const orImage = styled.div`
-  img {
-    margin-right: 8px;
-    width: 20px;
-    height: 20px;
-  }
 `;
 
 const SocialButton = styled.button`
@@ -125,9 +128,9 @@ const KakaoButton = styled.button`
 const ErrorMessage = styled.p`
   color: red;
   margin-top: 2px;
-  font-size: 0.8em; /* 경고문을 작게 설정 */
+  font-size: 0.8em;
   position: absolute;
-  top: 100%; /* 입력 필드 바로 아래에 위치 */
+  top: 100%;
   left: 0;
 `;
 
@@ -193,7 +196,7 @@ const Register: React.FC = () => {
     if (isAuthenticated) {
       navigate("/");
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, navigate]);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -225,14 +228,8 @@ const Register: React.FC = () => {
     }
   };
 
-
   const handleRegister = async () => {
-    if (   // 아래의 모든 조건을 만족해야 회원가입 가능
-      emailError === null &&
-      passwordError === null &&
-      email !== "" &&
-      password !== ""
-    ) {
+    if (emailError === null && passwordError === null && email !== "" && password !== "") {
       const registerForm = {
         email: email,
         password: password,
@@ -249,10 +246,10 @@ const Register: React.FC = () => {
 
       if (profileImage) {
         registerFormData.append('image', profileImage);
-	    }
-	    else {
-	      registerFormData.append('image', null as any);
-	    };
+      } else {
+        registerFormData.append('image', null as any);
+      }
+
       try {
         const response = await dispatch(registerUser(registerFormData)).unwrap();
         Swal.fire('success', '회원가입에 성공하였습니다.', 'success');
@@ -260,13 +257,11 @@ const Register: React.FC = () => {
       } catch (error: any) {
         if (error.response && error.response.status === 409) {
           Swal.fire('Conflict', '이미 존재하는 계정입니다.', 'error');
-        }
-        else {
+        } else {
           Swal.fire('error', '회원가입에 실패하였습니다.', 'error');
         }
       }
-    }
-    else {
+    } else {
       Swal.fire('error', '필수 요청 사항을 모두 입력해 주세요', 'error');
       return;
     }
@@ -280,18 +275,18 @@ const Register: React.FC = () => {
   };
 
   const handleKakaoRegister = async () => {
-    window.location.href='https://api.mo-gether.site/oauth2/authorization/kakao';
+    window.location.href = 'https://api.mo-gether.site/oauth2/authorization/kakao';
   }
 
   const handleGoogleRegister = async () => {
-    window.location.href='https://api.mo-gether.site/oauth2/authorization/google';
+    window.location.href = 'https://api.mo-gether.site/oauth2/authorization/google';
   }
 
   return (
     <RegisterContainer>
       <h2>Register</h2>
       <RegisterBox>
-      <ImageWrapper>
+        <ImageWrapper>
           <UserImage
             src={
               profileImage
@@ -380,13 +375,17 @@ const Register: React.FC = () => {
           />
         </InputWrapper>
         <InputWrapper>
-          <Input
-            type="text"
-            placeholder="gender"
+          <Select
             value={gender}
             onChange={(e) => setGender(e.target.value)}
             isValid={true}
-          />
+          >
+            <option value="" disabled>
+              Select Gender
+            </option>
+            <option value="MALE">MALE</option>
+            <option value="FEMALE">FEMALE</option>
+          </Select>
         </InputWrapper>
         <InputWrapper>
           <Input
@@ -417,7 +416,7 @@ const Register: React.FC = () => {
             <img src={require("../../assets/Google__G__logo 1.png")} />
             Google로 회원가입
           </SocialButton>
-          <KakaoButton onClick={handleKakaoRegister}><img src={require("../../assets/KakaoTalk_logo 1.png")}/>Kakao로 회원가입</KakaoButton>
+          <KakaoButton onClick={handleKakaoRegister}><img src={require("../../assets/KakaoTalk_logo 1.png")} />Kakao로 회원가입</KakaoButton>
         </SocialButtonsContainer>
       </RegisterBox>
       {error && <ErrorMessage>{error}</ErrorMessage>}

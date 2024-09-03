@@ -496,7 +496,7 @@ const BungaeEdit = () => {
             Keywords<RequiredIcon>*</RequiredIcon>
           </Label>
           <ButtonGroup>
-            {["파티", "자기계발", "취미", "여행", "술", "음식", "스포츠", "액티비티", "게임", "문화", "스터디", "언어"].map((key) => (
+            {["TRAVEL", "DRINKING", "FOOD", "SPORTS", "ACTIVITY", "GAME", "PARTY", "CULTURE", "STUDY", "LANGUAGE", "HOBBY", "UNSELECTED"].map((key) => (
               <Button
               key={key}
               selected={keyword===key}

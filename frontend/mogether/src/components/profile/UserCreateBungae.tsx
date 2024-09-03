@@ -197,12 +197,13 @@ const UserCreateBungaes: React.FC = () => {
     const [myCreatedBungae, setMyCreatedBungae] = useState<Post[]>([]); 
     const navigate = useNavigate();
     const [visiblePosts, setVisiblePosts] = useState<Post[]>([]); 
-    const isAuthenticated = useSelector(selectIsAuthenticated);
+    const accessToken = localStorage.getItem("accessToken");
 
     useEffect(() => {
         const myCreatedBungaeList = async () => {
             try {
                 const response = await dispatch(MyCreatedBungae(userId)).unwrap();
+                console.log(response);
                 setMyCreatedBungae(response);
                 setVisiblePosts(myCreatedBungae.slice(0, 12));    
             }
@@ -214,22 +215,15 @@ const UserCreateBungaes: React.FC = () => {
     }, [userId, dispatch]);
 
     useEffect(() => {
-      if(!isAuthenticated) {
+      if(!accessToken) {
         navigate('/login');
       }
-    }, [isAuthenticated]);
+    }, [accessToken]);
 
     
 
     
-    
-    // useEffect(() => {
-    //     if (sortOrder === 'latest') {
-    //       dispatch(sortPostsByLatest());
-    //     } else {
-    //       dispatch(sortPostsByLikes());
-    //     }
-    //   }, [sortOrder, dispatch]);
+  
     
       const handleLoadMore = () => {
         dispatch(loadMorePosts());

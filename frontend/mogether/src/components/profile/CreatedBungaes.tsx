@@ -201,6 +201,7 @@ const CreatedBungae: React.FC = () => {
             try {
                 const response = await dispatch(MyCreatedBungae(userId)).unwrap();
                 setMyCreatedBungae(response);
+                console.log(response);
                 setVisiblePosts(myCreatedBungae.slice(0, 12));    
             }
             catch (error) {
@@ -213,14 +214,7 @@ const CreatedBungae: React.FC = () => {
     
 
     
-    
-    // useEffect(() => {
-    //     if (sortOrder === 'latest') {
-    //       dispatch(sortPostsByLatest());
-    //     } else {
-    //       dispatch(sortPostsByLikes());
-    //     }
-    //   }, [sortOrder, dispatch]);
+  
     
       const handleLoadMore = () => {
         dispatch(loadMorePosts());

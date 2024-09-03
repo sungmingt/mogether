@@ -11,8 +11,8 @@ import { useNavigate } from "react-router-dom";
 import Select, { SingleValue } from "react-select";
 
 const keywords = [
-  '파티', '자기계발', '취미', '여행', '술', '음식', 
-  '스포츠', '액티비티', '게임', '문화', '스터디', '언어'
+  "TRAVEL", "DRINKING", "FOOD", "SPORTS", "ACTIVITY", "GAME", "PARTY", "CULTURE", "STUDY", "LANGUAGE", "HOBBY", "UNSELECTED"
+
 ];
 
 const PostListContainer = styled.div`
@@ -256,7 +256,7 @@ const KeyowrdContainer = styled.button`
   border: 1px solid #7848f4;
   background-color: #7848f4;
   white-space: nowrap;
-  color: "white";
+  color: #ffffff;
   margin: 3px;
   width: auto;
 `;

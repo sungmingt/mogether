@@ -2,7 +2,6 @@ import React, {useEffect, useState} from "react";
 import styled from "styled-components";
 import { AppDispatch, RootState } from "../../store/store";
 import { useSelector, useDispatch } from "react-redux";
-// import { selectUserId } from "../../store/slices/authSlice";
 import { MyCreatedMoim } from "../../store/slices/userSlice";
 import {Post} from "../../store/slices/userSlice";
 import { loadMorePosts, sortPostsByLatest, sortPostsByLikes } from "../../store/slices/moimSlice";
@@ -201,6 +200,7 @@ const UserCreateMoims: React.FC = () => {
         const myCreatedMoimList = async () => {
             try {
                 const response = await dispatch(MyCreatedMoim(userId)).unwrap();
+                console.log(response);
                 setMyCreatedMoim(response);
                 setVisiblePosts(myCreatedMoim.slice(0, 12));    
             }
@@ -212,19 +212,9 @@ const UserCreateMoims: React.FC = () => {
     }, [userId, dispatch]);
 
     
-
-    
-    
-    // useEffect(() => {
-    //     if (sortOrder === 'latest') {
-    //       dispatch(sortPostsByLatest());
-    //     } else {
-    //       dispatch(sortPostsByLikes());
-    //     }
-    //   }, [sortOrder, dispatch]);
     
       const handleLoadMore = () => {
-        dispatch(loadMorePosts());
+        dispatch(loadMorePosts()); // 동기식 액션
       };
     
       const handleToggleInterest = async (moimId: number, interested: boolean) => {

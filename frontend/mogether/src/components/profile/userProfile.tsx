@@ -76,15 +76,16 @@ const userProfile: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const { id } = useParams<{ id: string }>(); // URL에서 moimId를 가져옴 -> 여기서 url은 내가 설정한 url
   const userId = id ? parseInt(id, 10) : 0;
-  const [formData, setFormData] = useState<any>(null);
+  const [formData, setFormData] = useState<any>({});
   const navigate = useNavigate();
-  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const accessToken = localStorage.getItem("accessToken");
 
   useEffect(() => {
     const fetchProfileData = async () => {
         try {
             console.log(userId);
-            const response = dispatch(fetchProfile(userId)).unwrap();  //dispatch로 인해 profile 변경 -> useSelector로 변경값 갱신 -> 그걸 가져옴
+            const response = await dispatch(fetchProfile(userId)).unwrap();  //dispatch로 인해 profile 변경 -> useSelector로 변경값 갱신 -> 그걸 가져옴
+            console.log(response);
             setFormData(response);
             console.log(response);
         }
@@ -97,17 +98,17 @@ const userProfile: React.FC = () => {
   }, [dispatch, userId])
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!accessToken) {
       navigate("/login");
     }
-  }, [isAuthenticated, navigate]);
+  }, [accessToken, navigate]);
 
 
 // 여기서 이미지는 오로지 url로만
   return (
     <ProfileContainer>
       <ProfileTitle>My Profile</ProfileTitle> 
-      <ProfileImage src={formData.userProfileImage} alt="Profile" />
+      <ProfileImage src={formData.imageUrl || "../../assets/user_default.png"} alt="Profile" />
       <ProfileItem>
         <Label>Nickname:</Label>
         <Value>{formData.nickname}</Value>

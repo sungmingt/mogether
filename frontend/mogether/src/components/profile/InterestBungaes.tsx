@@ -197,13 +197,14 @@ const MyInterestBungae: React.FC = () => {
     const [interestCategory, setInterestCategory] = useState<string>("bungae");
     const [myInterestBungae, setMyInterestBungae] = useState<Bungae[]>([]); 
     const navigate = useNavigate();
-    const [visiblePosts, setVisiblePosts] = useState<Post[]>([]); 
+    const [visiblePosts, setVisiblePosts] = useState<Bungae[]>([]); 
 
     useEffect(() => {
         const myInterestBungaeList = async () => {
             try {
                 const response = await dispatch(MyInterestedBungae(userId)).unwrap();
                 setMyInterestBungae(response);
+                console.log(response);
                 setVisiblePosts(myInterestBungae.slice(0, 12));    
             }
             catch (error) {
