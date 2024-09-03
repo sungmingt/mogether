@@ -5,12 +5,10 @@ import { useSelector, useDispatch } from "react-redux";
 // import { selectUserId } from "../../store/slices/authSlice";
 import { MyCreatedBungae, loadMorePosts } from "../../store/slices/userSlice";
 import {Post} from "../../store/slices/userSlice";
-import { locations } from '../../utils/location';
 import { FaHeart } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { clickInterest, deleteInterest } from "../../store/slices/bungaeSlice";
 import Swal from "sweetalert2";
-import { selectIsAuthenticated } from "../../store/slices/authSlice";
 
 const PostListContainer = styled.div`
   display: flex;
@@ -193,18 +191,17 @@ const UserCreateBungaes: React.FC = () => {
     const { id } = useParams<{ id: string }>(); // URL에서 bungaeId 가져옴 -> 여기서 url은 내가 설정한 url
     const userId = id ? parseInt(id, 10) : 0;
     const dispatch = useDispatch<AppDispatch>();
-    const [myCreatedBungae, setMyCreatedBungae] = useState<Post[]>([]); 
     const navigate = useNavigate();
-    const [visiblePosts, setVisiblePosts] = useState<Post[]>([]); 
     const accessToken = localStorage.getItem("accessToken");
+    const { visiblePosts, allPosts} = useSelector(  //store의 상태값을 가져옴, 이 store의 상태값을 가져올 때 RootState를 선언한 후 가져옴
+      (state: RootState) => state.user
+    );  // 상태(state) -> dispatch가 일어날 때 갱신되는 값 -> 즉 reducer로 인해 관리되거나 비동기 dispatch에 의해 관리되는 값 
 
     useEffect(() => {
         const myCreatedBungaeList = async () => {
             try {
                 const response = await dispatch(MyCreatedBungae(userId)).unwrap();
-                console.log(response);
-                setMyCreatedBungae(response);
-                setVisiblePosts(myCreatedBungae.slice(0, 12));    
+                console.log(response);  //dispatch가 일어날 때 store에서 상태값이 갱신된다 -> 상태값이 갱신되면 useSelector에 의해 갱신된 상태값이 store에서 가져와짐
             }
             catch (error) {
                 console.error(error);
@@ -373,7 +370,7 @@ const UserCreateBungaes: React.FC = () => {
           </PostCard>
         ))}
       </PostGrid>
-      {visiblePosts.length < myCreatedBungae.length && (
+      {visiblePosts.length < allPosts.length && (
         <LoadMoreButton onClick={handleLoadMore}>Load more</LoadMoreButton>
       )}
     </PostListContainer>

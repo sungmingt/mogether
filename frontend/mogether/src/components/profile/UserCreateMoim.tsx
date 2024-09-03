@@ -4,7 +4,6 @@ import { AppDispatch, RootState } from "../../store/store";
 import { useSelector, useDispatch } from "react-redux";
 import { MyCreatedMoim, loadMorePosts } from "../../store/slices/userSlice";
 import {Post} from "../../store/slices/userSlice";
-import { locations } from '../../utils/location';
 import { FaHeart } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
 import { clickInterest, deleteInterest } from "../../store/slices/moimSlice";
@@ -191,24 +190,23 @@ const UserCreateMoims: React.FC = () => {
     const { id } = useParams<{ id: string }>(); // URL에서 bungaeId 가져옴 -> 여기서 url은 내가 설정한 url
     const userId = id ? parseInt(id, 10) : 0;
     const dispatch = useDispatch<AppDispatch>();
-    const [myCreatedMoim, setMyCreatedMoim] = useState<Post[]>([]); 
     const navigate = useNavigate();
-    const [visiblePosts, setVisiblePosts] = useState<Post[]>([]); 
+    const { visiblePosts, allPosts} = useSelector(
+      (state: RootState) => state.user
+    );
 
     useEffect(() => {
         const myCreatedMoimList = async () => {
             try {
                 const response = await dispatch(MyCreatedMoim(userId)).unwrap();
                 console.log(response);
-                setMyCreatedMoim(response);
-                setVisiblePosts(myCreatedMoim.slice(0, 12));    
             }
             catch (error) {
                 console.error(error);
             }
         };
         myCreatedMoimList();
-    }, [userId, dispatch]);
+    }, [userId, dispatch]);   // 다른 dispatch가 일어날 때도 해당 useEffect 함수의 실행 발생
 
     
     
@@ -305,7 +303,7 @@ const UserCreateMoims: React.FC = () => {
             <HeartIcon
               isInterested={post.interested || false}
               onClick={(e) => {
-                e.stopPropagation();
+                e.stopPropagation();  //button 이벤트의 확산 방지 -> 하트 아이콘 외의 다른 카드 부분?을 클릭하였을 때 괜히 interest 요청 보내지 않도록 함
                 {post.interested ? handleDelteInterest(post.id, post.interested || false) : handleToggleInterest(post.id, post.interested || false)}
               }}
             />
@@ -361,7 +359,7 @@ const UserCreateMoims: React.FC = () => {
           </PostCard>
         ))}
       </PostGrid>
-      {visiblePosts.length < myCreatedMoim.length && (
+      {visiblePosts.length < allPosts.length && (
         <LoadMoreButton onClick={handleLoadMore}>Load more</LoadMoreButton>
       )}
     </PostListContainer>
