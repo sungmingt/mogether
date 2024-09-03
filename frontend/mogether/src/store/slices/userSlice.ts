@@ -3,6 +3,7 @@ import { RootState } from '../store';
 import { api, createMoimApi, userApi, createBungaeApi } from '../../utils/api';
 import { MoimInterestApi, BungaeInterestApi, MyCreateMoimListApi, MyCreateBungaeListApi, changeUserProfile, EditMoimApi, EditBungaeApi } from "../../utils/api";
 import { create } from 'domain';
+import { selectVisiblePosts } from './moimSlice';
 
 
 export interface Post {
@@ -42,6 +43,8 @@ interface CurrentUserState {
   MyInterestedBungae: Post[] | null,
   MyCreatedMoim: Post[] | null,
   MyCreatedBungae: Post[] | null,
+  allPosts: Post[],
+  visiblePosts: Post[],
 }
 
 const initialState: CurrentUserState = {
@@ -52,6 +55,8 @@ const initialState: CurrentUserState = {
   MyInterestedBungae: [],
   MyCreatedMoim: [],
   MyCreatedBungae: [],
+  allPosts: [],
+  visiblePosts: [],
 };
 
 
@@ -195,7 +200,11 @@ const userSlice = createSlice({  //store와 action의 역할을 동시에 함
   name: 'user',
   initialState,
   reducers: {
-    
+    loadMorePosts(state) {
+      const start = state.visiblePosts.length; //현재 visiblePosts의 길이를 start로 지정
+      const morePosts = state.allPosts.slice(start, start + 12);
+      state.visiblePosts = [...state.visiblePosts, ...morePosts];
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(createMoim.fulfilled, (state, action: PayloadAction<any>) => { //그냥 객체 타입 -> any로 지정해줌
@@ -206,24 +215,32 @@ const userSlice = createSlice({  //store와 action의 역할을 동시에 함
     });
     builder.addCase(MyInterestedMoim.fulfilled, (state, action: PayloadAction<Post[]>) => {
       state.MyInterestedMoim = action.payload;
+      state.allPosts = action.payload;
+      state.visiblePosts = action.payload.slice(0, 12);
     })
     builder.addCase(MyInterestedMoim.rejected, (state, action: PayloadAction<any>) => {
       state.error = action.payload as string;
     });
     builder.addCase(MyInterestedBungae.fulfilled, (state, action: PayloadAction<Post[]>) => {
       state.MyInterestedBungae = action.payload;
+      state.allPosts = action.payload;
+      state.visiblePosts = action.payload.slice(0, 12);
     })
     builder.addCase(MyInterestedBungae.rejected, (state, action: PayloadAction<any>) => {
       state.error = action.payload as string;
     });
     builder.addCase(MyCreatedMoim.fulfilled, (state, action: PayloadAction<Post[]>) => {
       state.MyCreatedMoim = action.payload;
+      state.allPosts = action.payload;
+      state.visiblePosts = action.payload.slice(0, 12);
     })
     builder.addCase(MyCreatedMoim.rejected, (state, action: PayloadAction<any>) => {
       state.error = action.payload as string;
     });
     builder.addCase(MyCreatedBungae.fulfilled, (state, action: PayloadAction<Post[]>) => {
       state.MyCreatedBungae = action.payload;
+      state.allPosts = action.payload;
+      state.visiblePosts = action.payload.slice(0, 12);
     })
     builder.addCase(MyCreatedBungae.rejected, (state, action: PayloadAction<any>) => {
       state.error = action.payload as string;
@@ -244,5 +261,6 @@ const userSlice = createSlice({  //store와 action의 역할을 동시에 함
 });
 
 export default userSlice.reducer;
+export const { loadMorePosts } = userSlice.actions; 
 
 //selectUserProfile 은 UserProfile 배열을 가져온다

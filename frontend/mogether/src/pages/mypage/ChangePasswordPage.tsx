@@ -15,7 +15,7 @@ const PageContainer = styled.div`
 //   flex: 1;
 // `;
 
-const ChangePasswordContainer = () => {
+const ChangePasswordPage = () => {
   return (
     <PageContainer>
       <Header />
@@ -26,4 +26,4 @@ const ChangePasswordContainer = () => {
   );
 };
 
-export default ChangePasswordContainer;
+export default ChangePasswordPage;

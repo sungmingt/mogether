@@ -95,17 +95,17 @@ const LeftBar: React.FC = () => {
       </MenuIcon>
       <LeftBarContainer isOpen={menuOpen}>
         <MenuContainer>
-          <MenuItem onClick={() => handleNavigation("/myprofile")}>
+          <MenuItem onClick={() => handleNavigation("/mypage")}>
             내 정보
           </MenuItem>
-          <MenuItem onClick={() => handleNavigation("/profile/interests")}>
+          <MenuItem onClick={() => handleNavigation("/interestedMoim")}>
             관심 글 목록
           </MenuItem>
-          <MenuItem onClick={() => handleNavigation("/profile/posts")}>
+          <MenuItem onClick={() => handleNavigation("/createdMoim")}>
             등록한 글 목록
           </MenuItem>
           <MenuItem
-            onClick={() => handleNavigation("/profile/change-password")}
+            onClick={() => handleNavigation("/changePassword")}
           >
             비밀번호 변경
           </MenuItem>

@@ -5,7 +5,6 @@ import { fetchProfile, selectUserProfile, PatchUserProfile } from "../../store/s
 import { RootState, AppDispatch } from "../../store/store";
 import { useNavigate, useParams } from "react-router-dom";
 import Swal from "sweetalert2";
-import { selectUserId, selectIsAuthenticated } from "../../store/slices/authSlice";
 
 const ProfileContainer = styled.div`
   display: flex;
