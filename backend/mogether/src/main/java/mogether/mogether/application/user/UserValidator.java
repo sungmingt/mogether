@@ -40,7 +40,7 @@ public class UserValidator {
             md.update(password.getBytes());
             return String.format("%0128x", new BigInteger(1, md.digest()));
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new MogetherException(NO_SUCH_ALGORITHM);
         }
     }
 

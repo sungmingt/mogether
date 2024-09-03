@@ -20,6 +20,7 @@ public enum ErrorCode {
     //AUTH
     ILLEGAL_REGISTRATION_ID(400, "잘못된 registration id입니다."),
     INVALID_SOCIAL_TYPE(400, "올바르지 않은 소셜 로그인 제공자입니다."),
+    NO_SUCH_ALGORITHM(500, "유효한 암호화 알고리즘이 아닙니다."),
 
     //TOKEN
     ACCESS_TOKEN_EXPIRED(401, "access token 만료, reissue 요청이 필요합니다."),
