@@ -191,24 +191,23 @@ const ContentText = styled.p`
 const CreatedMoim: React.FC = () => {
     const userId = Number(localStorage.getItem('userId')) || 0;
     const dispatch = useDispatch<AppDispatch>();
-    const [myCreatedMoim, setMyCreatedMoim] = useState<Post[]>([]); 
     const navigate = useNavigate();
-    const [visiblePosts, setVisiblePosts] = useState<Post[]>([]); 
+    const { visiblePosts, allPosts} = useSelector(
+      (state: RootState) => state.user
+    );
 
     useEffect(() => {
         const myCreatedMoimList = async () => {
             try {
                 const response = await dispatch(MyCreatedMoim(userId)).unwrap();
-                setMyCreatedMoim(response);
                 console.log(response);
-                setVisiblePosts(myCreatedMoim.slice(0, 12));    
             }
             catch (error) {
                 console.error(error);
             }
         };
         myCreatedMoimList();
-    }, [userId, dispatch]);
+    }, [userId, allPosts]);
 
    
     
@@ -361,7 +360,7 @@ const CreatedMoim: React.FC = () => {
           </PostCard>
         ))}
       </PostGrid>
-      {visiblePosts.length < myCreatedMoim.length && (
+      {visiblePosts.length < allPosts.length && (
         <LoadMoreButton onClick={handleLoadMore}>Load more</LoadMoreButton>
       )}
     </PostListContainer>

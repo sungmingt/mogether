@@ -191,17 +191,18 @@ const ContentText = styled.p`
 const CreatedBungae: React.FC = () => {
     const userId = Number(localStorage.getItem('userId')) || 0;
     const dispatch = useDispatch<AppDispatch>();
-    const [myCreatedBungae, setMyCreatedBungae] = useState<Post[]>([]); 
     const navigate = useNavigate();
-    const [visiblePosts, setVisiblePosts] = useState<Post[]>([]); 
+    // const [myCreatedBungae, setMyCreatedBungae] = useState<Post[]>([]); 
+    // const [visiblePosts, setVisiblePosts] = useState<Post[]>([]); 
+    const { visiblePosts, allPosts } = useSelector(
+      (state: RootState) => state.user
+    );
 
     useEffect(() => {
         const myCreatedBungaeList = async () => {
             try {
                 const response = await dispatch(MyCreatedBungae(userId)).unwrap();
-                setMyCreatedBungae(response);
                 console.log(response);
-                setVisiblePosts(myCreatedBungae.slice(0, 12));    
             }
             catch (error) {
                 console.error(error);
@@ -364,7 +365,7 @@ const CreatedBungae: React.FC = () => {
           </PostCard>
         ))}
       </PostGrid>
-      {visiblePosts.length < myCreatedBungae.length && (
+      {visiblePosts.length < allPosts.length && (
         <LoadMoreButton onClick={handleLoadMore}>Load more</LoadMoreButton>
       )}
     </PostListContainer>
