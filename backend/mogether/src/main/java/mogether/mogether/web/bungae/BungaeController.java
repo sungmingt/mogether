@@ -47,6 +47,17 @@ public class BungaeController {
         return HttpStatus.OK;
     }
 
+    @Operation(summary = "번개 강제 퇴장", description = "호스트가 유저를 강제퇴장시킨다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "호스트의 유저 강제퇴장 성공"),
+            })
+    @PostMapping("/kickout")
+    public HttpStatus kickOut(@AuthenticationPrincipal AppUser appUser,
+                              @RequestBody BungaeKickOutRequest kickOutRequest) {
+        bungaeService.kickOut(appUser, kickOutRequest);
+        return HttpStatus.OK;
+    }
+
     @Operation(summary = "번개 글 등록", description = "유저 id를 통해 유저가 번개 글을 등록한다.",
             responses = {
                     @ApiResponse(responseCode = "201", description = "유저의 번개 글 등록 성공"),

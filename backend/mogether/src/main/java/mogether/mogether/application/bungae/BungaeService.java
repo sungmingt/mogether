@@ -46,6 +46,17 @@ public class BungaeService {
         bungaeUserRepository.delete(bungaeUser);
     }
 
+    //번개 추방 기능
+    public void kickOut(AppUser appUser, BungaeKickOutRequest request) {
+        Bungae findBungae = findById(request.getBungaeId());
+        validateUser(findBungae.getHost().getId(), appUser.getId());
+
+        //bungaeUser 삭제
+        BungaeUser bungaeUser = bungaeUserRepository.findByBungaeIdAndUserId(request.getBungaeId(), request.getUserId())
+                .orElseThrow(() -> new MogetherException(ErrorCode.NO_BUNGAEJOIN_HISTORY));
+        bungaeUserRepository.delete(bungaeUser);
+    }
+
     //번개 글 작성
     public BungaeCreateResponse create(AppUser appUser, List<MultipartFile> images, BungaeCreateRequest request) {
         User user = userService.findById(appUser.getId());

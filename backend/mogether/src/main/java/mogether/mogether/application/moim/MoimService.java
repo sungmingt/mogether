@@ -10,7 +10,6 @@ import mogether.mogether.domain.oauth.AppUser;
 import mogether.mogether.domain.user.User;
 import mogether.mogether.exception.ErrorCode;
 import mogether.mogether.exception.MogetherException;
-import mogether.mogether.web.bungae.dto.BungaeListResponse;
 import mogether.mogether.web.moim.dto.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -43,6 +42,16 @@ public class MoimService {
     public void quit(Long moimId, AppUser appUser) {
         //moimUser 삭제
         MoimUser moimUser = moimUserRepository.findByMoimIdAndUserId(moimId, appUser.getId())
+                .orElseThrow(() -> new MogetherException(ErrorCode.NOT_MOIM_MEMBER));
+        moimUserRepository.delete(moimUser);
+    }
+
+    //모임 강퇴 기능
+    public void kickOut(AppUser appUser, MoimKickOutRequest request) {
+        Moim findMoim = findById(request.getMoimId());
+        validateUser(findMoim.getHost().getId(), appUser.getId());
+
+        MoimUser moimUser = moimUserRepository.findByMoimIdAndUserId(request.getMoimId(), request.getUserId())
                 .orElseThrow(() -> new MogetherException(ErrorCode.NOT_MOIM_MEMBER));
         moimUserRepository.delete(moimUser);
     }

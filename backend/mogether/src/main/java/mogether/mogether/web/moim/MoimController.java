@@ -45,6 +45,18 @@ public class MoimController {
         return HttpStatus.OK;
     }
 
+    //모임 추방 기능
+    @Operation(summary = "모임 강제 퇴장", description = "호스트가 유저를 강제 퇴장시킨다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "호스트의 유저 강제퇴장 성공"),
+            })
+    @PostMapping("/kickout")
+    public HttpStatus kickOut(@AuthenticationPrincipal AppUser appUser,
+                              @RequestBody MoimKickOutRequest kickOutRequest) {
+        moimService.kickOut(appUser, kickOutRequest);
+        return HttpStatus.OK;
+    }
+
     @Operation(summary = "모임 글 등록", description = "유저 id를 통해 유저가 모임 글을 등록한다.",
             responses = {
                     @ApiResponse(responseCode = "201", description = "유저의 모임 글 등록 성공"),
