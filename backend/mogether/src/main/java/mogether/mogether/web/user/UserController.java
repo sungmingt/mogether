@@ -60,9 +60,8 @@ public class UserController {
                     @ApiResponse(responseCode = "200", description = "비밀번호 찾기 성공"),
             })
     @PostMapping("/password")
-    public PasswordFindResponse findPassword(@AuthenticationPrincipal AppUser appUser,
-                                            @RequestBody PasswordFindRequest passwordFindRequest) {
-        return userService.findPassword(appUser, passwordFindRequest);
+    public PasswordFindResponse findPassword(@RequestBody PasswordFindRequest passwordFindRequest) {
+        return userService.findPassword(passwordFindRequest);
     }
 
     @Operation(summary = "유저 정보 조회", description = "유저의 정보를 조회한다",
