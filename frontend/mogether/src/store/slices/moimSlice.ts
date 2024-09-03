@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction, AsyncThunk } from '@redux
 import { RootState } from '../store';
 import { fetchMoimApi, MoimCardApi, interestMoimApi, searchMoimApi, joinMoimApi, interestMoimDeleteApi, joinQuitMoimApi } from '../../utils/api';
 // 카테고리가 moim인 모든 게시글들을 저장하는 slice
+//post 인터페이스는 moim, bungae 인터페이스는 bungae
 export interface Post {  //여기서의 post는....moim의 형식을 의미한다....
   id: number;   // 서버에서 id를 줄 때 -> id 이렇게 준다...
   title: string;

@@ -227,6 +227,11 @@ export const searchMoimApi = async (searchData: any) => {
   return response;
 }
 
+export const searchBungaeApi = async (searchData: any) => {  // any 형식은 대부분 객체 형식이라고 봐도 무방...
+  const response = await api.get(`/bungae/search?name=${searchData.name}&city=${searchData.city}&gu=${searchData.gu}`);
+  return response;
+}
+
 export const changePasswordApi = async (passwordData: {userId: number, oldPassword: string, newPassword: string}) => {
   const response = await api.post(`/user/${passwordData.userId}/password`, { exPassword: passwordData.oldPassword, newPassword: passwordData.newPassword });
   return response;

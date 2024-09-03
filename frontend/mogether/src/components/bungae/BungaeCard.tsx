@@ -290,7 +290,7 @@ const AdditionalInfo = styled.div`
 `;
 
 const BungaeCard = () => {
-  const [eventInfo, setEventInfo] = useState<Bungae | null>(null);
+  const [eventInfo, setEventInfo] = useState<Bungae | null>(null); //지정된 interface -> bungae 형식
   const dispatch = useDispatch<AppDispatch>();
   const { id } = useParams<{ id: string }>();
   const bungaeId = id ? parseInt(id, 10) : 0;
