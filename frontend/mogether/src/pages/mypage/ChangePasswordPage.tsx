@@ -8,7 +8,7 @@ import Leftbar from "./Leftbar_myprofile";
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
+  min-height: 500vh;
 `;
 
 // const ContentContainer = styled.div`

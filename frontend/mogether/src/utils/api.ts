@@ -303,6 +303,16 @@ export const DeleteUserApi = async (userId: number) => {
   return response;
 }
 
+export const MoimUserKickOutApi = async (userId: number, moimId: number) => {
+  const response = await api.post('/moim/kickout', {userId: userId, moimId: moimId});
+  return response;
+}
+
+export const BungaeKickOutApi = async (userId: number, bungaeId: number) => {
+  const response = await api.post('/bungae/kickout', {userId: userId, bungaeId: bungaeId});
+  return response;
+}
+
 
 
 
