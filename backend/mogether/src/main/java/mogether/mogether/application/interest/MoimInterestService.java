@@ -30,7 +30,7 @@ public class MoimInterestService {
 
 
     public void doInterest(Long moimId, AppUser appUser) {
-        if(checkInterestExists(moimId, appUser.getId()).isPresent()) return;
+        if(find(moimId, appUser.getId()).isPresent()) return;
 
         Moim findMoim = moimService.findById(moimId);
         User findUser = userService.findById(appUser.getId());
@@ -40,7 +40,7 @@ public class MoimInterestService {
     }
 
     public void undoInterest(Long moimId, AppUser appUser) {
-        checkInterestExists(moimId, appUser.getId())
+        find(moimId, appUser.getId())
                 .ifPresentOrElse(
                         moimInterestRepository::delete,
                         () -> {
@@ -61,7 +61,7 @@ public class MoimInterestService {
         return MoimListResponse.of(moimList, findUser);
     }
 
-    private Optional<MoimInterest> checkInterestExists(Long moimId, Long userId) {
+    private Optional<MoimInterest> find(Long moimId, Long userId) {
         return moimInterestRepository
                 .findByMoimIdAndUserId(moimId, userId);
     }
