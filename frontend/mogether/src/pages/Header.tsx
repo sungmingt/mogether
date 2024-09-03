@@ -3,22 +3,22 @@ import styled, { keyframes } from "styled-components";
 import { Link, useNavigate } from "react-router-dom";
 import { FaBars, FaTimes, FaBell, FaUserCircle } from "react-icons/fa";
 import axios from "axios";
-import {selectIsAuthenticated, logout} from '../store/slices/authSlice';
+import { selectIsAuthenticated, logout, selectUserId } from "../store/slices/authSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { RootState, AppDispatch } from '../store/store';
+import { RootState, AppDispatch } from "../store/store";
 import Swal from "sweetalert2";
+import icon from "../assets/somoim_icon.svg";
+import { setAuthenticated } from "../store/slices/authSlice";
 
 const HeaderContainer = styled.header`
   top: 0;
   width: 100%;
-  height: 60px; /* 고정된 헤더 높이 */
+  height: 60px;
   background-color: transparent;
   color: #000000;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  // padding: 0 20px;
-  box-shadow: none;
   border-bottom: 2px solid #7848f4;
   z-index: 1000;
   margin-bottom: 30px;
@@ -86,11 +86,6 @@ const Button = styled.button`
   }
 `;
 
-const DropdownButton = styled.div`
-  display: flex;
-  flex-direction: column;
-`;
-
 const MenuIcon = styled.div`
   display: none;
   cursor: pointer;
@@ -109,22 +104,22 @@ const MenuIcon = styled.div`
 
 const slideDown = keyframes`
   from {
-    max-height: 0;
+    transform: translateY(-20px);
     opacity: 0;
   }
   to {
-    max-height: 500px;
+    transform: translateY(0);
     opacity: 1;
   }
 `;
 
 const slideUp = keyframes`
   from {
-    max-height: 500px;
+    transform: translateY(0);
     opacity: 1;
   }
   to {
-    max-height: 0;
+    transform: translateY(-20px);
     opacity: 0;
   }
 `;
@@ -133,24 +128,23 @@ const DropdownMenu = styled.div<{ isOpen: boolean }>`
   display: ${({ isOpen }) => (isOpen ? "block" : "none")};
   position: absolute;
   top: 60px;
-  left: 0;
-  margin-left: 10px;
-  width: 35%;
-  background-color: #fff;
+  right: 0;
+  width: 200px;
+  background-color: #ffffff;
   border: 2px solid #000000;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 999;
-  max-height: ${({ isOpen }) => (isOpen ? "500px" : "0")};
-  overflow: hidden;
   opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
-  animation: ${({ isOpen }) => (isOpen ? slideDown : slideUp)} 0.5s ease-in-out;
+  animation: ${({ isOpen }) => (isOpen ? slideDown : slideUp)} 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
+  border-radius: 8px;
 
   a {
     display: block;
     padding: 10px 20px;
     color: #000;
     text-decoration: none;
-    font-size: 18px;
+    font-size: 16px;
 
     &:hover {
       background-color: #f0f0f0;
@@ -163,51 +157,26 @@ const IconWrapper = styled.div`
   display: flex;
   align-items: center;
   cursor: pointer;
-  margin-left: 10px;
-
-  media (max-width: 768px) {
-    display: none;
-  }
+  margin: 12px;
+  position: relative;
+  gap: 5px;
 `;
 
-const IconMenu = styled.div<{isOpen: boolean}>`  
-  display: ${({isOpen}) => (isOpen ? "block" : "none")};
-  position: absolute:
-  top: 60px;
-  right: 0;
-  margin-right: 10px;
-  width: 20%;
-  backgroud-color: #fff;
-  border: 2px solid #000000;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  z-index: 999;
-  max-height: ${({ isOpen }) => (isOpen ? "500px" : "0")};
-  overflow: hidden;
-  opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
-  animation: ${({ isOpen }) => (isOpen ? slideDown : slideUp)} 0.5s ease-in-out;
-
-  a {
-    display: block;
-    padding: 10px 20px;
-    color: #000;
-    text-decoration: none;
-    font-size: 18px;
-
-    &:hover {
-      background-color: #f0f0f0;
-      color: #7848f4;
-    }
-  } 
+const DropdownButton = styled.div`
+  display: flex;
+  flex-direction: column;
 `;
+
 
 const Header: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const navigate = useNavigate();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isNotificationMenuOpen, setIsNotificationMenuOpen] = useState(false);
+  const navigate = useNavigate();
   const isAuthenticated = useSelector((state: RootState) => selectIsAuthenticated(state));
   const dispatch = useDispatch<AppDispatch>();
   const accessToken = localStorage.getItem("accessToken");
+  const userId = Number(localStorage.getItem("userId")) || 0;  
 
   const toggleMenu = () => {
     setIsOpen(!isOpen);
@@ -245,16 +214,24 @@ const Header: React.FC = () => {
     };
   }, [isOpen]);
 
+  useEffect(() => {
+    if (userId > 0 && accessToken) {
+      dispatch(setAuthenticated(true));
+    }
+    else {
+      dispatch(setAuthenticated(false));
+    }
+  }, [dispatch, userId]); 
+
   const handleLogout = async () => {
     try {
-      const response = await dispatch(logout());
+      await dispatch(logout()).unwrap();
+      dispatch(setAuthenticated(false));
       navigate("/");
     } catch (error) {
       Swal.fire("error", "로그아웃에 실패했습니다", "error");
-  }
+    }
   };
-
-  
 
   return (
     <HeaderContainer>
@@ -262,39 +239,40 @@ const Header: React.FC = () => {
         {isOpen ? <FaTimes /> : <FaBars />}
       </MenuIcon>
       <Nav>
+        <NavLink to="/"><img src={require("../assets/somoim_icon.png")} alt="icon"/></NavLink>
         <NavLink to="/moim/list">소모임</NavLink>
         <NavLink to="/bungae/list">번개</NavLink>
         <NavLink to="/mypage">마이페이지</NavLink>
       </Nav>
       <ButtonContainer>
-      {isAuthenticated ? (
+        {isAuthenticated ? (
           <>
             <Button onClick={() => handleNavigation("/createPost")}>Create Post</Button>
-            <Button onClick={() => handleLogout()}>Logout</Button>
+            <Button onClick={handleLogout}>Logout</Button>
             <IconWrapper onClick={toggleNotificationMenu}>
               <FaBell size={24} />
-              <IconMenu isOpen={isNotificationMenuOpen}>
-                {/* <NavLink to="/notifications" onClick={toggleNotificationMenu}>
+              <DropdownMenu isOpen={isNotificationMenuOpen}>
+                <NavLink to="/notifications" onClick={toggleNotificationMenu}>
                   알림1
                 </NavLink>
                 <NavLink to="/notifications" onClick={toggleNotificationMenu}>
                   알림2
-                </NavLink> */}
-              </IconMenu>
+                </NavLink>
+              </DropdownMenu>
             </IconWrapper>
             <IconWrapper onClick={toggleProfileMenu}>
               <FaUserCircle size={24} />
-              <IconMenu isOpen={isProfileMenuOpen}>
+              <DropdownMenu isOpen={isProfileMenuOpen}>
                 <NavLink to="/mypage" onClick={toggleProfileMenu}>
                   프로필
                 </NavLink>
-                <NavLink to="/mypage/createdMoim" onClick={toggleProfileMenu}>
+                <NavLink to="/createdMoim" onClick={toggleProfileMenu}>
                   작성 글
                 </NavLink>
-                <NavLink to="/mypage/interestedMoim" onClick={toggleProfileMenu}>
+                <NavLink to="/interestedMoim" onClick={toggleProfileMenu}>
                   관심 글
                 </NavLink>
-              </IconMenu>
+              </DropdownMenu>
             </IconWrapper>
           </>
         ) : (
@@ -304,45 +282,30 @@ const Header: React.FC = () => {
           </>
         )}
       </ButtonContainer>
-      {isAuthenticated ? (
-        <DropdownMenu isOpen={isOpen}>
-          <NavLink to="/moim/list" onClick={toggleMenu}>
-            소모임
-          </NavLink>
-          <NavLink to="/bunage/list" onClick={toggleMenu}>
-            번개
-          </NavLink>
-          <NavLink to="/mypage" onClick={toggleMenu}>
-            마이페이지
-          </NavLink>
-          <DropdownButton>
-            <Button onClick={() => handleNavigation("/createPost")}>
-              Create Post
-            </Button>
-            <Button onClick={() => handleLogout()}>
-              Logout
-            </Button>
-          </DropdownButton>
-        </DropdownMenu>
-      ) : (
-        <DropdownMenu isOpen={isOpen}>
-          <NavLink to="/moim/list" onClick={toggleMenu}>
-            소모임
-          </NavLink>
-          <NavLink to="/bungae/list" onClick={toggleMenu}>
-            번개
-          </NavLink>
-          <NavLink to="/mypage" onClick={toggleMenu}>
-            마이페이지
-          </NavLink>
-          <DropdownButton>
-            <Button onClick={() => handleNavigation("/login")}>Login</Button>
-            <Button onClick={() => handleNavigation("/register")}>
-              Register
-            </Button>
-          </DropdownButton>
-        </DropdownMenu>
-      )}
+      <DropdownMenu isOpen={isOpen}>
+        <NavLink to="/moim/list" onClick={toggleMenu}>
+          소모임
+        </NavLink>
+        <NavLink to="/bungae/list" onClick={toggleMenu}>
+          번개
+        </NavLink>
+        <NavLink to="/mypage" onClick={toggleMenu}>
+          마이페이지
+        </NavLink>
+        <DropdownButton>
+          {isAuthenticated ? (
+            <>
+              <Button onClick={() => handleNavigation("/createPost")}>Create Post</Button>
+              <Button onClick={handleLogout}>Logout</Button>
+            </>
+          ) : (
+            <>
+              <Button onClick={() => handleNavigation("/login")}>Login</Button>
+              <Button onClick={() => handleNavigation("/register")}>Register</Button>
+            </>
+          )}
+        </DropdownButton>
+      </DropdownMenu>
     </HeaderContainer>
   );
 };

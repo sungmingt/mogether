@@ -1,10 +1,13 @@
 import axios from 'axios';
+import { forgotPassword } from '../store/slices/authSlice';
+import { access } from 'fs';
 
 const API_BASE_URL = "https://api.mo-gether.site"; // 백엔드 서버의 기본 URL
 
 // Axios 인스턴스 생성
 export const api = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -33,14 +36,18 @@ api.interceptors.response.use(
 
     if (error.response.status === 401 && refreshToken) {  //refreshToken이 있을 때
       try {
-        const { data } = await axios.post(`${API_BASE_URL}/token`, {
-          refreshToken: refreshToken,
+        const response = await axios.get(`${API_BASE_URL}/token`, {
+          headers: {
+            'refreshToken': refreshToken,
+          },
         });
-        const newAccessToken = data.accessToken.split(' ')[1];  //`Bearer ${} 이런 식을 보내지면
-        const newRefreshToken = data.refreshToken.split(' ')[1];
+        const newAccessToken = response.data.accessToken;
+        const newRefreshToken = response.data.refreshToken;
+        const newUserId = response.data.userId;
 
         localStorage.setItem('accessToken', newAccessToken);
         localStorage.setItem('refreshToken', newRefreshToken);
+        localStorage.setItem('userId', newUserId); 
         originalRequest.headers['accessToken'] = `${newAccessToken}`;
 
         return axios(originalRequest);
@@ -56,6 +63,7 @@ api.interceptors.response.use(
 //content-type: multipart/form-data로 보내기 위한 설정
 export const api2 = axios.create({
   baseURL: API_BASE_URL,
+  withCredentials: true,
   headers: {
     'Content-Type': 'multipart/form-data',
   },
@@ -66,7 +74,7 @@ api2.interceptors.request.use(
   (config) => {
     const accessToken = localStorage.getItem('accessToken');
     if (accessToken) {
-      config.headers['Authorization'] = `Bearer ${accessToken}`;
+      config.headers['accessToken'] = `${accessToken}`;
     }
     return config;
   },
@@ -84,13 +92,19 @@ api2.interceptors.response.use(
 
     if (error.response.status === 401 && refreshToken) {  //refreshToken이 있을 때
       try {
-        const { data } = await axios.post(`${API_BASE_URL}/auth/refresh-token`, {
-          refreshToken,
+        const response = await axios.get(`${API_BASE_URL}/token`, {
+          headers: {
+            'refreshToken': refreshToken,
+          },
         });
-        const newAccessToken = data.accessToken.split(' ')[1];  //`Bearer ${} 이런 식을 보내지면
+        const newAccessToken = response.data.accessToken;
+        const newRefreshToken = response.data.refreshToken;
+        const newUserId = response.data.userId;
 
         localStorage.setItem('accessToken', newAccessToken);
-        originalRequest.headers['Authorization'] = `Bearer ${newAccessToken}`;
+        localStorage.setItem('refreshToken', newRefreshToken);
+        localStorage.setIem('userId', newUserId); 
+        originalRequest.headers['accessToken'] = `${newAccessToken}`;
 
         return axios(originalRequest);
       } catch (err) {
@@ -104,42 +118,18 @@ api2.interceptors.response.use(
 
 // API 요청 함수들
 export const loginApi = async (email: string, password: string) => {
-  const response = await api.post('/login', { email, password });
-  const accessToken = response.headers['accessToken'].split(' ')[1];
-  const refreshToken = response.headers['refreshToken'].split(' ')[1];
-  const userId = response.headers['userId'];
-  localStorage.setItem('accessToken', accessToken);
-  localStorage.setItem('refreshToken', refreshToken);
-  localStorage.setItem('userId', userId);
+  const response = await api.post('/login', { email: email, password: password });
   return response;  //api.ts에서 이미 localStorage에 accessToken, refreshToken을 저장했기 때문에 return response만 해주면 됨
 };
 
-// export const GoogleLoginApi = async () => {
-//   const response = await axios.get('https://api.mo-gether.site/oauth2/authorization/google');
-//   const accessToken = response.headers['accessToken'].split(' ')[1];
-//   const refreshToken = response.headers['refreshToken'].split(' ')[1];
-//   const userId = response.headers['userId'];
-//   localStorage.setItem('accessToken', accessToken);
-//   localStorage.setItem('refreshToken', refreshToken);
-//   localStorage.setItem('userId', userId);
-//   return response;
-// }
+export const forgotPasswordApi = async (email: string, nickname: string) => {
+  const response = await api.post('/user/password', { email: email, nickname: nickname });
+  return response;
+}
 
-// export const KakaoLoginApi = async () => {
-//   const response = await axios.get('https://api.mo-gether.site/oauth2/authorization/kakao');
-//   const accessToken = response.headers['accessToken'].split(' ')[1];
-//   const refreshToken = response.headers['refreshToken'].split(' ')[1];
-//   const userId = response.headers['userId'];
-//   localStorage.setItem('accessToken', accessToken);
-//   localStorage.setItem('refreshToken', refreshToken);
-//   localStorage.setItem('userId', userId);
-//   return response;
-// }
 
 export const registerApi = async (registerFormData: FormData) => {  //register 호출 시 registerFormData라는 객체 데이터를 받아옴
   const response = await api2.post('/user/join', registerFormData);
-  // localStorage.setItem('accessToken', response.data.accessToken);
-  // localStorage.setItem('refreshToken', response.data.refreshToken);
   return response;
 };
 
@@ -175,13 +165,13 @@ export const fetchBungaeApi = async () => {
   return response;
 };
 
-export const createMoimApi = async (postData: any) => {
-  const response = await api.post('/moim', postData);
+export const createMoimApi = async (postData: FormData) => {
+  const response = await api2.post('/moim', postData);
   return response;
 };
 
-export const createBungaeApi = async (postData: any) => {
-  const response = await api.post('/bungae', postData);
+export const createBungaeApi = async (postData: FormData) => {
+  const response = await api2.post('/bungae', postData);
   return response;
 }
 
@@ -242,25 +232,6 @@ export const changePasswordApi = async (passwordData: {userId: number, oldPasswo
   return response;
 };
 
-// export const googleLoginApi = async (response: GoogleLoginResponse) => {
-//   const { tokenId } = response;
-//   const res = await api.post('/auth/google-login', { tokenId });
-//   const accessToken = res.headers['accessToken'].split(' ')[1];
-//   const refreshToken = res.headers['refreshToken'].split(' ')[1];
-//   localStorage.setItem('accessToken', accessToken);
-//   localStorage.setItem('refreshToken', refreshToken);
-//   return res;
-// };
-
-// export const kakaoLoginApi = async (response: any) => {
-//   const { accessToken } = response;
-//   const res = await api.post('/auth/kakao-login', { accessToken });
-//   const newAccessToken = res.headers['accessToken'].split(' ')[1];
-//   const newRefreshToken = res.headers['refreshToken'].split(' ')[1];
-//   localStorage.setItem('accessToken', newAccessToken);
-//   localStorage.setItem('refreshToken', newRefreshToken);
-//   return res;
-// };
 
 export const logoutApi = async () => {
   const response = await api.post('/logout');
@@ -319,6 +290,11 @@ export const EditMoimApi = async (moimId: number, editData: any) => {
 
 export const EditBungaeApi = async (bungaeId: number, editData: any) => {
   const response = await api2.patch(`/bungae/${bungaeId}`, editData);
+  return response;
+}
+
+export const DeleteUserApi = async (userId: number) => {
+  const response = await api.delete(`/user/${userId}`);
   return response;
 }
 

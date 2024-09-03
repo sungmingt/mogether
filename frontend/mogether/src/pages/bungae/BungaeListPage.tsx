@@ -16,7 +16,6 @@ const BungaeListPage: React.FC = () => {
     <PageContainer>
       <Header />
       <BungaeList />
-      <Leftbar />
       <Footer />
     </PageContainer>
   );

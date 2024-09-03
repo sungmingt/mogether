@@ -2,12 +2,12 @@ import React, { useEffect, useState } from "react";
 import styled from "styled-components";
 // import { MoimInterestApi, BungaeInterestApi } from "../../utils/api"; 여기는 slice에서 관리
 import { RootState, AppDispatch } from "../../store/store";
-import {MyInterestedMoim} from "../../store/slices/userSlice";
+import {MyInterestedMoim, loadMorePosts} from "../../store/slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { selectUserId } from "../../store/slices/authSlice";
 import { Post } from "../../store/slices/userSlice";  //userSlice의 Post 기준! 왜냐면 여기서 내가 작성한 글을 관리하니까!
 import { FaHeart } from "react-icons/fa";
-import { fetchPosts, loadMorePosts, sortPostsByLatest, sortPostsByLikes, clickInterest, deleteInterest } from '../../store/slices/moimSlice';
+import { clickInterest, deleteInterest } from '../../store/slices/moimSlice';
 import { locations } from '../../utils/location';
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -213,17 +213,7 @@ const MyInterestMoim: React.FC = () => {
         myInterestMoimList();
     }, [userId, dispatch]);
 
-    
-
-    
-    
-    // useEffect(() => {
-    //     if (sortOrder === 'latest') {
-    //       dispatch(sortPostsByLatest());
-    //     } else {
-    //       dispatch(sortPostsByLikes());
-    //     }
-    //   }, [sortOrder, dispatch]);
+  
     
       const handleLoadMore = () => {
         dispatch(loadMorePosts());

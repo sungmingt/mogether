@@ -24,6 +24,7 @@ import KakaoRedirectUrlPage from './components/auth/KakaoRedirectUrlPage';
 import GoogleRedirectUrlPage from './components/auth/GoogleRedirectUrlPage';
 import PrivacyLaw from './pages/auth/PrivacyLaw';
 import SocialRegisterUrl from './components/auth/SocialRegisterRedirection';
+import ChangePasswordPage from './pages/mypage/ChangePasswordPage';
 
 
 
@@ -54,10 +55,11 @@ const App = () => {
         <Route path="/interestedBungae" element={<MyInterestedBungae />} />
         <Route path="/usercreatedMoim/:id" element={<UserCreateMoim />} />
         <Route path="/usercreatedBungae/:id" element={<UserCreateBungae />} />
-        <Route path="/social/login" element={<KakaoRedirectUrlPage />} />
-        <Route path="/social/login" element={<GoogleRedirectUrlPage />} />
+        <Route path="/social/login/kakao" element={<KakaoRedirectUrlPage />} />
+        <Route path="/social/login/google" element={<GoogleRedirectUrlPage />} />
         <Route path="/law/privacy" element={<PrivacyLaw />} />
         <Route path="/social/register" element={<SocialRegisterUrl />} />
+        <Route path="/changePassword" element={<ChangePasswordPage />} /> 
       </Routes>
     </Router>
     </>

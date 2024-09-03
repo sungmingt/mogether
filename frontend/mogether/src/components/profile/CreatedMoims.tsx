@@ -3,9 +3,8 @@ import styled from "styled-components";
 import { AppDispatch, RootState } from "../../store/store";
 import { useSelector, useDispatch } from "react-redux";
 // import { selectUserId } from "../../store/slices/authSlice";
-import { MyCreatedMoim } from "../../store/slices/userSlice";
+import { MyCreatedMoim, loadMorePosts } from "../../store/slices/userSlice";
 import {Post} from "../../store/slices/userSlice";
-import { loadMorePosts, sortPostsByLatest, sortPostsByLikes } from "../../store/slices/moimSlice";
 import { locations } from '../../utils/location';
 import { FaHeart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -192,17 +191,16 @@ const ContentText = styled.p`
 const CreatedMoim: React.FC = () => {
     const userId = Number(localStorage.getItem('userId')) || 0;
     const dispatch = useDispatch<AppDispatch>();
-    const [myCreatedMoim, setMyCreatedMoim] = useState<Post[]>([]); 
-    const [myCreatedBungae, setMyCreatedBungae] = useState<Post[]>([]); 
     const navigate = useNavigate();
-    const [visiblePosts, setVisiblePosts] = useState<Post[]>([]); 
+    const { visiblePosts, allPosts} = useSelector(
+      (state: RootState) => state.user
+    );
 
     useEffect(() => {
         const myCreatedMoimList = async () => {
             try {
                 const response = await dispatch(MyCreatedMoim(userId)).unwrap();
-                setMyCreatedMoim(response);
-                setVisiblePosts(myCreatedMoim.slice(0, 12));    
+                console.log(response);
             }
             catch (error) {
                 console.error(error);
@@ -211,17 +209,7 @@ const CreatedMoim: React.FC = () => {
         myCreatedMoimList();
     }, [userId, dispatch]);
 
-    
-
-    
-    
-    // useEffect(() => {
-    //     if (sortOrder === 'latest') {
-    //       dispatch(sortPostsByLatest());
-    //     } else {
-    //       dispatch(sortPostsByLikes());
-    //     }
-    //   }, [sortOrder, dispatch]);
+   
     
       const handleLoadMore = () => {
         dispatch(loadMorePosts());
@@ -372,7 +360,7 @@ const CreatedMoim: React.FC = () => {
           </PostCard>
         ))}
       </PostGrid>
-      {visiblePosts.length < myCreatedMoim.length && (
+      {visiblePosts.length < allPosts.length && (
         <LoadMoreButton onClick={handleLoadMore}>Load more</LoadMoreButton>
       )}
     </PostListContainer>

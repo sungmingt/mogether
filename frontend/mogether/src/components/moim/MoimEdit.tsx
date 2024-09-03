@@ -232,11 +232,10 @@ const MoimEdit = () => {
   const dispatch: AppDispatch = useDispatch();
   const navigate = useNavigate();
   const userId = Number(localStorage.getItem('userId')) || 0;
-  const userProfile = useSelector((state: RootState) => state.userProfile.userProfiles[userId]);  //rootState : store.ts에서 가져옴 -> store.ts는 각각 정의된 store에서 가져옴
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [category, setCategory] = useState<string | null>("moim");
-  const [keywords, setKeywords] = useState<string[]>([]);
+  const [category, setCategory] = useState<string>("moim");
+  const [keyword, setKeyword] = useState<string>("");
   const [location, setLocation] = useState("");
   const [subLocation, setSubLocation] = useState("");
   const [imageUrls, setImageUrls] = useState<string[]>([]);
@@ -258,23 +257,19 @@ const MoimEdit = () => {
     meetingPeriodEnd: "",
   });
   const [additionalFocusedInput, setAdditionalFocusedInput] = useState<FocusedInputShape | null>(null);
-  const isAuthenticated = useSelector(selectIsAuthenticated);
   const {id} = useParams<{id: string}>();
   const moimId = id ? parseInt(id, 10) : 0;
   const bungaeId = id ? parseInt(id, 10) : 0;
+  const accessToken = localStorage.getItem('accessToken');
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!accessToken) {
       navigate('/Login');   //userProfile이 존재 x -> 가져옴
     }
-  }, [dispatch, isAuthenticated]);
+  }, [dispatch, accessToken]);
 
-  const handleKeywordChange = useCallback((keyword: string) => {  //이전과 동일한 참조값이 반환될 경우 -> 리렌더 x
-    setKeywords((prev) =>
-      prev.includes(keyword)
-        ? prev.filter((k) => k !== keyword)
-        : [...prev, keyword]
-    );
+  const handleKeywordChange = useCallback((keyword: string) => {
+    setKeyword(keyword);
   }, []);
 
   useEffect(() => {
@@ -283,7 +278,7 @@ const MoimEdit = () => {
         const response = await dispatch(clickPosts(moimId)).unwrap();
         setTitle(response.title);
         setContent(response.content);
-        setKeywords(response.keyword);
+        setKeyword(response.keyword);
         setLocation(response.address.city);
         setSubLocation(response.address.gu);
         setDateRange({
@@ -300,6 +295,7 @@ const MoimEdit = () => {
   }, [dispatch, moimId]);
 
   const handleCategoryChange = useCallback((selectedCategory: string) => {
+    console.log(selectedCategory);
     setCategory(selectedCategory);
   }, []);
 
@@ -325,16 +321,26 @@ const MoimEdit = () => {
     setImageFile((prev) => prev ? prev.filter((_, i) => i !== index) : null);
   };
 
+  const handleMeetingTimeChange = (date: moment.Moment | string) => {
+    if (date && typeof date !== 'string') {
+      setMeetingStartTime(date.format('YYYY-MM-DD HH:mm'));
+    }
+    else {
+      setMeetingStartTime(null);
+    }
+  };
+
   const handleSubmit = async () => {
     if (
       !title ||
       !content ||
-      keywords.length === 0 ||
+      !keyword ||
       !category ||
       !dateRange.startDate ||
       !dateRange.endDate ||
       !location ||
-      !subLocation
+      !subLocation ||
+      (category === "bungae" && !meetingStartTime)
     ) {
       Swal.fire("Error", "필수 입력 항목을 모두 입력해주세요.", "error");
       return;
@@ -343,10 +349,10 @@ const MoimEdit = () => {
 
     if (category === "moim") {
       const moimData = {
-        userId: userProfile?.userId,
+        userId: userId,
         title: title,
         content: content,
-        keyword: keywords,
+        keyword: keyword,
         address: {
           city: location,
           gu: subLocation,
@@ -366,7 +372,7 @@ const MoimEdit = () => {
         });
 	    }
 	    else {
-	      moimFormData.append('images', null as any);
+	      moimFormData.append('images', 'null');
 	    };
       try {
         const moimFormDataMoimId = {moimId: moimId, moimFormData: moimFormData};
@@ -378,15 +384,14 @@ const MoimEdit = () => {
           title: '게시글 생성 실패',
           text: '생성 중 오류가 발생했습니다. 다시 시도하세요.',
         });
-        window.location.reload();
       }
     }
     else {
       const bungaeData = {
-        userId: userProfile?.userId,
+        userId: userId,
         title: title,
         content: content,
-        keyword: keywords,
+        keyword: keyword,
         address: {
           city: location,
           gu: subLocation,
@@ -406,7 +411,7 @@ const MoimEdit = () => {
         });
 	    }
 	    else {
-	      bungaeFormData.append('images', null as any);
+	      bungaeFormData.append('images', 'null');
 	    };
       try {
         const bungaeFormDataBungaeId = {bungaeId: bungaeId, bungaeFormData: bungaeFormData};
@@ -418,7 +423,6 @@ const MoimEdit = () => {
           title: '게시글 생성 실패',
           text: '생성 중 오류가 발생했습니다. 다시 시도하세요.',
         });
-        window.location.reload();
       }
     }
 
@@ -457,7 +461,7 @@ const MoimEdit = () => {
             Category<RequiredIcon>*</RequiredIcon>
           </Label>
           <ButtonGroup>
-            {["bungae", "study", "gathering"].map((cat) => (
+            {["bungae", "moim"].map((cat) => (
               <Button
                 key={cat}
                 selected={category === cat}
@@ -478,8 +482,8 @@ const MoimEdit = () => {
               Meeting Start Time<RequiredIcon>*</RequiredIcon>
             </Label>
             <Datetime
-              value={meetingStartTime || ""}  //왼쪽값이 false인 경우 -> 오른쪽값 반환
-              onChange={(date) => setMeetingStartTime(date ? date.toString() : null)}
+              value={meetingStartTime ? moment(meetingStartTime) : ""}  //왼쪽값이 false인 경우 -> 오른쪽값 반환
+              onChange={handleMeetingTimeChange}
               inputProps={{ placeholder: "Select Date and Time" }}
               dateFormat="YYYY-MM-DD"
               timeFormat="HH:mm"
@@ -491,14 +495,14 @@ const MoimEdit = () => {
             Keywords<RequiredIcon>*</RequiredIcon>
           </Label>
           <ButtonGroup>
-            {["Art", "Music", "Travel", "Sports"].map((keyword) => (
+            {["TRAVEL", "DRINKING", "FOOD", "SPORTS", "ACTIVITY", "GAME", "PARTY", "CULTURE", "STUDY", "LANGUAGE", "HOBBY", "UNSELECTED"].map((key) => (
               <Button
-                key={keyword}
-                selected={keywords.includes(keyword)}
-                onClick={() => handleKeywordChange(keyword)}
-              >
-                {keyword}
-              </Button>
+              key={key}
+              selected={keyword===key}
+              onClick={() => handleKeywordChange(key)}
+            >
+              {key}
+            </Button>
             ))}
           </ButtonGroup>
         </div>

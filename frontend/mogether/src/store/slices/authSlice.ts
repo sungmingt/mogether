@@ -1,6 +1,7 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-import { loginApi, logoutApi, kakaoRegisterApi, GoogleRegisterApi } from '../../utils/api';
+import { loginApi, logoutApi, kakaoRegisterApi, GoogleRegisterApi, forgotPasswordApi } from '../../utils/api';
 import { RootState } from '../store';
+import { log } from 'console';
 
 interface User {
     email: string;
@@ -43,8 +44,11 @@ export const login = createAsyncThunk(
         try {
             const response = await loginApi(email, password);
             if (response.status === 200 || response.status === 201) {
-                return response.data;  //아래 extrareducers에서 action.payload로 들어감
-
+                console.log(response.status);
+                localStorage.setItem('accessToken', response.data.accessToken);
+                localStorage.setItem('refreshToken', response.data.refreshToken);
+                localStorage.setItem('userId', response.data.userId);
+                return response;  //아래 extrareducers에서 action.payload로 들어감
             }
         } catch (error) {
             return thunkAPI.rejectWithValue('Login failed');
@@ -52,19 +56,6 @@ export const login = createAsyncThunk(
     }
 );
 
-// export const register = createAsyncThunk(
-//     'auth/register',
-//     async (registerFormData: FormData, thunkAPI) => {
-//         try {
-//             const response = await registerApi(registerFormData);
-//             if (response.status === 200 || response.status === 201) {
-//                 return response.data;
-//             };
-//         } catch (error) {
-//             return thunkAPI.rejectWithValue('Registration failed');
-//         }
-//     }
-// );
 
 export const logout = createAsyncThunk(
     'auth/logout',
@@ -72,9 +63,14 @@ export const logout = createAsyncThunk(
         try {
             const response = await logoutApi();
             if (response.status === 200 || response.status === 201) {
+                // localStorage.removeItem('accessToken');
+                // localStorage.removeItem('refreshToken');
+                // localStorage.removeItem('userId');
+                console.log(response.data);
                 return response.data;
             }
         } catch (error) {
+            console.log(error);
             return thunkAPI.rejectWithValue('Logout failed');
         }
     }
@@ -108,33 +104,20 @@ export const googleRegister = createAsyncThunk(
     }
 ); 
 
-// export const googleLogin = createAsyncThunk(
-//     'auth/googleLogin',
-//     async (_, thunkAPI) => {
-//         try {
-//             const response = await GoogleLoginApi();
-//             if (response.status === 200 || response.status === 201) {
-//                 return response.data;
-//             }
-//         } catch (error) {
-//             return thunkAPI.rejectWithValue('Google login failed');
-//         }
-//     }
-// );
+export const forgotPassword = createAsyncThunk(
+    'auth/forgotPassword',
+    async ({ email, nickname }: { email: string; nickname: string }, thunkAPI) => {
+        try {
+            const response = await forgotPasswordApi(email, nickname);
+            if (response.status === 200 || response.status === 201) {
+                return response.data;
+            }
+        } catch (error) {
+            return thunkAPI.rejectWithValue('Forgot password failed');
+        }
+    }
+);
 
-// export const kakaoLogin = createAsyncThunk(
-//     'auth/kakaoLogin',
-//     async (_, thunkAPI) => {
-//         try {
-//             const response = await KakaoLoginApi();
-//             if (response.status === 200 || response.status === 201) {
-//                 return response.data;
-//             }
-//         } catch (error) {
-//             return thunkAPI.rejectWithValue('Kakao login failed');
-//         }
-//     }
-// );
 
 
 
@@ -152,13 +135,15 @@ const authSlice = createSlice({
         //     localStorage.removeItem('userId');
         //     state.userId = 0;
         // },
+        setAuthenticated: (state, action: PayloadAction<boolean>) => {
+            state.isAuthenticated = action.payload;
+        },
     },
     extraReducers: (builder) => {
         builder
             .addCase(login.fulfilled, (state, action) => {
                 console.log('login success' + action.payload);
                 state.isAuthenticated = true;
-                // localStorage.setItem();
                 state.loading = false;
                 state.error = null;
             })
@@ -171,31 +156,9 @@ const authSlice = createSlice({
                 state.user = null;
                 state.loading = false;
                 state.error = action.payload as string;  //action payload에 타입 지정
+                console.log('login failed' + action.payload);
             })
-            // .addCase(kakaoLogin.fulfilled, (state, action) => {
-            //     state.isAuthenticated = true;
-            //     // localStorage.setItem();
-            //     state.loading = false;
-            //     state.error = null;
-            // })
-            // .addCase(kakaoLogin.rejected, (state, action) => {
-            //     state.isAuthenticated = false;
-            //     state.user = null;
-            //     state.loading = false;
-            //     state.error = action.payload as string;  //action payload에 타입 지정
-            // })
-            // .addCase(googleLogin.fulfilled, (state, action) => {
-            //     state.isAuthenticated = true;
-            //     // localStorage.setItem();
-            //     state.loading = false;
-            //     state.error = null;
-            // })
-            // .addCase(googleLogin.rejected, (state, action) => {
-            //     state.isAuthenticated = false;
-            //     state.user = null;
-            //     state.loading = false;
-            //     state.error = action.payload as string;  //action payload에 타입 지정
-            // })
+            
             .addCase(logout.fulfilled, (state, action) => {
                 state.isAuthenticated = false;
                 state.user = null;
@@ -232,6 +195,8 @@ const authSlice = createSlice({
             .addCase(kakaoRegister.fulfilled, (state) => {
                 state.loading = false;
                 state.error = null;
+                // console.log(state);
+                // state.isAuthenticated = true;
             })
             .addCase(kakaoRegister.rejected, (state, action) => {
                 state.loading = false;
@@ -244,7 +209,16 @@ const authSlice = createSlice({
             .addCase(googleRegister.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
-            });
+            })
+            .addCase(forgotPassword.fulfilled, (state, action) => {
+                console.log('response success' + action.payload);
+                state.loading = false;
+                state.error = null;
+            })
+            .addCase(forgotPassword.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            })
     },
 });
 
@@ -252,5 +226,5 @@ export const selectAuthLoading = (state: RootState) => state.auth.loading;
 export const selectAuthError = (state: RootState) => state.auth.error;
 export const selectIsAuthenticated = (state: RootState) => state.auth.isAuthenticated; //slice의 name을 통해 접근
 export const selectUserId = (state: RootState) => state.auth.userId;
-
+export const { setAuthenticated } = authSlice.actions;
 export default authSlice.reducer;

@@ -3,9 +3,8 @@ import styled from "styled-components";
 import { AppDispatch, RootState } from "../../store/store";
 import { useSelector, useDispatch } from "react-redux";
 // import { selectUserId } from "../../store/slices/authSlice";
-import { MyCreatedBungae } from "../../store/slices/userSlice";
+import { MyCreatedBungae, loadMorePosts } from "../../store/slices/userSlice";
 import {Post} from "../../store/slices/userSlice";
-import { loadMorePosts, sortPostsByLatest, sortPostsByLikes } from "../../store/slices/bungaeSlice";
 import { locations } from '../../utils/location';
 import { FaHeart } from "react-icons/fa";
 import { useNavigate, useParams } from "react-router-dom";
@@ -197,12 +196,13 @@ const UserCreateBungaes: React.FC = () => {
     const [myCreatedBungae, setMyCreatedBungae] = useState<Post[]>([]); 
     const navigate = useNavigate();
     const [visiblePosts, setVisiblePosts] = useState<Post[]>([]); 
-    const isAuthenticated = useSelector(selectIsAuthenticated);
+    const accessToken = localStorage.getItem("accessToken");
 
     useEffect(() => {
         const myCreatedBungaeList = async () => {
             try {
                 const response = await dispatch(MyCreatedBungae(userId)).unwrap();
+                console.log(response);
                 setMyCreatedBungae(response);
                 setVisiblePosts(myCreatedBungae.slice(0, 12));    
             }
@@ -214,22 +214,15 @@ const UserCreateBungaes: React.FC = () => {
     }, [userId, dispatch]);
 
     useEffect(() => {
-      if(!isAuthenticated) {
+      if(!accessToken) {
         navigate('/login');
       }
-    }, [isAuthenticated]);
+    }, [accessToken]);
 
     
 
     
-    
-    // useEffect(() => {
-    //     if (sortOrder === 'latest') {
-    //       dispatch(sortPostsByLatest());
-    //     } else {
-    //       dispatch(sortPostsByLikes());
-    //     }
-    //   }, [sortOrder, dispatch]);
+  
     
       const handleLoadMore = () => {
         dispatch(loadMorePosts());

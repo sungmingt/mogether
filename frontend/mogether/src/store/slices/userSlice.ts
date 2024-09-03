@@ -3,6 +3,7 @@ import { RootState } from '../store';
 import { api, createMoimApi, userApi, createBungaeApi } from '../../utils/api';
 import { MoimInterestApi, BungaeInterestApi, MyCreateMoimListApi, MyCreateBungaeListApi, changeUserProfile, EditMoimApi, EditBungaeApi } from "../../utils/api";
 import { create } from 'domain';
+import { selectVisiblePosts } from './moimSlice';
 
 
 export interface Post {
@@ -42,6 +43,8 @@ interface CurrentUserState {
   MyInterestedBungae: Post[] | null,
   MyCreatedMoim: Post[] | null,
   MyCreatedBungae: Post[] | null,
+  allPosts: Post[],
+  visiblePosts: Post[],
 }
 
 const initialState: CurrentUserState = {
@@ -52,6 +55,8 @@ const initialState: CurrentUserState = {
   MyInterestedBungae: [],
   MyCreatedMoim: [],
   MyCreatedBungae: [],
+  allPosts: [],
+  visiblePosts: [],
 };
 
 
@@ -62,9 +67,11 @@ export const createMoim = createAsyncThunk(
     try {
       const response = await createMoimApi(postData);
       if (response.status === 200 || response.status === 201) {
+        console.log(response.data);
         return response.data;
       }
     } catch (error) {
+      console.log(error);
       return rejectWithValue('Failed to create post');  //rejectWithValue는 reject시 해당 값을 반환
     }   //반환값 확인하면서 고치기
   }
@@ -147,7 +154,7 @@ export const MyInterestedBungae = createAsyncThunk(
   }
 );
 
-export const MyCreatedMoim = createAsyncThunk(
+export const MyCreatedMoim = createAsyncThunk(  //내가 만든 소모임 리스트
   'user/MyCreatedMoim',
   async (userId: number, thunkAPI) => {
     try {
@@ -165,7 +172,7 @@ export const MyCreatedMoim = createAsyncThunk(
   }
 )
 
-export const MyCreatedBungae = createAsyncThunk(
+export const MyCreatedBungae = createAsyncThunk(  //내가 만든 번개모임 리스트
   'user/MyCreatedBungae',
   async (userId: number, thunkAPI) => {
     try {
@@ -187,36 +194,53 @@ export const MyCreatedBungae = createAsyncThunk(
 
 
 
+
+
 const userSlice = createSlice({  //store와 action의 역할을 동시에 함
   name: 'user',
   initialState,
   reducers: {
-    
+    loadMorePosts(state) {
+      const start = state.visiblePosts.length; //현재 visiblePosts의 길이를 start로 지정
+      const morePosts = state.allPosts.slice(start, start + 12);
+      state.visiblePosts = [...state.visiblePosts, ...morePosts];
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(createMoim.fulfilled, (state, action: PayloadAction<any>) => { //그냥 객체 타입 -> any로 지정해줌
       state.posts.push(action.payload);
     });
+    builder.addCase(createMoim.rejected, (state, action: PayloadAction<any>) => {
+      state.error = action.payload as string;
+    });
     builder.addCase(MyInterestedMoim.fulfilled, (state, action: PayloadAction<Post[]>) => {
       state.MyInterestedMoim = action.payload;
+      state.allPosts = action.payload;
+      state.visiblePosts = action.payload.slice(0, 12);
     })
     builder.addCase(MyInterestedMoim.rejected, (state, action: PayloadAction<any>) => {
       state.error = action.payload as string;
     });
     builder.addCase(MyInterestedBungae.fulfilled, (state, action: PayloadAction<Post[]>) => {
       state.MyInterestedBungae = action.payload;
+      state.allPosts = action.payload;
+      state.visiblePosts = action.payload.slice(0, 12);
     })
     builder.addCase(MyInterestedBungae.rejected, (state, action: PayloadAction<any>) => {
       state.error = action.payload as string;
     });
     builder.addCase(MyCreatedMoim.fulfilled, (state, action: PayloadAction<Post[]>) => {
       state.MyCreatedMoim = action.payload;
+      state.allPosts = action.payload;
+      state.visiblePosts = action.payload.slice(0, 12);
     })
     builder.addCase(MyCreatedMoim.rejected, (state, action: PayloadAction<any>) => {
       state.error = action.payload as string;
     });
     builder.addCase(MyCreatedBungae.fulfilled, (state, action: PayloadAction<Post[]>) => {
       state.MyCreatedBungae = action.payload;
+      state.allPosts = action.payload;
+      state.visiblePosts = action.payload.slice(0, 12);
     })
     builder.addCase(MyCreatedBungae.rejected, (state, action: PayloadAction<any>) => {
       state.error = action.payload as string;
@@ -237,5 +261,6 @@ const userSlice = createSlice({  //store와 action의 역할을 동시에 함
 });
 
 export default userSlice.reducer;
+export const { loadMorePosts } = userSlice.actions; 
 
 //selectUserProfile 은 UserProfile 배열을 가져온다

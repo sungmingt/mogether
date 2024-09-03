@@ -3,9 +3,8 @@ import styled from "styled-components";
 import { AppDispatch, RootState } from "../../store/store";
 import { useSelector, useDispatch } from "react-redux";
 // import { selectUserId } from "../../store/slices/authSlice";
-import { MyCreatedBungae } from "../../store/slices/userSlice";
+import { MyCreatedBungae, loadMorePosts } from "../../store/slices/userSlice";
 import {Post} from "../../store/slices/userSlice";
-import { loadMorePosts, sortPostsByLatest, sortPostsByLikes } from "../../store/slices/bungaeSlice";
 import { locations } from '../../utils/location';
 import { FaHeart } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
@@ -192,16 +191,18 @@ const ContentText = styled.p`
 const CreatedBungae: React.FC = () => {
     const userId = Number(localStorage.getItem('userId')) || 0;
     const dispatch = useDispatch<AppDispatch>();
-    const [myCreatedBungae, setMyCreatedBungae] = useState<Post[]>([]); 
     const navigate = useNavigate();
-    const [visiblePosts, setVisiblePosts] = useState<Post[]>([]); 
+    // const [myCreatedBungae, setMyCreatedBungae] = useState<Post[]>([]); 
+    // const [visiblePosts, setVisiblePosts] = useState<Post[]>([]); 
+    const { visiblePosts, allPosts } = useSelector(
+      (state: RootState) => state.user
+    );
 
     useEffect(() => {
         const myCreatedBungaeList = async () => {
             try {
                 const response = await dispatch(MyCreatedBungae(userId)).unwrap();
-                setMyCreatedBungae(response);
-                setVisiblePosts(myCreatedBungae.slice(0, 12));    
+                console.log(response);
             }
             catch (error) {
                 console.error(error);
@@ -213,14 +214,7 @@ const CreatedBungae: React.FC = () => {
     
 
     
-    
-    // useEffect(() => {
-    //     if (sortOrder === 'latest') {
-    //       dispatch(sortPostsByLatest());
-    //     } else {
-    //       dispatch(sortPostsByLikes());
-    //     }
-    //   }, [sortOrder, dispatch]);
+  
     
       const handleLoadMore = () => {
         dispatch(loadMorePosts());
@@ -371,7 +365,7 @@ const CreatedBungae: React.FC = () => {
           </PostCard>
         ))}
       </PostGrid>
-      {visiblePosts.length < myCreatedBungae.length && (
+      {visiblePosts.length < allPosts.length && (
         <LoadMoreButton onClick={handleLoadMore}>Load more</LoadMoreButton>
       )}
     </PostListContainer>

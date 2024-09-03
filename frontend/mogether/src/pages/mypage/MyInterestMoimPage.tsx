@@ -2,6 +2,8 @@ import React from "react";
 import styled from "styled-components";
 import InterestingMoim from "../../components/profile/InterestMoims";
 import Leftbar from "./Leftbar_myprofile";
+import Header from "../Header"
+import Footer from "../Footer"
 
 const PageContainer = styled.div`
   display: flex;
@@ -12,8 +14,10 @@ const PageContainer = styled.div`
 const MyInterestMoimPage: React.FC = () => {
   return (
     <PageContainer>
+      <Header />
       <InterestingMoim />
       <Leftbar />
+      <Footer />
     </PageContainer>
   );
 };

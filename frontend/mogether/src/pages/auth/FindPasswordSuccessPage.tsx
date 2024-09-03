@@ -1,9 +1,8 @@
 import React from "react";
-import ChangePassword from "../../components/profile/ChangePassword";
+import FindPasswordSuccess from "../../components/auth/FindPasswordSuccess";
 import styled from "styled-components";
 import Header from "../Header";
 import Footer from "../Footer";
-import Leftbar from "./Leftbar_myprofile";
 
 const PageContainer = styled.div`
   display: flex;
@@ -15,15 +14,14 @@ const PageContainer = styled.div`
 //   flex: 1;
 // `;
 
-const ChangePasswordPage = () => {
+const FindPasswordSuccessContainer = () => {
   return (
     <PageContainer>
       <Header />
-      <ChangePassword />
-      <Leftbar />
+      <FindPasswordSuccess />
       <Footer />
     </PageContainer>
   );
 };
 
-export default ChangePasswordPage;
+export default FindPasswordSuccessContainer;

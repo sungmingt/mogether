@@ -243,11 +243,12 @@ const MoimCreate = () => {
   const navigate = useNavigate();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
-  const [category, setCategory] = useState<string | null>("moim");
-  const [keyword, setKeyword] = useState<string | null>("Art");
+  const [category, setCategory] = useState<string>("moim");
+  const [keyword, setKeyword] = useState<string>("");
   const [location, setLocation] = useState("");
   const [subLocation, setSubLocation] = useState("");
   const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [imageFile, setImageFile] = useState<File[] | null>(null);
   const [dateRange, setDateRange] = useState<{ startDate: string | null, endDate: string | null }>({
     startDate: null,
     endDate: null,
@@ -267,9 +268,10 @@ const MoimCreate = () => {
   const [additionalFocusedInput, setAdditionalFocusedInput] = useState<FocusedInputShape | null>(null);
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const userId = Number(localStorage.getItem('userId')) || 0;
+  const accessToken = localStorage.getItem('accessToken');
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!accessToken) {
       navigate('/login');   //userProfile이 존재 x -> 가져옴
     }
   }, [dispatch, isAuthenticated]);
@@ -296,17 +298,28 @@ const MoimCreate = () => {
     const fileArray = Array.from(files || []);
     const newUrls = fileArray.map((file) => URL.createObjectURL(file));
     setImageUrls((prev) => [...prev, ...newUrls]);
+    setImageFile((prev) => (prev ? [...prev, ...fileArray] : fileArray));
   };
 
   const handleImageRemove = (index: number) => {
     setImageUrls((prev) => prev.filter((_, i) => i !== index));
+    setImageFile((prev) => prev ? prev.filter((_, i) => i !== index) : null);
+  };
+
+  const handleMeetingTimeChange = (date: moment.Moment | string) => {
+    if (date && typeof date !== 'string') {
+      setMeetingStartTime(date.format('YYYY-MM-DD HH:mm'));
+    }
+    else {
+      setMeetingStartTime(null);
+    }
   };
 
   const handleSubmit = async () => {
     if (
       !title ||
       !content ||
-      keyword === "" ||
+      !keyword ||
       !category ||
       !dateRange.startDate ||
       !dateRange.endDate ||
@@ -322,7 +335,6 @@ const MoimCreate = () => {
       title: title,
       content: content,
       keyword: keyword,
-      images: imageUrls,
       address: {
         city: location,
         gu: subLocation,
@@ -337,7 +349,6 @@ const MoimCreate = () => {
       title: title,
       content: content,
       keyword: keyword,
-      images: imageUrls,
       address: {
         city: location,
         gu: subLocation,
@@ -350,8 +361,22 @@ const MoimCreate = () => {
     };
     
     if (category === "moim") {
+      const moimFormData = new FormData();
+      moimFormData.append('dto', new Blob([JSON.stringify(moimData)], { type: 'application/json' }));
+
+      if (imageFile && imageFile.length > 0) {   //imageFile이 null(이미지가 올라간 게 없을 경우)
+        imageFile.forEach((file) => {
+        moimFormData.append('images', file);
+        });
+	    }
+      else {
+        moimFormData.append('images', "null")
+      }
       try {
-        const response = await dispatch(createMoim(moimData)).unwrap();
+        const response = await dispatch(createMoim(moimFormData)).unwrap();
+        console.log(response);
+        console.log(keyword);
+        navigate('/moim/list')
       }
       catch (error) {
         Swal.fire({
@@ -359,12 +384,23 @@ const MoimCreate = () => {
           title: '게시글 생성 실패',
           text: '생성 중 오류가 발생했습니다. 다시 시도하세요.',
         });
-        window.location.reload();
       }
     }
     else {
+      const bungaeFormData = new FormData();
+      bungaeFormData.append('dto', new Blob([JSON.stringify(bungaeData)], { type: 'application/json' }));
+      if (imageFile && imageFile.length > 0) {   //imageFile이 null(이미지가 올라간 게 없을 경우)
+        imageFile.forEach((file) => {
+          bungaeFormData.append('images', file);
+        });
+      }
+      else {
+        bungaeFormData.append('images', "null");
+      }
       try {
-        const response = await dispatch(createBungae(bungaeData)).unwrap();
+        const response = await dispatch(createBungae(bungaeFormData)).unwrap();
+        console.log(response);
+        navigate('/bungae/list')
       }
       catch (error) {
         Swal.fire({
@@ -372,7 +408,6 @@ const MoimCreate = () => {
           title: '게시글 생성 실패',
           text: '생성 중 오류가 발생했습니다. 다시 시도하세요.',
         });
-        window.location.reload();
       }
     }
 
@@ -411,7 +446,7 @@ const MoimCreate = () => {
             Category<RequiredIcon>*</RequiredIcon>
           </Label>
           <ButtonGroup>
-            {["bungae", "study", "gathering"].map((cat) => (
+            {["bungae", "moim"].map((cat) => (
               <Button
                 key={cat}
                 selected={category === cat}
@@ -432,8 +467,8 @@ const MoimCreate = () => {
               Meeting Start Time<RequiredIcon>*</RequiredIcon>
             </DateLabel>
             <Datetime
-              value={meetingStartTime || ""}  //왼쪽값이 false인 경우 -> 오른쪽값 반환
-              onChange={(date) => setMeetingStartTime(date ? date.toString() : null)}
+              value={meetingStartTime ? moment(meetingStartTime) : ""}  //왼쪽값이 false인 경우 -> 오른쪽값 반환
+              onChange={handleMeetingTimeChange}
               inputProps={{ placeholder: "Select Date and Time" }}
               dateFormat="YYYY-MM-DD"
               timeFormat="HH:mm"
@@ -445,7 +480,7 @@ const MoimCreate = () => {
             Keywords<RequiredIcon>*</RequiredIcon>
           </Label>
           <ButtonGroup>
-            {["Art", "Music", "Travel", "Sports"].map((key) => (
+            {["TRAVEL", "DRINKING", "FOOD", "SPORTS", "ACTIVITY", "GAME", "PARTY", "CULTURE", "STUDY", "LANGUAGE", "HOBBY", "UNSELECTED"].map((key) => (
               <Button
                 key={key}
                 selected={keyword===key}
@@ -482,6 +517,9 @@ const MoimCreate = () => {
           />
         </DateWrapper>
         <LocationWrapper>
+          <DateLabel>
+            지역<RequiredIcon>*</RequiredIcon>
+          </DateLabel>
           <Select
             value={location}
             onChange={(e) => setLocation(e.target.value)}

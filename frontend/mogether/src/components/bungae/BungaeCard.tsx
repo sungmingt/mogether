@@ -2,11 +2,9 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { selectBungaePost, clickPosts, clickInterest, clickJoin, deleteInterest } from '../../store/slices/bungaeSlice';
+import { selectBungaePost, clickPosts, clickInterest, clickJoin, deleteInterest, quitJoin } from '../../store/slices/bungaeSlice';
 import { RootState, AppDispatch } from '../../store/store';
 import { Bungae } from '../../store/slices/bungaeSlice';
-// import { interestApi, joinApi } from '../../utils/api';
-import { stat } from 'fs';
 import Swal from "sweetalert2";
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
@@ -14,7 +12,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { FaHeart, FaUser } from "react-icons/fa";
 import { deleteBungaeCardApi } from '../../utils/api';
 
-
+// Styled components
 const Card = styled.div`
   border: 1px solid #ccc;
   padding: 10px;
@@ -240,6 +238,7 @@ const JoinButton = styled.button<{ quit?: boolean }>`
   border: none;
   border-radius: 5px;
   padding: 10px 20px;
+  margin: 5px;
   cursor: pointer;
   font-size: 16px;
 
@@ -290,251 +289,254 @@ const AdditionalInfo = styled.div`
   }
 `;
 
-
 const BungaeCard = () => {
-    const [eventInfo, setEventInfo] = useState<Bungae | null>(null);  //가져온 객체 저장
-    const dispatch = useDispatch<AppDispatch>();
-    const { id } = useParams<{ id: string }>(); // URL에서 bungaeId 가져옴 -> 여기서 url은 내가 설정한 url
-    const bungaeId = id ? parseInt(id, 10) : 0; // id가 존재하면 숫자로 변환하고, 그렇지 않으면 0으로 설정
-    const error = useSelector((state: RootState) => state.bungae.error);
-    const loading = useSelector((state: RootState) => state.bungae.loading);
-    const userId = Number(localStorage.getItem('userId')) || 0;
-    const joined = useSelector(selectBungaePost)?.joined;  //null or defined값이 들어올 수도 있기 때문에...
-    const interested = useSelector(selectBungaePost)?.interested;
-    const [modalVisible, setModalVisible] = useState(false);
-    const navigate = useNavigate();
+  const [eventInfo, setEventInfo] = useState<Bungae | null>(null);
+  const dispatch = useDispatch<AppDispatch>();
+  const { id } = useParams<{ id: string }>();
+  const bungaeId = id ? parseInt(id, 10) : 0;
+  const error = useSelector((state: RootState) => state.bungae.error);
+  const loading = useSelector((state: RootState) => state.bungae.loading);
+  const userId = Number(localStorage.getItem('userId')) || 0;
+  const [modalVisible, setModalVisible] = useState(false);
+  const navigate = useNavigate();
 
-    const sliderSettings = {
-        dots: true,
-        infinite: true,
-        speed: 500,
-        slidesToShow: 1,
-        slidesToScroll: 1,
-        arrows: true,
-    };
+  const sliderSettings = {
+    dots: true,
+    infinite: true,
+    speed: 500,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+    arrows: true,
+  };
 
-
-    
-    useEffect(() => {
-        const fetchData = async () => {
-            try{
-                const response = await dispatch(clickPosts(bungaeId)).unwrap();
-                setEventInfo(response);
-            }
-            catch (error) {
-                console.error(error);
-            }
-        };
-        fetchData();
-    }, [dispatch, bungaeId]);  //dispatch 또는 moimdId가 변경될 때마다 hook 실행
-
-    const handleInterest = async () => {  //단건 조회
-        if (eventInfo) {  //eventInfo가 존재할 경우
-            try {
-            const response = await dispatch(clickInterest({ bungaeId: eventInfo.id, userId: userId })).unwrap();  //반환값인 response.data(action.payload만 반환하게 함)
-            const updatedEventInfo = {
-              ...eventInfo,
-              interested: true,
-              interestsCount: eventInfo.interestsCount + 1,
-            };  
-            setEventInfo(updatedEventInfo);
-            } catch (error) {
-              Swal.fire('error','Failed to toggle interest', 'error');
-            }  //sweetal2를 이용해서 꾸며주기!
-        }
-    }
-
-    const handleDeleteInterest = async () => {
-        if (eventInfo) {
-            try{
-                const response = await dispatch(deleteInterest({bungaeId: eventInfo.id, userId: userId})).unwrap();
-                const updatedEventInfo = {
-                    ...eventInfo,
-                    interested: false,
-                    interestsCount: eventInfo.interestsCount - 1,
-                  };  
-                  setEventInfo(updatedEventInfo);            
-                } catch (error) {
-                Swal.fire("error","failed","error");
-            }
-        }
-    }
-
-    const handleJoin = async () => {
-        if (eventInfo) {  //eventInfo가 존재할 경우
-            try {
-              const response = await dispatch(clickJoin({ bungaeId: eventInfo.id, userId: userId })).unwrap();
-              const updatedEventInfo = {
-                ...eventInfo,
-                joined: true,
-                participantsCount: eventInfo.participantsCount + 1,
-              };  
-              setEventInfo(updatedEventInfo);
-            } catch (error) {
-              alert('Failed to toggle join');
-            }  //sweetal2를 이용해서 꾸며주기!
-        }
-    }
-
-    const handleQuitJoin = async () => {
-        if (eventInfo) {  //eventInfo가 존재할 경우
-            try {
-              const response = await dispatch(clickJoin({ bungaeId: eventInfo.id, userId: userId })).unwrap();
-              const updatedEventInfo = {
-                ...eventInfo,
-                joined: false,
-                participantsCount: eventInfo.participantsCount - 1,
-              };  
-              setEventInfo(updatedEventInfo);
-            } catch (error) {
-              alert('Failed to toggle join');
-            }  //sweetal2를 이용해서 꾸며주기!
-        }
-    }
-
-    const handleEdit = () => {
-        navigate('/bungae/edit/' + String(bungaeId));
-      };
-    
-      const handleDelete = async () => {
-        const response = await deleteBungaeCardApi(bungaeId);
-        if (response.status === 200 || response .status === 201) {
-          Swal.fire('Deleted', 'The post has been deleted', 'success');
-          navigate('/bungae/list');
-        } else {
-          Swal.fire('Failed', 'Failed to delete the post', 'error');
-        }
-      };
-
-    const toggleModal = () => {
-        setModalVisible(!modalVisible);
-      };
-    
-    const handleUserInfoClick = () => {
-      if (eventInfo) {
-        navigate(`/user/${eventInfo.hostId}`);
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await dispatch(clickPosts(bungaeId)).unwrap();
+        setEventInfo(response);
+      } catch (error) {
+        console.error(error);
       }
     };
-    
-    const handleUserPostsClick = () => {
-        if (eventInfo) {
-            navigate(`/usercreatedMoim/${eventInfo.hostId}`);
-        }
-      };
+    fetchData();
+  }, [dispatch, bungaeId]);
 
+  const handleInterest = async () => {
+    if (userId === 0) {
+      Swal.fire('Unauthorized', 'Please login to interact with this post', 'error');
+      return;
+    }
+    if (eventInfo) {
+      try {
+        await dispatch(clickInterest({ bungaeId: eventInfo.id, userId })).unwrap();
+        setEventInfo({
+          ...eventInfo,
+          interested: true,
+          interestsCount: eventInfo.interestsCount + 1,
+        });
+      } catch (error) {
+        Swal.fire('error', 'Failed to toggle interest', 'error');
+      }
+    }
+  };
 
-    return(
+  const handleDeleteInterest = async () => {
+    if (userId === 0) {
+      Swal.fire('Unauthorized', 'Please login to interact with this post', 'error');
+      return;
+    }
+    if (eventInfo) {
+      try {
+        await dispatch(deleteInterest({ bungaeId: eventInfo.id, userId })).unwrap();
+        setEventInfo({
+          ...eventInfo,
+          interested: false,
+          interestsCount: Math.max(eventInfo.interestsCount - 1, 0),
+        });
+      } catch (error) {
+        Swal.fire('error', 'Failed to remove interest', 'error');
+      }
+    }
+  };
+
+  const handleJoin = async () => {
+    if (userId === 0) {
+      Swal.fire('Unauthorized', 'Please login to interact with this post', 'error');
+      return;
+    }
+    if (eventInfo) {
+      try {
+        await dispatch(clickJoin({ bungaeId: eventInfo.id, userId })).unwrap();
+        setEventInfo({
+          ...eventInfo,
+          joined: true,
+          participantsCount: eventInfo.participantsCount + 1,
+        });
+      } catch (error) {
+        Swal.fire('error', 'Failed to join the event', 'error');
+      }
+    }
+  };
+
+  const handleQuitJoin = async () => {
+    if (userId === 0) {
+      Swal.fire('Unauthorized', 'Please login to interact with this post', 'error');
+      return;
+    }
+    if (eventInfo) {
+      try {
+        await dispatch(quitJoin({ bungaeId: eventInfo.id, userId })).unwrap();
+        setEventInfo({
+          ...eventInfo,
+          joined: false,
+          participantsCount: Math.max(eventInfo.participantsCount - 1, 0),
+        });
+      } catch (error) {
+        Swal.fire('error', 'Failed to quit the event', 'error');
+      }
+    }
+  };
+
+  const handleEdit = () => {
+    navigate('/bungae/edit/' + String(bungaeId));
+  };
+
+  const handleDelete = async () => {
+    const response = await deleteBungaeCardApi(bungaeId);
+    if (response.status === 200 || response.status === 201) {
+      Swal.fire('Deleted', 'The post has been deleted', 'success');
+      navigate('/bungae/list');
+    } else {
+      Swal.fire('Failed', 'Failed to delete the post', 'error');
+    }
+  };
+
+  const toggleModal = () => {
+    setModalVisible(!modalVisible);
+  };
+
+  const handleUserInfoClick = () => {
+    if (eventInfo) {
+      navigate(`/user/${eventInfo.hostId}`);
+    }
+  };
+
+  const handleUserPostsClick = () => {
+    if (eventInfo) {
+      navigate(`/usercreatedMoim/${eventInfo.hostId}`);
+    }
+  };
+
+  return (
     <Card>
-    {eventInfo ? (
-    <>
-    <ImageGalleryWrapper>
-        <Slider {...sliderSettings}>
-          {eventInfo?.imageUrls && eventInfo.imageUrls.map((image, index) => (
-            <GalleryImage
-              key={index}
-              src={image}
-              alt={`Event Image ${index}`}
-            />
-          ))}
-        </Slider>
-    </ImageGalleryWrapper>
-    <InfoSection>
-        <InfoLeft>
-          <Title>{eventInfo.title}</Title>
-          <SubInfo>
-            모집기간: {eventInfo.createdAt} ~ {eventInfo.expireAt}
-          </SubInfo>
-          <SubInfo>
-            장소: {eventInfo.address.city}, {eventInfo.address.gu},{" "}
-            {eventInfo.address.details}
-          </SubInfo>
-          <KeywordButton>{eventInfo.keyword}</KeywordButton>
-        </InfoLeft>
-        <InterestandParticipantContainer>
-          <HeartInterestsContainer>
-            <HeartIcon
-              interested={eventInfo.interested}
-              onClick={eventInfo.interested ? handleDeleteInterest:handleInterest}
-            />
-            <InterestCount>{eventInfo.interestsCount}</InterestCount>
-            <ParticipantsContainer>
-              <FaUser />
-              <InterestCount>{eventInfo.participantsCount}</InterestCount>
-            </ParticipantsContainer>
-          </HeartInterestsContainer>
-          <ParticipantImages>
-            {eventInfo.participantsImageUrls && eventInfo.participantsImageUrls.map((url, index) => (
-              <img key={index} src={url} alt={`participant-${index}`} />
-            ))}
-          </ParticipantImages>
-        </InterestandParticipantContainer>
-    </InfoSection>
-    <Divider />
-    <ContentSection>
-        <p>{eventInfo.content}</p>
-    </ContentSection>
-    <Divider />
-    <AdditionalInfo>
-        <h3>Additional Info</h3>
-        {eventInfo.placeDetails && (
-          <p>장소 세부 정보: {eventInfo.placeDetails}</p>
-        )}
-        {eventInfo.minMember > 0 && (
-          <p>최소 참가 인원: {eventInfo.minMember}명</p>
-        )}
-        {eventInfo.maxMember > 0 && (
-          <p>최대 참가 인원: {eventInfo.maxMember}명</p>
-        )}
-        {eventInfo.ageLimit > 0 && (
-          <p>연령 제한: {eventInfo.ageLimit}세 이상</p>
-        )}
-        {eventInfo.fee > 0 && <p>참가비: {eventInfo.fee}원</p>}
-    </AdditionalInfo>
-    <Divider />
-    <HostSection>
-        <HostInfo onClick={toggleModal}>
-          <HostImage src={eventInfo.hostProfileImageUrl} alt="Host" />
-          <HostDetails>
-            <HostName>{eventInfo.hostName}</HostName>
-            <HostBio>{eventInfo.hostIntro}</HostBio>
-          </HostDetails>
-        </HostInfo>
-        {userId === eventInfo.hostId ? (
-          <ButtonGroup>
-            <EditButton onClick={handleEdit}>Edit</EditButton>
-            <DeleteButton onClick={handleDelete}>Delete</DeleteButton>
-          </ButtonGroup>
-        ) : (
-          <JoinButton quit={eventInfo.joined} onClick={eventInfo.joined ? handleQuitJoin : handleJoin}>
-            {eventInfo.joined ? "Quit" : "Join"}
-          </JoinButton>
-        )}
-    </HostSection>
-    <Divider />
-
-    <ModalOverlay show={modalVisible} onClick={toggleModal} />
-    {modalVisible && (
-        <ModalContent>
-          <ModalCloseButton onClick={toggleModal}>&times;</ModalCloseButton>
-          <ModalTitle>유저 조회</ModalTitle>
-          <DropdownItem onClick={handleUserInfoClick}>
-            유저 정보 조회
-          </DropdownItem>
-          <DropdownItem onClick={handleUserPostsClick}>
-            유저 작성 글
-          </DropdownItem>
-        </ModalContent>
-    )}
-    </>
-    ) : (
-            error ? (
-                <p>Error</p>
+      {eventInfo ? (
+        <>
+          <ImageGalleryWrapper>
+            <Slider {...sliderSettings}>
+              {eventInfo?.imageUrls && eventInfo.imageUrls.map((image, index) => (
+                <GalleryImage
+                  key={index}
+                  src={image}
+                  alt={`Event Image ${index}`}
+                />
+              ))}
+            </Slider>
+          </ImageGalleryWrapper>
+          <InfoSection>
+            <InfoLeft>
+              <Title>{eventInfo.title}</Title>
+              <SubInfo>
+                모집기간: {eventInfo.createdAt} ~ {eventInfo.expireAt}
+              </SubInfo>
+              <SubInfo>
+                장소: {eventInfo.address.city}, {eventInfo.address.gu},{" "}
+                {eventInfo.address.details}
+              </SubInfo>
+              <KeywordButton>{eventInfo.keyword}</KeywordButton>
+            </InfoLeft>
+            <InterestandParticipantContainer>
+              <HeartInterestsContainer>
+                <HeartIcon
+                  interested={eventInfo.interested}
+                  onClick={eventInfo.interested ? handleDeleteInterest : handleInterest}
+                />
+                <InterestCount>{eventInfo.interestsCount}</InterestCount>
+                <ParticipantsContainer>
+                  <FaUser />
+                  <InterestCount>{eventInfo.participantsCount}</InterestCount>
+                </ParticipantsContainer>
+              </HeartInterestsContainer>
+              <ParticipantImages>
+                {eventInfo.participantsImageUrls && eventInfo.participantsImageUrls.map((url, index) => (
+                  <img key={index} src={url} alt={`participant-${index}`} />
+                ))}
+              </ParticipantImages>
+            </InterestandParticipantContainer>
+          </InfoSection>
+          <Divider />
+          <ContentSection>
+            <p>{eventInfo.content}</p>
+          </ContentSection>
+          <Divider />
+          <AdditionalInfo>
+            <h3>Additional Info</h3>
+            {eventInfo.placeDetails && (
+              <p>장소 세부 정보: {eventInfo.placeDetails}</p>
+            )}
+            {eventInfo.minMember > 0 && (
+              <p>최소 참가 인원: {eventInfo.minMember}명</p>
+            )}
+            {eventInfo.maxMember > 0 && (
+              <p>최대 참가 인원: {eventInfo.maxMember}명</p>
+            )}
+            {eventInfo.ageLimit > 0 && (
+              <p>연령 제한: {eventInfo.ageLimit}세 이상</p>
+            )}
+            {eventInfo.fee > 0 && <p>참가비: {eventInfo.fee}원</p>}
+          </AdditionalInfo>
+          <Divider />
+          <HostSection>
+            <HostInfo onClick={toggleModal}>
+              <HostImage src={eventInfo.hostProfileImageUrl} alt="Host" />
+              <HostDetails>
+                <HostName>{eventInfo.hostName}</HostName>
+                <HostBio>{eventInfo.hostIntro}</HostBio>
+              </HostDetails>
+            </HostInfo>
+            {userId === eventInfo.hostId ? (
+              <ButtonGroup>
+                <EditButton onClick={handleEdit}>Edit</EditButton>
+                <DeleteButton onClick={handleDelete}>Delete</DeleteButton>
+              </ButtonGroup>
             ) : (
-                 <p>Loading...</p>
-                )
-        )}
-        </Card>
-    );
+              <JoinButton quit={eventInfo.joined} onClick={eventInfo.joined ? handleQuitJoin : handleJoin}>
+                {eventInfo.joined ? "Quit" : "Join"}
+              </JoinButton>
+            )}
+          </HostSection>
+          <Divider />
+
+          <ModalOverlay show={modalVisible} onClick={toggleModal} />
+          {modalVisible && (
+            <ModalContent>
+              <ModalCloseButton onClick={toggleModal}>&times;</ModalCloseButton>
+              <ModalTitle>유저 조회</ModalTitle>
+              <DropdownItem onClick={handleUserInfoClick}>
+                유저 정보 조회
+              </DropdownItem>
+              <DropdownItem onClick={handleUserPostsClick}>
+                유저 작성 글
+              </DropdownItem>
+            </ModalContent>
+          )}
+        </>
+      ) : error ? (
+        <p>Error</p>
+      ) : (
+        <p>Loading...</p>
+      )}
+    </Card>
+  );
 }
 
 export default BungaeCard;

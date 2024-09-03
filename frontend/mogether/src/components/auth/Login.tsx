@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { login, selectAuthError, selectIsAuthenticated } from '../../store/slices/authSlice';
+import { login, selectAuthError, selectIsAuthenticated, setAuthenticated } from '../../store/slices/authSlice';
 import styled from 'styled-components';
 import { RootState, AppDispatch } from '../../store/store';
 import { useNavigate } from 'react-router-dom';
@@ -109,7 +109,7 @@ const Login: React.FC = () => {
   const [password, setPassword] = useState<string>('');
   const error = useSelector((state: RootState) => selectAuthError(state));
   const isAuthenticated = useSelector((state: RootState) => selectIsAuthenticated(state));
-  const allProfiles = useSelector(selectAllUserProfiles);
+  const allProfiles = useSelector((state: RootState) => selectAllUserProfiles(state));
   // const [userId, setUserId] = useState<number>(0);
   // const userId = useSelector(selectCurrentUserProfile)?.userId;
 
@@ -119,10 +119,24 @@ const Login: React.FC = () => {
       try {
         const response = await dispatch(login({ email: email, password: password })).unwrap();
         // response.status === 200일때 dispatch로 인해 isAuthenticated 값이 갱신된다(useSelector에 의해서)
+        console.log(response);
+        // const accessToken = response.headers['accessToken'];
+        // const refreshToken = response.headers['refreshToken'];
+        // const userId = response.headers['userId'];
+        const accessToken = localStorage.getItem('accessToken') || '';
+        const refreshToken = localStorage.getItem('refreshToken') || '';
+        const userId = localStorage.getItem('userId') || ''; 
+        console.log(accessToken, refreshToken, userId);
+        if (!accessToken && !refreshToken && !userId) {
+          dispatch(setAuthenticated(true));  //reducer에서 액션 등록 후 동기적으로 액션을 수행할 수 있다.
+        }
+        else {
+          dispatch(setAuthenticated(false));
+        }
         navigate('/');
-
       }
       catch (error) {
+        console.log(error);
         Swal.fire('error', '잘못된 요청입니다', 'error');
       }
     }
@@ -135,12 +149,7 @@ const Login: React.FC = () => {
   };
 
   const handleKakao = () => {
-    // try {
-    //   navigate('/social/login?kakao');
-    // }
-    // catch (error) {
-    //   Swal.fire('error', '잘못된 요청입니다', 'error');
-    // }
+
     window.location.href='https://api.mo-gether.site/oauth2/authorization/kakao';
   };
 

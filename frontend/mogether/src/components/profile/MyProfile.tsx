@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import styled from "styled-components";
-import { fetchProfile, selectUserProfile, PatchUserProfile } from "../../store/slices/userProfileSlice";
+import { fetchProfile, selectUserProfile, PatchUserProfile, DeleteUser } from "../../store/slices/userProfileSlice";
 import { RootState, AppDispatch } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
@@ -57,6 +57,15 @@ const Input = styled.input`
   border-radius: 5px;
 `;
 
+const Select = styled.select`
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  width: 100%;
+  box-sizing: border-box;
+`;
+
 const Button = styled.button`
   padding: 10px 20px;
   background-color: #7848f4;
@@ -79,20 +88,17 @@ const FileInput = styled.input`
 const MyProfile: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const userId = Number(localStorage.getItem('userId')) || 0;
-  const currentUserProfile = useSelector(
-    (state: RootState) => state.userProfile.userProfiles[userId]
-  );
   const [editMode, setEditMode] = useState(false);
-  const [formData, setFormData] = useState<any>(null);
+  const [formData, setFormData] = useState<any>({});
   const [profileImage, setProfileImage] = useState<File | null>(null);
   const navigate = useNavigate();
-  const isAuthenticated = useSelector(selectIsAuthenticated);
+  const accessToken = localStorage.getItem("accessToken");
 
   useEffect(() => {
     const fetchProfileData = async () => {
         try {
-            const response = dispatch(fetchProfile(userId)).unwrap();  //dispatch로 인해 profile 변경 -> useSelector로 변경값 갱신 -> 그걸 가져옴
-            setFormData(currentUserProfile);
+            const response = await dispatch(fetchProfile(userId)).unwrap(); 
+            setFormData(response);
             console.log(response);
         }
         catch (error) {
@@ -101,76 +107,83 @@ const MyProfile: React.FC = () => {
         }
     }
     fetchProfileData();
-  }, [dispatch])
+  }, [dispatch, userId]);
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    if (!accessToken) {
       navigate("/login");
     }
-  }, [isAuthenticated, navigate]);
+  }, [accessToken, navigate]);
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
     });
   };
+
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
       setProfileImage(e.target.files[0]);
     }
   };
 
+  const handleUserDelete = async () => {
+    try {
+      const response = await dispatch(DeleteUser(userId));
+      Swal.fire("Success", "성공적으로 탈퇴되었습니다.", "success");
+      navigate("/");
+    } catch (error) {
+      console.error(error);
+      Swal.fire("Error", error as string, 'error');
+    }
+  }
+
   const handleToggleEdit = async () => {
-    if (editMode) {  //editMode가 true인 경우
-      if (editMode) {
-        if (!formData.nickname || !formData.name) {
-          Swal.fire("error", "Nickname and Name are required", "error");
-          return;
-        }
+    if (editMode) {
+      if (!formData.nickname) {
+        Swal.fire("error", "Nickname is required", "error");
+        return;
+      }
   
-        const patchData = new FormData();
-        if (profileImage) {
-          patchData.append("image", profileImage);
-        }
-        else {
-          patchData.append("image", null as any);
-        }
-        patchData.append(
-          "dto",
-          new Blob(
-            [
-              JSON.stringify({
-                name: formData.name,
-                nickname: formData.nickname,
-                address: formData.address,
-                age: formData.age,
-                gender: formData.gender,
-                intro: formData.intro,
-                phoneNumber: formData.phoneNumber,
-              }),
-            ],
-            { type: "application/json" }
-          )
-        );
+      const patchData = new FormData();
+      if (profileImage) {
+        patchData.append("image", profileImage);
+      } else {
+        patchData.append("image", "null");
+      }
+      patchData.append(
+        "dto",
+        new Blob(
+          [
+            JSON.stringify({
+              nickname: formData.nickname,
+              address: formData.address,
+              age: formData.age,
+              gender: formData.gender,
+              intro: formData.intro,
+              phoneNumber: formData.phoneNumber,
+            }),
+          ],
+          { type: "application/json" }
+        )
+      );
       try {
         const response = await dispatch(PatchUserProfile(patchData)).unwrap();
-        // window.location.reload();  //useEffect를 한번 더 실행?
-      }
-      catch (error) {
+        Swal.fire('Success', '프로필이 수정되었습니다.', 'success'); 
+      } catch (error) {
         console.error(error);
         Swal.fire('error', error as string, 'error');
       }
     }
     setEditMode(!editMode);
-  }
-};
+  };
 
   return (
     <ProfileContainer>
       <ProfileTitle>My Profile</ProfileTitle>
-      <ProfileImage src={formData.userProfileImage} alt="Profile" />
+      <ProfileImage src={formData.imageUrl || "../../assets/user_default.png"} alt="Profile" />
       {editMode && (
         <FileInput type="file" accept="image/*" onChange={handleImageChange} />
       )}
@@ -185,19 +198,6 @@ const MyProfile: React.FC = () => {
           />
         ) : (
           <Value>{formData.nickname}</Value>
-        )}
-      </ProfileItem>
-      <ProfileItem>
-        <Label>Name:</Label>
-        {editMode ? (
-          <Input
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleInputChange}
-          />
-        ) : (
-          <Value>{formData.name}</Value>
         )}
       </ProfileItem>
       <ProfileItem>
@@ -249,12 +249,14 @@ const MyProfile: React.FC = () => {
       <ProfileItem>
         <Label>Gender:</Label>
         {editMode ? (
-          <Input
-            type="text"
+          <Select
             name="gender"
             value={formData.gender}
             onChange={handleInputChange}
-          />
+          >
+            <option value="MALE">MALE</option>
+            <option value="FEMALE">FEMALE</option>
+          </Select>
         ) : (
           <Value>{formData.gender}</Value>
         )}
@@ -288,10 +290,9 @@ const MyProfile: React.FC = () => {
       <Button onClick={handleToggleEdit}>
         {editMode ? "Save Changes" : "Edit Profile"}
       </Button>
+      <Button onClick={handleUserDelete}>탈퇴하기</Button>
     </ProfileContainer>
   );
 };
 
 export default MyProfile;
-
-

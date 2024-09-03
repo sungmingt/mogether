@@ -85,14 +85,14 @@ const ChangePassword: React.FC = () => {
       (state: RootState) => state.userProfile.userProfiles[userId]
     );
     const allProfile = useSelector(selectAllUserProfiles);   
-    const isAuthenticated = useSelector(selectIsAuthenticated);
+    const accessToken = localStorage.getItem('accessToken'); 
     const navigate = useNavigate();
 
     useEffect(() => {
-        if (!isAuthenticated) {
+        if (!accessToken) {
             navigate('/login');
         }
-    }, [isAuthenticated, userId]);
+    }, [accessToken, userId]);
  
 
     const handlePasswordChange = async () => {
@@ -123,21 +123,13 @@ const ChangePassword: React.FC = () => {
         const passwordData = {userId: userId, oldPassword: oldPassword, newPassword: newPassword};
         try {
             const response = await dispatch(PatchUserPassword(passwordData)).unwrap();
-            // if (currentProfile) {
-            //     currentProfile.password = response;
-            // } else {
-            //     Swal.fire('error', '프로필을 찾을 수 없습니다', 'error');
-            // }
+            console.log(response);
             if (currentUserProfile) {
               currentUserProfile.password = newPassword;
+              Swal.fire('success', '비밀번호가 성공적으로 변경되었습니다', 'success');  
             } else {
                 Swal.fire('error', '프로필을 찾을 수 없습니다', 'error');
             }
-            // allProfile.forEach((profile) => {
-            //     if (profile.userId === userId) {
-            //         profile.password = newPassword;
-            //     }
-            // })
             allProfile[userId].password = newPassword;
             
         }
