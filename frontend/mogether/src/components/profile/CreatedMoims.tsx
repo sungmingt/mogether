@@ -207,7 +207,7 @@ const CreatedMoim: React.FC = () => {
             }
         };
         myCreatedMoimList();
-    }, [userId, allPosts]);
+    }, [userId, dispatch]);
 
    
     
