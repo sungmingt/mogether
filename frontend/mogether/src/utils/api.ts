@@ -284,7 +284,7 @@ export const joinQuitBungaeApi = async (join: any) => {
 }
 
 export const changeUserProfile = async (profileData: any) => {
-  const response = await api.patch(`/user/${profileData.userId}`, profileData.data);
+  const response = await api2.patch(`/user/${profileData.userId}`, profileData.patchData);
   return response;
 }
 
@@ -303,13 +303,13 @@ export const DeleteUserApi = async (userId: number) => {
   return response;
 }
 
-export const MoimUserKickOutApi = async (userId: number, moimId: number) => {
-  const response = await api.post('/moim/kickout', {userId: userId, moimId: moimId});
+export const MoimUserKickOutApi = async (kickOut: any) => {
+  const response = await api.post('/moim/kickout', {userId: kickOut.userId, moimId: kickOut.moimId});
   return response;
 }
 
-export const BungaeKickOutApi = async (userId: number, bungaeId: number) => {
-  const response = await api.post('/bungae/kickout', {userId: userId, bungaeId: bungaeId});
+export const BungaeKickOutApi = async (kickOut: any) => {
+  const response = await api.post('/bungae/kickout', {userId: kickOut.userId, bungaeId: kickOut.bungaeId});
   return response;
 }
 

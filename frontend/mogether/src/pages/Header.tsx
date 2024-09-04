@@ -128,10 +128,10 @@ const DropdownMenu = styled.div<{ isOpen: boolean }>`
   display: ${({ isOpen }) => (isOpen ? "block" : "none")};
   position: absolute;
   top: 60px;
-  right: 0;
+  left: 0;
   width: 200px;
   background-color: #ffffff;
-  border: 2px solid #000000;
+  border: 2px solid #7848f4;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   z-index: 999;
   opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};

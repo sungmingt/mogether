@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { selectBungaePost, clickPosts, clickInterest, clickJoin, deleteInterest, quitJoin } from '../../store/slices/bungaeSlice';
+import { selectBungaePost, clickPosts, clickInterest, clickJoin, deleteInterest, quitJoin, bungaeKickOut } from '../../store/slices/bungaeSlice';
 import { RootState, AppDispatch } from '../../store/store';
 import { Bungae } from '../../store/slices/bungaeSlice';
 import Swal from "sweetalert2";
@@ -289,6 +289,47 @@ const AdditionalInfo = styled.div`
   }
 `;
 
+const ParticipantListModalContent = styled.div`
+  max-height: 60vh;
+  overflow-y: auto;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+const ParticipantItem = styled.div`
+  display: flex;
+  align-items: center;
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+`;
+
+const ParticipantImage = styled.img`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  margin-right: 10px;
+`;
+
+const ParticipantName = styled.span`
+  flex-grow: 1;
+  font-size: 14px;
+`;
+
+const KickOutButton = styled.button`
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 5px 10px;
+  cursor: pointer;
+
+  &:hover {
+    background-color: #d32f2f;
+  }
+`;
+
 const BungaeCard = () => {
   const [eventInfo, setEventInfo] = useState<Bungae | null>(null); //지정된 interface -> bungae 형식
   const dispatch = useDispatch<AppDispatch>();
@@ -299,6 +340,10 @@ const BungaeCard = () => {
   const userId = Number(localStorage.getItem('userId')) || 0;
   const [modalVisible, setModalVisible] = useState(false);
   const navigate = useNavigate();
+  const [participants, setParticipants] = useState<{ userId: number, imageUrl: string, nickname: string }[]>([]);
+  const [participantModalVisible, setParticipantModalVisible] = useState(false);
+  const [imagesArray, setImagesArray] = useState<string[]>([]); //이미지 배열을 관리
+
 
   const sliderSettings = {
     dots: true,
@@ -314,6 +359,8 @@ const BungaeCard = () => {
       try {
         const response = await dispatch(clickPosts(bungaeId)).unwrap();
         setEventInfo(response);
+        setParticipants(response.participants);
+        setImagesArray(response.imageUrls || []);
       } catch (error) {
         console.error(error);
       }
@@ -427,20 +474,50 @@ const BungaeCard = () => {
     }
   };
 
+  const toggleParticipantModal = () => {
+    setParticipantModalVisible(!participantModalVisible);
+  };
+
+  const handleUserKickOut = async (participantsUserId: number) => {
+    Swal.fire({  //async와 await는 한몸 / 웬만하면 같이 써주는게 좋다....?
+      title: '정말 강퇴하시겠습니까?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: '예',
+      cancelButtonText: '아니오'
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const response = await dispatch(bungaeKickOut({ bungaeId: bungaeId, userId: participantsUserId })).unwrap();
+          console.log(response);
+          Swal.fire('강퇴되었습니다.', '', 'success');
+          toggleParticipantModal(); // Close the modal
+        } catch (error) {
+          Swal.fire('강퇴 실패', '강퇴하는 데 문제가 발생했습니다.', 'error');
+        }
+      }
+    });
+  };
+
   return (
     <Card>
       {eventInfo ? (
         <>
           <ImageGalleryWrapper>
-            <Slider {...sliderSettings}>
-              {eventInfo?.imageUrls && eventInfo.imageUrls.map((image, index) => (
-                <GalleryImage
-                  key={index}
-                  src={image}
-                  alt={`Event Image ${index}`}
-                />
-              ))}
-            </Slider>
+            {imagesArray.length > 0 ? (
+              <Slider {...sliderSettings}>
+                {imagesArray.map((image, index) => ( //imagesArray의 요소 하나하나를 image라는 변수로 가져와서 사용한다는 의미
+                  <GalleryImage
+                    key={index}
+                    src={image}
+                    alt={`Event Image ${index}`}
+                    referrerPolicy="no-referrer"
+                  />
+                ))}
+              </Slider>
+            ) : (
+              <p>이미지를 불러오는 중...</p>
+            )}
           </ImageGalleryWrapper>
           <InfoSection>
             <InfoLeft>
@@ -449,7 +526,7 @@ const BungaeCard = () => {
                 모집기간: {eventInfo.createdAt} ~ {eventInfo.expireAt}
               </SubInfo>
               <SubInfo>
-                장소: {eventInfo.address.city}, {eventInfo.address.gu},{" "}
+                장소: {eventInfo.address.city}, {eventInfo.address.gu}{" "}
                 {eventInfo.address.details}
               </SubInfo>
               <KeywordButton>{eventInfo.keyword}</KeywordButton>
@@ -513,6 +590,24 @@ const BungaeCard = () => {
                 {eventInfo.joined ? "Quit" : "Join"}
               </JoinButton>
             )}
+            <ModalOverlay show={participantModalVisible} onClick={toggleParticipantModal} />
+          {participantModalVisible && (
+            <ModalContent>
+              <ModalCloseButton onClick={toggleParticipantModal}>&times;</ModalCloseButton>
+              <ModalTitle>참여자 조회</ModalTitle>
+              <ParticipantListModalContent>
+                {participants.map((participant) => (
+                  <ParticipantItem key={participant.userId}>
+                    <ParticipantImage src={participant.imageUrl} alt={participant.nickname} />
+                    <ParticipantName>{participant.nickname}</ParticipantName>
+                    <KickOutButton onClick={() => handleUserKickOut(participant.userId)}>
+                      강퇴하기
+                    </KickOutButton>
+                  </ParticipantItem>
+                ))}
+              </ParticipantListModalContent>
+            </ModalContent>
+          )}
           </HostSection>
           <Divider />
 

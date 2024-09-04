@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk, PayloadAction, AsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { fetchBungaeApi, interestBungaeApi, searchBungaeApi, joinBungaeApi, interestBungaeDeleteApi, joinQuitBungaeApi, BungaeCardApi } from '../../utils/api';
+import { fetchBungaeApi, interestBungaeApi, searchBungaeApi, joinBungaeApi, interestBungaeDeleteApi, joinQuitBungaeApi, BungaeCardApi, BungaeKickOutApi } from '../../utils/api';
 
 export interface Bungae {  //여기서는 번개!
   id: number;   // 서버에서 id를 줄 때 -> id 이렇게 준다...
@@ -172,6 +172,22 @@ export const searchPosts = createAsyncThunk(
   }
 );
 
+export const bungaeKickOut = createAsyncThunk(
+  'bungaes/bungaeKickOut',
+  async (kickOut: any, thunkAPI) => {
+    try {
+      const response = await BungaeKickOutApi(kickOut);
+      if (response.status === 200 || response.status === 201) {
+        return response.data;
+      } else {
+        return thunkAPI.rejectWithValue('Failed to kick out');
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue('Failed to kick out');
+    }
+  }
+)
+
 
 const bungaeSlice = createSlice({   // 게시글 리스트의 상태와 액션을 관리하는 리듀서
   name: 'bungaes',
@@ -284,6 +300,13 @@ const bungaeSlice = createSlice({   // 게시글 리스트의 상태와 액션�
       .addCase(quitJoin.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(bungaeKickOut.fulfilled, (state, action) => {
+        state.loading = false;
+        console.log(action.payload);
+      })
+      .addCase(bungaeKickOut.rejected, (state, action) => {
+        state.error = action.payload as string; 
       });
       
   },

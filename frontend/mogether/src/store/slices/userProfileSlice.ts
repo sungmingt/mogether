@@ -55,7 +55,7 @@ export const fetchProfile = createAsyncThunk(
 
 export const PatchUserProfile = createAsyncThunk(
     'user/patchUserProfile',
-    async (profileData: FormData, { rejectWithValue }) => {
+    async (profileData: any, { rejectWithValue }) => {
         try {
             const response = await changeUserProfile(profileData);
             if (response.status === 200 || response.status === 201) {

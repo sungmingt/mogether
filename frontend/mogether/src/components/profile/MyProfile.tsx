@@ -170,7 +170,8 @@ const MyProfile: React.FC = () => {
         )
       );
       try {
-        const response = await dispatch(PatchUserProfile(patchData)).unwrap();
+        const profileData = {patchData: patchData, userId: userId}
+        const response = await dispatch(PatchUserProfile(profileData)).unwrap();
         Swal.fire('Success', '프로필이 수정되었습니다.', 'success'); 
       } catch (error) {
         console.error(error);
