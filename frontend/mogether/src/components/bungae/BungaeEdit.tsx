@@ -14,7 +14,7 @@ import { createMoim, createBungae, EditMoim, EditBungae } from '../../store/slic
 import { RootState, AppDispatch } from '../../store/store';
 import { selectIsAuthenticated, selectUserId } from "../../store/slices/authSlice";
 import { useNavigate, useParams } from 'react-router-dom';
-import {clickPosts} from '../../store/slices/moimSlice';
+import {clickPosts} from '../../store/slices/bungaeSlice';
 import moment from "moment";
 import { set } from "react-datepicker/dist/date_utils";
 
@@ -273,9 +273,9 @@ const BungaeEdit = () => {
   }, []);
 
   useEffect(() => {
-    const fetchMoimData = async () => {
-      if (moimId) {
-        const response = await dispatch(clickPosts(moimId)).unwrap();
+    const fetchBungaeData = async () => {
+      if (bungaeId) {
+        const response = await dispatch(clickPosts(bungaeId)).unwrap();
         setTitle(response.title);
         setContent(response.content);
         setKeyword(response.keyword);
@@ -291,8 +291,8 @@ const BungaeEdit = () => {
         }
       }
     }
-    fetchMoimData();
-  }, [dispatch, moimId]);
+    fetchBungaeData();
+  }, [dispatch, bungaeId]);
 
   const handleCategoryChange = useCallback((selectedCategory: string) => {
     setCategory(selectedCategory);
@@ -375,7 +375,8 @@ const BungaeEdit = () => {
 	    
       try {
         const moimFormDataMoimId = {moimId: moimId, moimFormData: moimFormData};
-        const response = await dispatch(EditMoim(moimFormDataMoimId)).unwrap();
+        const response = await dispatch(createMoim(moimFormData)).unwrap();
+        console.log(response);
         navigate('/moim/list')
       }
       catch (error) {

@@ -415,7 +415,8 @@ const MoimEdit = () => {
 	    };
       try {
         const bungaeFormDataBungaeId = {bungaeId: bungaeId, bungaeFormData: bungaeFormData};
-        const response = await dispatch(createBungae(bungaeFormDataBungaeId)).unwrap();
+        const response = await dispatch(createBungae(bungaeFormData)).unwrap();
+        console.log(response);
       }
       catch (error) {
         Swal.fire({

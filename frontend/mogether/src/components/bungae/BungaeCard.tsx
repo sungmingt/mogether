@@ -33,7 +33,7 @@ const ImageGalleryWrapper = styled.div`
 
 const GalleryImage = styled.img`
   width: 100%;
-  height: auto;
+  height: 400px;
   object-fit: cover;
   border-radius: 10px;
 `;
