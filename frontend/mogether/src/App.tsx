@@ -26,6 +26,7 @@ import PrivacyLaw from './pages/auth/PrivacyLaw';
 import SocialRegisterUrl from './components/auth/SocialRegisterRedirection';
 import ChangePasswordPage from './pages/mypage/ChangePasswordPage';
 import FindPasswordSuccessPage from './pages/auth/FindPasswordSuccessPage';
+import UserProfilePage from './pages/mypage/UserProfilePage';
 
 
 
@@ -62,6 +63,7 @@ const App = () => {
         <Route path="/social/register" element={<SocialRegisterUrl />} />
         <Route path="/changePassword" element={<ChangePasswordPage />} /> 
         <Route path="/forgot-password/success" element={<FindPasswordSuccessPage />} />
+        <Route path="/user/:id" element={<UserProfilePage />} />
       </Routes>
     </Router>
     </>
