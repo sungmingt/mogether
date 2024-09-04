@@ -90,14 +90,4 @@ public class BungaeImageService {
             throw new MogetherException(FILE_DELETE_FAILED);
         }
     }
-
-    @Transactional(readOnly = true)
-    public List<String> getImageUrls(Bungae bungae) {
-        //arraylist로 초기화 했으니 항상 null 이 아니다? -> count로 검증?
-        return Optional.ofNullable(bungae.getBungaeImageList())
-                .orElse(List.of(new BungaeImage("mogether_default_post", defaultImageUrl, "mogether_default_post")))
-                .stream()
-                .map(BungaeImage::getFileUrl)
-                .toList();
-    }
 }
