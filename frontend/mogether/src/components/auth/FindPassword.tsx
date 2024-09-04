@@ -18,6 +18,7 @@ const ForgotPasswordContainer = styled.div`
   justify-content: center;
   width: 100%;
   max-width: 400px;
+  height: 100vh;
   padding: 20px;
   border-radius: 10px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -63,13 +64,9 @@ const FindPassword:React.FC = () => {
     const [nickname, setNickname] = useState<string>('');
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string | null>(null);
-    // const [isLoading, setIsLoading] = useState<boolean>(true);
     const isAuthenticated = useSelector(selectIsAuthenticated);
     const navigate = useNavigate();
-    const dispatch = useDispatch<AppDispatch>();
-
-    // const allProfiles = useSelector((state: RootState) => {
-    //   return { ...state.userProfile.userProfiles };});    
+    const dispatch = useDispatch<AppDispatch>(); 
     let allProfiles = useSelector((state: RootState) => state.userProfile.userProfiles)
     useEffect(() => {
         if (isAuthenticated) {
@@ -81,12 +78,10 @@ const FindPassword:React.FC = () => {
 
     const handleFindPassword = async () => {
       try {
-        // 서버에 POST 요청을 보내어 이메일과 비밀번호를 받음
         const response = await dispatch(forgotPassword({email: email, nickname: nickname})).unwrap(); 
         console.log(response);
         const password = response.password;
   
-          // EmailJS를 사용하여 이메일 전송
         const templateParams = {
             to_email: email,
             nickname: nickname,
