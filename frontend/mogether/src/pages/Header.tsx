@@ -128,6 +128,35 @@ const DropdownMenu = styled.div<{ isOpen: boolean }>`
   display: ${({ isOpen }) => (isOpen ? "block" : "none")};
   position: absolute;
   top: 60px;
+  right: 0;
+  width: 200px;
+  background-color: #ffffff;
+  border: 2px solid #7848f4;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 999;
+  opacity: ${({ isOpen }) => (isOpen ? 1 : 0)};
+  animation: ${({ isOpen }) => (isOpen ? slideDown : slideUp)} 0.3s ease-in-out;
+  transition: opacity 0.3s ease-in-out;
+  border-radius: 8px;
+
+  a {
+    display: block;
+    padding: 10px 20px;
+    color: #000;
+    text-decoration: none;
+    font-size: 16px;
+
+    &:hover {
+      background-color: #f0f0f0;
+      color: #7848f4;
+    }
+  }
+`;
+
+const ReactIconDropdownMenu = styled.div<{ isOpen: boolean }>`
+  display: ${({ isOpen }) => (isOpen ? "block" : "none")};
+  position: absolute;
+  top: 60px;
   left: 0;
   width: 200px;
   background-color: #ffffff;
@@ -282,7 +311,7 @@ const Header: React.FC = () => {
           </>
         )}
       </ButtonContainer>
-      <DropdownMenu isOpen={isOpen}>
+      <ReactIconDropdownMenu isOpen={isOpen}>
         <NavLink to="/moim/list" onClick={toggleMenu}>
           소모임
         </NavLink>
@@ -305,7 +334,7 @@ const Header: React.FC = () => {
             </>
           )}
         </DropdownButton>
-      </DropdownMenu>
+      </ReactIconDropdownMenu>
     </HeaderContainer>
   );
 };
