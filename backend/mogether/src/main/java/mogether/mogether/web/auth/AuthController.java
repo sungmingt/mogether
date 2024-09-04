@@ -20,7 +20,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public Token login(@RequestBody @Validated LoginRequest loginRequest, HttpServletResponse response) {
+    public Token login(@RequestBody @Validated LoginRequest loginRequest) {
         return authService.login(loginRequest);
     }
 
@@ -31,7 +31,7 @@ public class AuthController {
     }
 
     @GetMapping("/token")
-    public Token reissueToken(@RequestHeader String refreshToken, HttpServletResponse response) {
+    public Token reissueToken(@RequestHeader String refreshToken) {
         return authService.reissueToken(refreshToken);
     }
 }
