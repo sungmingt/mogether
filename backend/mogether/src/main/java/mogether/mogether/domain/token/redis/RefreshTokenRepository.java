@@ -7,12 +7,13 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 import static java.time.Duration.ofMillis;
+import static mogether.mogether.domain.token.TokenInfo.REFRESH_TOKEN;
 import static mogether.mogether.domain.token.TokenInfo.REFRESH_TOKEN_VALIDATION_SECOND;
 
 @Repository
 public class RefreshTokenRepository {
 
-    private static final String KEY = "refreshToken";
+    private static final String KEY = REFRESH_TOKEN;
 
     private final RedisTemplate<String, String> refreshTokenRedisTemplate;
     private final HashOperations<String, String, String> hashOperations;
