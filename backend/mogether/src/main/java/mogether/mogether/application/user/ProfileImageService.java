@@ -71,14 +71,6 @@ public class ProfileImageService {
         return new ProfileImage(fileOriName, s3Url, s3FileName);
     }
 
-    @Transactional(readOnly = true)
-    public String getImageUrl(User user) {
-        //arraylist로 초기화 했으니 항상 null 이 아니다? -> count로 검증?
-        return Optional.ofNullable(user.getProfileImage())
-                .map(ProfileImage::getFileUrl)
-                .orElse(defaultImageUrl);
-    }
-
     public void delete(ProfileImage profileImage) {
         deleteFromS3(profileImage.getS3FileName());
         profileImageRepository.delete(profileImage);

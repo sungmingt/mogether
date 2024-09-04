@@ -86,13 +86,6 @@ public class UserService {
         return UserJoinResponse.of(findUser);
     }
 
-
-    @Transactional(readOnly = true)
-    public String getProfileImageUrl(Long userId) {
-        User user = findById(userId);
-        return profileImageService.getImageUrl(user);
-    }
-
     @Transactional(readOnly = true)
     public User findById(Long userId) {
         return userRepository.findById(userId)
