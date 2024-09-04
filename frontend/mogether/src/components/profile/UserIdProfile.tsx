@@ -78,7 +78,7 @@ const Divider = styled.hr`
   margin: 20px 0;
 `;
 
-const userProfile: React.FC = () => {
+const UserIdProfile: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const { id } = useParams<{ id: string }>(); // URL에서 moimId를 가져옴 -> 여기서 url은 내가 설정한 url
   const userId = id ? parseInt(id, 10) : 0;
@@ -113,7 +113,7 @@ const userProfile: React.FC = () => {
 // 여기서 이미지는 오로지 url로만
   return (
     <ProfileContainer>
-      <ProfileTitle>My Profile</ProfileTitle> 
+      <ProfileTitle>User Profile</ProfileTitle> 
       <ProfileImage src={formData.imageUrl || "../../assets/user_default.png"} alt="Profile" />
       <ProfileItem>
         <Label>Nickname:</Label>
@@ -157,6 +157,6 @@ const userProfile: React.FC = () => {
   );
 };
 
-export default userProfile;
+export default UserIdProfile;
 
 

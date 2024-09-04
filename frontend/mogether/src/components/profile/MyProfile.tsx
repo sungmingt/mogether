@@ -283,29 +283,20 @@ const MyProfile: React.FC = () => {
         <Label>Address:</Label>
         {editMode ? (
           <>
-            <Select
-              value={selectedCity}
-              onChange={handleCityChange}
-            >
-              <option value="">행정시를 선택하세요</option>
-              {locations.map((loc) => (
-                <option key={loc.name} value={loc.name}>
-                  {loc.name}
-                </option>
-              ))}
-            </Select>
-            <Select
-              value={selectedDistrict}
-              onChange={handleDistrictChange}
-              disabled={!selectedCity} // Disable if no city selected
-            >
-              <option value="">행정구를 선택하세요</option>
-              {locations.find((loc) => loc.name === selectedCity)?.subArea.map((district) => (
-                <option key={district} value={district}>
-                  {district}
-                </option>
-              ))}
-            </Select>
+            <Input
+              type="text"
+              name="city"
+              value={formData.address?.city}
+              onChange={handleInputChange}
+              placeholder="City"
+            />
+            <Input
+              type="text"
+              name="gu"
+              value={formData.address?.gu}
+              onChange={handleInputChange}
+              placeholder="GU"
+            />
             <Input
               type="text"
               name="details"

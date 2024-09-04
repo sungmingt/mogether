@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import UserProfile from "../../components/profile/userProfile";
+import UserIdProfile from "../../components/profile/UserIdProfile";
 import Header from "../Header";
 import Footer from "../Footer";
 
@@ -15,7 +15,7 @@ const UserProfilePage: React.FC = () => {
   return (
     <PageContainer>
       <Header />
-      <UserProfile />
+      <UserIdProfile />
       <Footer />
     </PageContainer>
   );

@@ -488,7 +488,7 @@ const MoimCard = () => {
   };
 
   const handleUserInfoClick = () => {
-    if (eventInfo) {
+    if (eventInfo) {   //eventInfo, 즉 카드 정보가 존재하면 이동
       navigate(`/user/${eventInfo.hostId}`);
     }
   };
