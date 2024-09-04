@@ -46,7 +46,7 @@ public class TokenProvider {
         Date expireDate = new Date(issueDate.getTime() + timeToLive);
 
         return  Jwts.builder()
-                .claim("id", id)
+                .claim(ID, id)
                 .issuedAt(issueDate)
                 .expiration(expireDate)
                 .signWith(secretKey, Jwts.SIG.HS512)
@@ -55,7 +55,7 @@ public class TokenProvider {
 
     public Long getIdFromToken(String token) {
         Claims claims = parseClaims(token);
-        return Long.valueOf(String.valueOf(claims.get("id"))) ;
+        return Long.valueOf(String.valueOf(claims.get(ID))) ;
     }
 
     private Claims parseClaims(String token) {
