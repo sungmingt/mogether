@@ -83,7 +83,8 @@ const FindPassword:React.FC = () => {
       try {
         // 서버에 POST 요청을 보내어 이메일과 비밀번호를 받음
         const response = await dispatch(forgotPassword({email: email, nickname: nickname})).unwrap(); 
-        const { password } = response.password;
+        console.log(response);
+        const password = response.password;
   
           // EmailJS를 사용하여 이메일 전송
         const templateParams = {
@@ -100,6 +101,7 @@ const FindPassword:React.FC = () => {
         )
         .then(() => {
           Swal.fire('Success', '이메일로 비밀번호가 전송되었습니다.', 'success');
+          navigate('/forgot-password/success')
         }, 
         (error) => {
           console.error(error);

@@ -7,7 +7,7 @@ import Footer from "../Footer";
 const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  min-height: 500vh;
+  min-height: 100vh;
 `;
 
 // const ContentContainer = styled.div`

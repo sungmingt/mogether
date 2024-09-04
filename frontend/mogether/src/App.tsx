@@ -25,6 +25,7 @@ import GoogleRedirectUrlPage from './components/auth/GoogleRedirectUrlPage';
 import PrivacyLaw from './pages/auth/PrivacyLaw';
 import SocialRegisterUrl from './components/auth/SocialRegisterRedirection';
 import ChangePasswordPage from './pages/mypage/ChangePasswordPage';
+import FindPasswordSuccessPage from './pages/auth/FindPasswordSuccessPage';
 
 
 
@@ -60,6 +61,7 @@ const App = () => {
         <Route path="/law/privacy" element={<PrivacyLaw />} />
         <Route path="/social/register" element={<SocialRegisterUrl />} />
         <Route path="/changePassword" element={<ChangePasswordPage />} /> 
+        <Route path="/forgot-password/success" element={<FindPasswordSuccessPage />} />
       </Routes>
     </Router>
     </>
