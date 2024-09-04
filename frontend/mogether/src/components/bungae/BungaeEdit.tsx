@@ -253,8 +253,6 @@ const BungaeEdit = () => {
     maxMembers: "",
     ageLimit: "",
     fee: "",
-    meetingPeriodStart: "",
-    meetingPeriodEnd: "",
   });
   const [additionalFocusedInput, setAdditionalFocusedInput] = useState<FocusedInputShape | null>(null);
   const {id} = useParams<{id: string}>();
@@ -631,7 +629,7 @@ const BungaeEdit = () => {
               }))
             }
           />
-          <div>
+          {/* <div>
             <Label>
               <FontAwesomeIcon
                 icon={faCalendarAlt}
@@ -659,7 +657,7 @@ const BungaeEdit = () => {
               numberOfMonths={1}
               isOutsideRange={() => false}
             />
-          </div>
+          </div> */}
         </NoteContainer>
       </Form>
       <StyledButton onClick={handleSubmit}>Submit</StyledButton>

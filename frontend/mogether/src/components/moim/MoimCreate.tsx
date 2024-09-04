@@ -262,8 +262,6 @@ const MoimCreate = () => {
     maxMembers: "",
     ageLimit: "",
     fee: "",
-    meetingPeriodStart: "",
-    meetingPeriodEnd: "",
   });
   const [additionalFocusedInput, setAdditionalFocusedInput] = useState<FocusedInputShape | null>(null);
   const isAuthenticated = useSelector(selectIsAuthenticated);
@@ -617,7 +615,7 @@ const MoimCreate = () => {
               }))
             }
           />
-          <DateWrapper>
+          {/* <DateWrapper>
             <DateLabel>
               <FontAwesomeIcon
                 icon={faCalendarAlt}
@@ -645,7 +643,7 @@ const MoimCreate = () => {
               numberOfMonths={1}
               isOutsideRange={() => false}
             />
-          </DateWrapper>
+          </DateWrapper> */}
         </NoteContainer>
       </Form>
       <StyledButton onClick={handleSubmit}>Submit</StyledButton>
