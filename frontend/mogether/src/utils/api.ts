@@ -233,7 +233,7 @@ export const searchBungaeApi = async (searchData: any) => {  // any 형식은 �
 }
 
 export const changePasswordApi = async (passwordData: {userId: number, oldPassword: string, newPassword: string}) => {
-  const response = await api.post(`/user/${passwordData.userId}/password`, { exPassword: passwordData.oldPassword, newPassword: passwordData.newPassword });
+  const response = await api.patch(`/user/${passwordData.userId}/password`, { exPassword: passwordData.oldPassword, newPassword: passwordData.newPassword });
   return response;
 };
 
