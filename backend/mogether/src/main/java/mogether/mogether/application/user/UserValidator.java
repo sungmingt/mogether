@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 
 import static mogether.mogether.exception.ErrorCode.*;
 import static mogether.mogether.exception.ErrorCode.PASSWORD_NOT_VALID;
-import static mogether.mogether.exception.ErrorCode.USER_NOT_AUTHORIZED;
 
 public class UserValidator {
 
@@ -25,12 +24,6 @@ public class UserValidator {
     public static void checkPasswordPattern(String password) {
         if (!Pattern.matches(REG_PASSWORD, password)) {
             throw new MogetherException(PASSWORD_NOT_VALID);
-        }
-    }
-
-    public static void checkUserAuthority(Long requestUserId, Long userId) {
-        if(!Objects.equals(requestUserId, userId)) {
-            throw new MogetherException(USER_NOT_AUTHORIZED);
         }
     }
 
