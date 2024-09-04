@@ -309,7 +309,7 @@ const MyProfile: React.FC = () => {
             <Input
               type="text"
               name="details"
-              value={formData.address?.details || ''}
+              value={formData.address?.details}
               onChange={handleInputChange}
               placeholder="Details"
             />

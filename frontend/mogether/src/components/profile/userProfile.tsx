@@ -71,6 +71,13 @@ const Button = styled.button`
   }
 `;
 
+const Divider = styled.hr`
+  width: 100%;
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 20px 0;
+`;
+
 const userProfile: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const { id } = useParams<{ id: string }>(); // URL에서 moimId를 가져옴 -> 여기서 url은 내가 설정한 url
@@ -112,10 +119,12 @@ const userProfile: React.FC = () => {
         <Label>Nickname:</Label>
         <Value>{formData.nickname}</Value>
       </ProfileItem>
+      <Divider />
       <ProfileItem>
         <Label>Name:</Label>
         <Value>{formData.name}</Value>
       </ProfileItem>
+      <Divider />
       <ProfileItem>
         <Label>Address:</Label>
         <Value>
@@ -123,22 +132,27 @@ const userProfile: React.FC = () => {
             {formData.address?.details}
           </Value>
       </ProfileItem>
+      <Divider />
       <ProfileItem>
         <Label>Age:</Label>
         <Value>{formData.age}</Value>
       </ProfileItem>
+      <Divider />
       <ProfileItem>
         <Label>Gender:</Label>
         <Value>{formData.gender}</Value>
       </ProfileItem>
+      <Divider />
       <ProfileItem>
         <Label>Intro:</Label>
         <Value>{formData.intro}</Value>
       </ProfileItem>
+      <Divider />
       <ProfileItem>
         <Label>Phone Number:</Label>
         <Value>{formData.phoneNumber}</Value>
       </ProfileItem>
+      <Divider />
     </ProfileContainer>
   );
 };
