@@ -34,7 +34,7 @@ public class UserValidator {
         }
     }
 
-    public static String encodePassword(String password) {  // todo : salt 적용 (salt 컬럼 추가)
+    public static String encodePassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance(ALGORITHM);
             md.update(password.getBytes());
