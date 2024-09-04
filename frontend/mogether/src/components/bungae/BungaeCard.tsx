@@ -361,6 +361,12 @@ const BungaeCard = () => {
         setEventInfo(response);
         setParticipants(response.participants);
         setImagesArray(response.imageUrls || []);
+        if(eventInfo && eventInfo.hostId === userId) {
+          setParticipantModalVisible(true);
+        }
+        else {
+          setParticipantModalVisible(false);
+        }
       } catch (error) {
         console.error(error);
       }

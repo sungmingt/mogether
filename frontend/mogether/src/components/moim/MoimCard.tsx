@@ -361,6 +361,12 @@ const MoimCard = () => {
         setEventInfo(response);
         setParticipants(response.participants);
         setImagesArray(response.imageUrls || []);
+        if(eventInfo && eventInfo.hostId === userId) {
+          setParticipantModalVisible(true);
+        }
+        else {
+          setParticipantModalVisible(false);
+        }
       } catch (error) {
         console.error(error);
       }
@@ -574,7 +580,7 @@ const MoimCard = () => {
               </JoinButton>
             )}
             <ModalOverlay show={participantModalVisible} onClick={toggleParticipantModal} />
-          {participantModalVisible && (
+            {participantModalVisible && (
             <ModalContent>
               <ModalCloseButton onClick={toggleParticipantModal}>&times;</ModalCloseButton>
               <ModalTitle>참여자 조회</ModalTitle>
