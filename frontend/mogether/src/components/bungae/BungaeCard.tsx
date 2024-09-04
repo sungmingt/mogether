@@ -124,7 +124,7 @@ const ParticipantsContainer = styled.div`
   margin-left: 10px;
 `;
 
-const ParticipantImages = styled.div`
+const JoinedImages = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
@@ -543,11 +543,11 @@ const BungaeCard = () => {
                   <InterestCount>{eventInfo.participantsCount}</InterestCount>
                 </ParticipantsContainer>
               </HeartInterestsContainer>
-              <ParticipantImages>
-                {eventInfo.participantsImageUrls && eventInfo.participantsImageUrls.map((url, index) => (
+              <JoinedImages>
+                {eventInfo.participantsImageUrls && eventInfo.participantsImageUrls.slice(0, 6).map((url, index) => (
                   <img key={index} src={url} alt={`participant-${index}`} />
                 ))}
-              </ParticipantImages>
+              </JoinedImages>
             </InterestandParticipantContainer>
           </InfoSection>
           <Divider />
