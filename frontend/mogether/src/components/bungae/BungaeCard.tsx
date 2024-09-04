@@ -360,13 +360,7 @@ const BungaeCard = () => {
         const response = await dispatch(clickPosts(bungaeId)).unwrap();
         setEventInfo(response);
         setParticipants(response.participants);
-        setImagesArray(response.imageUrls || []);
-        if(eventInfo && eventInfo.hostId === userId) {
-          setParticipantModalVisible(true);
-        }
-        else {
-          setParticipantModalVisible(false);
-        }
+        setImagesArray(response.imageUrls ? Array.from(new Set(response.imageUrls)) : []);
       } catch (error) {
         console.error(error);
       }
@@ -590,6 +584,7 @@ const BungaeCard = () => {
               <ButtonGroup>
                 <EditButton onClick={handleEdit}>Edit</EditButton>
                 <DeleteButton onClick={handleDelete}>Delete</DeleteButton>
+                <JoinButton onClick={toggleParticipantModal}>참여자 조회</JoinButton>
               </ButtonGroup>
             ) : (
               <JoinButton quit={eventInfo.joined} onClick={eventInfo.joined ? handleQuitJoin : handleJoin}>

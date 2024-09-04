@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate, useParams } from 'react-router-dom';
-import { selectMoimPost, clickPosts, clickInterest, clickJoin, deleteInterest, moimUserKickOut } from '../../store/slices/moimSlice';
+import { selectMoimPost, clickPosts, clickInterest, clickJoin, deleteInterest, moimUserKickOut, quitJoin } from '../../store/slices/moimSlice';
 import { RootState, AppDispatch } from '../../store/store';
 import { Bungae } from '../../store/slices/bungaeSlice';
 import Swal from "sweetalert2";
@@ -360,13 +360,7 @@ const MoimCard = () => {
         const response = await dispatch(clickPosts(moimId)).unwrap();
         setEventInfo(response);
         setParticipants(response.participants);
-        setImagesArray(response.imageUrls || []);
-        if(eventInfo && eventInfo.hostId === userId) {
-          setParticipantModalVisible(true);
-        }
-        else {
-          setParticipantModalVisible(false);
-        }
+        setImagesArray(response.imageUrls ? Array.from(new Set(response.imageUrls)) : []);
       } catch (error) {
         console.error(error);
       }
@@ -438,7 +432,7 @@ const MoimCard = () => {
     }
     if (eventInfo) {
       try {
-        const response = await dispatch(clickJoin({ moimId: eventInfo.id, userId })).unwrap();
+        const response = await dispatch(quitJoin({ moimId: eventInfo.id, userId })).unwrap();
         setEventInfo({
           ...eventInfo,
           joined: false,
@@ -573,6 +567,7 @@ const MoimCard = () => {
               <ButtonGroup>
                 <EditButton onClick={handleEdit}>Edit</EditButton>
                 <DeleteButton onClick={handleDelete}>Delete</DeleteButton>
+                <JoinButton onClick={toggleParticipantModal}>참여자 조회</JoinButton>
               </ButtonGroup>
             ) : (
               <JoinButton quit={eventInfo.joined} onClick={eventInfo.joined ? handleQuitJoin : handleJoin}>
