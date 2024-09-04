@@ -191,7 +191,7 @@ const Register: React.FC = () => {
     city: string;
     gu: string;
     details: string;
-  }>({ city: "", gu: "", details: "" });   // city, gu, details의 형식 지정 후 상태값 state 설정
+  }>({ city: "", gu: "", details: "" });
   const [age, setAge] = useState<number>(0);
   const [gender, setGender] = useState<string>("");
   const [intro, setIntro] = useState<string>("");
@@ -208,7 +208,6 @@ const Register: React.FC = () => {
       navigate("/");
     }
   }, [isAuthenticated, navigate]);
-
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -348,7 +347,7 @@ const Register: React.FC = () => {
           />
           <ErrorMessage>{passwordError}</ErrorMessage>
         </InputWrapper>
-        {/* <InputWrapper>
+        <InputWrapper>
           <Input
             type="text"
             placeholder="city"
@@ -356,36 +355,8 @@ const Register: React.FC = () => {
             onChange={(e) => setAddress({ ...address, city: e.target.value })}
             isValid={true}
           />
-        </InputWrapper> */}
-        <LocationWrapper>
-          <Select
-            value={address.city}
-            onChange={(e) => setAddress({...address, city: e.target.value})}
-          >
-            <option value="">행정시를 선택하세요</option>
-            {locations.map((loc) => (
-              <option key={loc.name} value={loc.name}>
-                {loc.name}
-              </option>
-            ))}
-          </Select>
-          <Select
-            value={address.gu}
-            onChange={(e) => setAddress({...address, gu: e.target.value})}
-            disabled={!location}
-          >
-            <option value="">행정구를 선택하세요</option>
-            {address.city &&  //address.city가 true일때만 설정 가능
-              locations
-                .find((loc) => loc.name === address.city)
-                ?.subArea.map((sub) => (
-                  <option key={sub} value={sub}>
-                    {sub}
-                  </option>
-                ))}
-          </Select>
-        </LocationWrapper>
-        {/* <InputWrapper>
+        </InputWrapper>
+        <InputWrapper>
           <Input
             type="text"
             placeholder="gu"
@@ -393,7 +364,7 @@ const Register: React.FC = () => {
             onChange={(e) => setAddress({ ...address, gu: e.target.value })}
             isValid={true}
           />
-        </InputWrapper> */}
+        </InputWrapper>
         <InputWrapper>
           <Input
             type="text"
