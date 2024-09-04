@@ -1,6 +1,7 @@
 package mogether.mogether.web.moim.dto;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -18,21 +19,18 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class MoimCreateRequest {
 
-    @NotEmpty
+    @NotNull
     private Long userId;
-    @NotEmpty
+    @NotBlank
     private String title;
-    @NotEmpty
+    @NotBlank
     private String content;
-    @NotEmpty
+    @NotBlank
     private String keyword;
-    @NotEmpty
     private Address address;
 
-    @NotEmpty
     private LocalDate createdAt;
-    @NotEmpty
-    private LocalDate expireAt; ///
+    private LocalDate expireAt;
 
     public Moim toMoim(User user) {
         Moim moim = new Moim(

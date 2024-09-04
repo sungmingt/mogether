@@ -9,6 +9,7 @@ import mogether.mogether.domain.oauth.AppUser;
 import mogether.mogether.web.bungae.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -53,7 +54,7 @@ public class BungaeController {
             })
     @PostMapping("/kickout")
     public HttpStatus kickOut(@AuthenticationPrincipal AppUser appUser,
-                              @RequestBody BungaeKickOutRequest kickOutRequest) {
+                              @RequestBody @Validated BungaeKickOutRequest kickOutRequest) {
         bungaeService.kickOut(appUser, kickOutRequest);
         return HttpStatus.OK;
     }
@@ -66,7 +67,7 @@ public class BungaeController {
     @PostMapping
     public BungaeCreateResponse create(@AuthenticationPrincipal AppUser appUser,
                                        @RequestPart(name = "images", required = false) List<MultipartFile> images,
-                                       @RequestPart(name = "dto") BungaeCreateRequest bungaeCreateRequest) {
+                                       @RequestPart(name = "dto") @Validated BungaeCreateRequest bungaeCreateRequest) {
         return bungaeService.create(appUser, images, bungaeCreateRequest);
     }
 
@@ -78,7 +79,7 @@ public class BungaeController {
     public BungaeUpdateResponse update(@PathVariable("bungaeId") Long bungaeId,
                                        @AuthenticationPrincipal AppUser appUser,
                                        @RequestPart(name = "images", required = false) List<MultipartFile> images,
-                                       @RequestPart(name = "dto") BungaeUpdateRequest bungaeUpdateRequest) {
+                                       @RequestPart(name = "dto") @Validated BungaeUpdateRequest bungaeUpdateRequest) {
         return bungaeService.update(bungaeId, appUser, bungaeUpdateRequest, images);
     }
 

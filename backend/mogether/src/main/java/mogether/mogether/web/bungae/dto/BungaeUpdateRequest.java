@@ -1,6 +1,7 @@
 package mogether.mogether.web.bungae.dto;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -17,23 +18,19 @@ import java.time.LocalDate;
 @AllArgsConstructor
 public class BungaeUpdateRequest {
 
-    @NotEmpty
-    private Long userId; /////////////
-    @NotEmpty
+    @NotNull
+    private Long userId;
+    @NotBlank
     private String title;
-    @NotEmpty
+    @NotBlank
     private String content;
-    @NotEmpty
-    private String keyword; ////
-    @NotEmpty
+    @NotBlank
+    private String keyword;
     private Address address;
 
-    @NotEmpty
     private String gatherAt;
-    @NotEmpty
     private LocalDate createdAt;
-    @NotEmpty
-    private LocalDate expireAt; ///
+    private LocalDate expireAt;
 
     private String placeDetails;
     private int minMember;

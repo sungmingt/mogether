@@ -1,5 +1,6 @@
 package mogether.mogether.web.bungae.dto;
 
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class BungaeKickOutRequest {
 
+    @NotNull
     private Long bungaeId;
+    @NotNull
     private Long userId;
 }

@@ -25,8 +25,8 @@ public class MoimListResponse {
     private Long hostId;
     private String hostName;
     private String hostProfileImageUrl;
-    private List<String> participantsImageUrls;//
-    private int participantsCount;//
+    private List<String> participantsImageUrls;
+    private int participantsCount;
 
     private boolean isJoined;
     private boolean isInterested;
@@ -34,7 +34,7 @@ public class MoimListResponse {
 
     private String title;
     private String content;
-    private Keyword keyword; ////
+    private Keyword keyword;
     private Address address;
 
     private LocalDate createdAt;

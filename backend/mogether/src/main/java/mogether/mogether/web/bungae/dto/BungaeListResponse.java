@@ -34,11 +34,11 @@ public class BungaeListResponse {
 
     private String title;
     private String content;
-    private Keyword keyword; ////
+    private Keyword keyword;
     private Address address;
     private int interestsCount;
 
-    private String gatherAt; //////////////////////
+    private String gatherAt;
     private LocalDate createdAt;
     private LocalDate expireAt;
 

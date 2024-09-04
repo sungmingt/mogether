@@ -9,6 +9,7 @@ import mogether.mogether.domain.oauth.AppUser;
 import mogether.mogether.web.moim.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -52,7 +53,7 @@ public class MoimController {
             })
     @PostMapping("/kickout")
     public HttpStatus kickOut(@AuthenticationPrincipal AppUser appUser,
-                              @RequestBody MoimKickOutRequest kickOutRequest) {
+                              @RequestBody @Validated MoimKickOutRequest kickOutRequest) {
         moimService.kickOut(appUser, kickOutRequest);
         return HttpStatus.OK;
     }
@@ -65,7 +66,7 @@ public class MoimController {
     @PostMapping
     public MoimCreateResponse create(@AuthenticationPrincipal AppUser appUser,
                                      @RequestPart(name = "images", required = false) List<MultipartFile> images,
-                                     @RequestPart(name = "dto") MoimCreateRequest moimCreateRequest) {
+                                     @RequestPart(name = "dto") @Validated MoimCreateRequest moimCreateRequest) {
         return moimService.create(appUser, images, moimCreateRequest);
     }
 
@@ -77,7 +78,7 @@ public class MoimController {
     public MoimUpdateResponse update(@PathVariable Long moimId,
                                      @AuthenticationPrincipal AppUser appUser,
                                      @RequestPart(name = "images", required = false) List<MultipartFile>images,
-                                     @RequestPart(name = "dto") MoimUpdateRequest moimUpdateRequest) {
+                                     @RequestPart(name = "dto") @Validated MoimUpdateRequest moimUpdateRequest) {
         return moimService.update(moimId, appUser, images, moimUpdateRequest);
     }
 
