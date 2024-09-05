@@ -50,6 +50,39 @@ const Section = styled.section`
   }
 `;
 
+const Section2 = styled.section`
+  width: 100%;
+  height: 80vh;
+  padding: 60px 20px;
+  margin: 0;
+  background-color: ${({ color }) => color || "#ffffff"};
+  display: flex;
+  align-items: center;
+  flex-direction: row-reverse;
+  box-sizing: border-box;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+
+  &.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.15);
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+    height: auto;
+  }
+`;
+
 const TextContainer = styled.div`
   flex: 2;
   margin: 10px;
@@ -187,9 +220,6 @@ const HomePage: React.FC = () => {
     }
   }, [userId])
 
-  const handleImageClick = () => {
-    navigate("/postCreate");
-  };
 
   return (
     <HomePageContainer>
@@ -213,7 +243,7 @@ const HomePage: React.FC = () => {
           <Image src={require("../assets/home2.png")} alt="Community" />
         </ImageWrapper>
       </Section>
-      <Section
+      <Section2
         className={visibleSections[1] ? "visible" : ""}
         color="#e6e6e6"
       >
@@ -228,10 +258,10 @@ const HomePage: React.FC = () => {
         <ImageWrapper>
           <Image src={require("../assets/somoim.png")} alt="Join a Group" />
         </ImageWrapper>
-      </Section>
+      </Section2>
       <Section
         className={visibleSections[2] ? "visible" : ""}
-        color="#e6e6e6"
+        color="#ffffff"
       >
         <TextContainer>
           <Title>함께라서 더 즐거운 우리들의 모임</Title>
