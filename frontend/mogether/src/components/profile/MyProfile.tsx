@@ -5,7 +5,7 @@ import { fetchProfile, PatchUserProfile, DeleteUser } from "../../store/slices/u
 import { AppDispatch } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { locations } from "../../utils/location"; // Importing locations data
+import { locations } from "../../utils/location";
 
 const ProfileContainer = styled.div`
   display: flex;
@@ -34,36 +34,39 @@ const ProfileImage = styled.img`
 
 const ProfileItem = styled.div`
   display: flex;
-  align-items: center;
-  margin-bottom: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 15px;
   width: 100%;
   max-width: 600px;
 `;
 
 const Label = styled.label`
   font-weight: bold;
-  margin-right: 10px;
-  width: 120px;
+  margin-bottom: 5px;
 `;
 
 const Value = styled.div`
-  flex: 1;
+  width: 100%;
+  padding: 10px;
+  background-color: #eee;
+  border-radius: 5px;
 `;
 
 const Input = styled.input`
-  flex: 1;
+  width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  margin-bottom: 10px;
 `;
 
 const Select = styled.select`
-  flex: 1;
+  width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  width: 100%;
-  box-sizing: border-box;
+  margin-bottom: 10px;
 `;
 
 const Button = styled.button`
@@ -126,6 +129,12 @@ const Divider = styled.hr`
   margin: 20px 0;
 `;
 
+const AddressContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
 const MyProfile: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const userId = Number(localStorage.getItem('userId')) || 0;
@@ -149,7 +158,7 @@ const MyProfile: React.FC = () => {
         }
         catch (error) {
             console.error(error);
-            Swal.fire('error', error as string, 'error');
+            Swal.fire('error', 'Failed to fetch profile data', 'error');
         }
     }
     fetchProfileData();
@@ -191,7 +200,7 @@ const MyProfile: React.FC = () => {
     });
   };
 
-  const handleDistrictChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleDistrictChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
     const district = e.target.value;
     setSelectedDistrict(district);
     setFormData({
@@ -203,14 +212,25 @@ const MyProfile: React.FC = () => {
     });
   };
 
+  const handleDetailsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const details = e.target.value;
+    setFormData({
+      ...formData,
+      address: {
+        ...formData.address,
+        details,
+      },
+    });
+  };
+
   const handleUserDelete = async () => {
     try {
-      await dispatch(DeleteUser(userId));
+      await dispatch(DeleteUser(userId)).unwrap();
       Swal.fire("Success", "성공적으로 탈퇴되었습니다.", "success");
       navigate("/");
     } catch (error) {
       console.error(error);
-      Swal.fire("Error", error as string, 'error');
+      Swal.fire("Error", 'Failed to delete user', 'error');
     }
   }
 
@@ -244,12 +264,12 @@ const MyProfile: React.FC = () => {
         )
       );
       try {
-        const profileData = {patchData: patchData, userId: userId}
+        const profileData = { patchData, userId };
         await dispatch(PatchUserProfile(profileData)).unwrap();
         Swal.fire('Success', '프로필이 수정되었습니다.', 'success'); 
       } catch (error) {
         console.error(error);
-        Swal.fire('error', error as string, 'error');
+        Swal.fire('error', 'Failed to update profile', 'error');
       }
     }
     setEditMode(!editMode);
@@ -282,29 +302,38 @@ const MyProfile: React.FC = () => {
       <ProfileItem>
         <Label>Address:</Label>
         {editMode ? (
-          <>
-            <Input
-              type="text"
-              name="city"
-              value={formData.address?.city}
-              onChange={handleInputChange}
-              placeholder="City"
-            />
-            <Input
-              type="text"
-              name="gu"
-              value={formData.address?.gu}
-              onChange={handleInputChange}
-              placeholder="GU"
-            />
+          <AddressContainer>
+            <Select
+              value={selectedCity}
+              onChange={handleCityChange}
+            >
+              <option value="">행정시를 선택하세요</option>
+              {locations.map((loc) => (
+                <option key={loc.name} value={loc.name}>
+                  {loc.name}
+                </option>
+              ))}
+            </Select>
+            <Select
+              value={selectedDistrict}
+              onChange={handleDistrictChange}
+              disabled={!selectedCity}
+            >
+              <option value="">행정구를 선택하세요</option>
+              {locations.find((loc) => loc.name === selectedCity)?.subArea.map((district) => (
+                <option key={district} value={district}>
+                  {district}
+                </option>
+              ))}
+            </Select>
             <Input
               type="text"
               name="details"
               value={formData.address?.details}
-              onChange={handleInputChange}
+              onChange={handleDetailsChange}
               placeholder="Details"
             />
-          </>
+          </AddressContainer>
         ) : (
           <Value>
             {formData.address?.city} {formData.address?.gu}{" "}

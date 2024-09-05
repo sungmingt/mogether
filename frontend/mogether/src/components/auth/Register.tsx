@@ -184,23 +184,17 @@ const Register: React.FC = () => {
   const [password, setPassword] = useState<string>("");
   const [emailError, setEmailError] = useState<string | null>(null);
   const [passwordError, setPasswordError] = useState<string | null>(null);
-  const [nameError, setNameError] = useState<string | null>(null);
   const [nickname, setNickname] = useState<string>("");
   const [nicknameError, setNicknameError] = useState<string | null>(null);
-  const [address, setAddress] = useState<{
-    city: string;
-    gu: string;
-    details: string;
-  }>({ city: "", gu: "", details: "" });
+  const [address, setAddress] = useState<{ city: string; gu: string; details: string }>({ city: "", gu: "", details: "" });
   const [age, setAge] = useState<number>(0);
   const [gender, setGender] = useState<string>("");
   const [intro, setIntro] = useState<string>("");
-  const [phoneNumber, setphoneNumber] = useState<string>("");
+  const [phoneNumber, setPhoneNumber] = useState<string>("");
   const error = useSelector((state: RootState) => state.auth.error);
-  const loading = useSelector((state: RootState) => state.auth.loading);
-  const navigate = useNavigate();
   const isAuthenticated = useSelector(selectIsAuthenticated);
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const [profileImage, setProfileImage] = useState<File | null>(null);
 
   useEffect(() => {
@@ -210,88 +204,49 @@ const Register: React.FC = () => {
   }, [isAuthenticated, navigate]);
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setEmail(value.trim());
-    if (/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
-      setEmailError(null);
-    } else {
-      setEmailError("올바르지 않은 이메일 형식입니다");
-    }
+    const value = e.target.value.trim();
+    setEmail(value);
+    setEmailError(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value) ? null : "올바르지 않은 이메일 형식입니다");
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setPassword(value.trim());
-    if (/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value)) {
-      setPasswordError(null);
-    } else {
-      setPasswordError("비밀번호는 8자 대소문자와 특수문자, 숫자의 조합으로 이루어져야 합니다");
-    }
+    const value = e.target.value.trim();
+    setPassword(value);
+    setPasswordError(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/.test(value)
+      ? null
+      : "비밀번호는 8자 대소문자와 특수문자, 숫자의 조합으로 이루어져야 합니다"
+    );
   };
 
   const handleNicknameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setNickname(value.trim());
-    if (value.length >= 2) {
-      setNicknameError(null);
-    } else {
-      setNicknameError("두 글자 이상 입력해주세요");
-    }
+    const value = e.target.value.trim();
+    setNickname(value);
+    setNicknameError(value.length >= 2 ? null : "두 글자 이상 입력해주세요");
   };
 
   const handleRegister = async () => {
-    if (emailError === null && passwordError === null && email !== "" && password !== "") {
-      const registerForm = {
-        email: email,
-        password: password,
-        name: name,
-        nickname: nickname,
-        address: address,
-        age: age,
-        gender: gender,
-        intro: intro,
-        phoneNumber: phoneNumber
-      };
+    if (emailError === null && passwordError === null && email && password) {
+      const registerForm = { email, password, name, nickname, address, age, gender, intro, phoneNumber };
       const registerFormData = new FormData();
       registerFormData.append('dto', new Blob([JSON.stringify(registerForm)], { type: 'application/json' }));
-
-      if (profileImage) {
-        registerFormData.append('image', profileImage);
-      } else {
-        registerFormData.append('image', null as any);
-      }
+      if (profileImage) registerFormData.append('image', profileImage);
 
       try {
-        const response = await dispatch(registerUser(registerFormData)).unwrap();
+        await dispatch(registerUser(registerFormData)).unwrap();
         Swal.fire('success', '회원가입에 성공하였습니다.', 'success');
-        navigate("/Login");
+        navigate("/login");
       } catch (error: any) {
-        if (error.response && error.response.status === 409) {
-          Swal.fire('Conflict', '이미 존재하는 계정입니다.', 'error');
-        } else {
-          Swal.fire('error', '회원가입에 실패하였습니다.', 'error');
-        }
+        Swal.fire('error', error?.response?.status === 409 ? '이미 존재하는 계정입니다.' : '회원가입에 실패하였습니다.', 'error');
       }
     } else {
       Swal.fire('error', '필수 요청 사항을 모두 입력해 주세요', 'error');
-      return;
     }
   };
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (file) {
-      setProfileImage(file);
-    }
+    if (file) setProfileImage(file);
   };
-
-  const handleKakaoRegister = async () => {
-    window.location.href = 'https://api.mo-gether.site/oauth2/authorization/kakao';
-  }
-
-  const handleGoogleRegister = async () => {
-    window.location.href = 'https://api.mo-gether.site/oauth2/authorization/google';
-  }
 
   return (
     <RegisterContainer>
@@ -299,135 +254,67 @@ const Register: React.FC = () => {
       <RegisterBox>
         <ImageWrapper>
           <UserImage
-            src={
-              profileImage
-                ? URL.createObjectURL(profileImage)
-                : "https://via.placeholder.com/100?text=User+Image"
-            }
+            src={profileImage ? URL.createObjectURL(profileImage) : "https://via.placeholder.com/100?text=User+Image"}
             alt="User Profile"
             onClick={() => document.getElementById("fileInput")?.click()}
           />
-          <CameraIcon
-            onClick={() => document.getElementById("fileInput")?.click()}
-          />
-          <HiddenFileInput
-            id="fileInput"
-            type="file"
-            accept="image/*"
-            onChange={handleImageChange}
-          />
+          <CameraIcon onClick={() => document.getElementById("fileInput")?.click()} />
+          <HiddenFileInput id="fileInput" type="file" accept="image/*" onChange={handleImageChange} />
         </ImageWrapper>
         <InputWrapper>
-          <Input
-            type="text"
-            placeholder="Nickname"
-            value={nickname}
-            onChange={handleNicknameChange}
-            isValid={nicknameError === null}
-          />
-          <ErrorMessage>{nicknameError}</ErrorMessage>
+          <Input type="text" placeholder="Nickname" value={nickname} onChange={handleNicknameChange} isValid={nicknameError === null} />
+          {nicknameError && <ErrorMessage>{nicknameError}</ErrorMessage>}
         </InputWrapper>
         <InputWrapper>
-          <Input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={handleEmailChange}
-            isValid={emailError === null}
-          />
-          <ErrorMessage>{emailError}</ErrorMessage>
+          <Input type="email" placeholder="Email" value={email} onChange={handleEmailChange} isValid={emailError === null} />
+          {emailError && <ErrorMessage>{emailError}</ErrorMessage>}
         </InputWrapper>
         <InputWrapper>
-          <Input
-            type="password"
-            placeholder="Password (at least 8 characters)"
-            value={password}
-            onChange={handlePasswordChange}
-            isValid={passwordError === null}
-          />
-          <ErrorMessage>{passwordError}</ErrorMessage>
+          <Input type="password" placeholder="Password (at least 8 characters)" value={password} onChange={handlePasswordChange} isValid={passwordError === null} />
+          {passwordError && <ErrorMessage>{passwordError}</ErrorMessage>}
+        </InputWrapper>
+        <LocationWrapper>
+          <Select value={address.city} onChange={(e) => setAddress({ ...address, city: e.target.value, gu: "" })}>
+            <option value="">행정시를 선택하세요</option>
+            {locations.map((loc) => <option key={loc.name} value={loc.name}>{loc.name}</option>)}
+          </Select>
+          <Select value={address.gu} onChange={(e) => setAddress({ ...address, gu: e.target.value })} disabled={!address.city}>
+            <option value="">행정구를 선택하세요</option>
+            {locations.find((loc) => loc.name === address.city)?.subArea.map((district) => (
+              <option key={district} value={district}>{district}</option>
+            ))}
+          </Select>
+        </LocationWrapper>
+        <InputWrapper>
+          <Input type="text" placeholder="Details" value={address.details} onChange={(e) => setAddress({ ...address, details: e.target.value })} isValid={true} />
         </InputWrapper>
         <InputWrapper>
-          <Input
-            type="text"
-            placeholder="city"
-            value={address.city}
-            onChange={(e) => setAddress({ ...address, city: e.target.value })}
-            isValid={true}
-          />
+          <Input type="number" placeholder="Age" value={age} onChange={(e) => setAge(parseInt(e.target.value))} isValid={true} />
         </InputWrapper>
         <InputWrapper>
-          <Input
-            type="text"
-            placeholder="gu"
-            value={address.gu}
-            onChange={(e) => setAddress({ ...address, gu: e.target.value })}
-            isValid={true}
-          />
-        </InputWrapper>
-        <InputWrapper>
-          <Input
-            type="text"
-            placeholder="details"
-            value={address.details}
-            onChange={(e) =>
-              setAddress({ ...address, details: e.target.value })
-            }
-            isValid={true}
-          />
-        </InputWrapper>
-        <InputWrapper>
-          <Input
-            type="number"
-            placeholder="age"
-            value={age}
-            onChange={(e) => setAge(parseInt(e.target.value))}
-            isValid={true}
-          />
-        </InputWrapper>
-        <InputWrapper>
-          <Select
-            value={gender}
-            onChange={(e) => setGender(e.target.value)}
-            isValid={true}
-          >
-            <option value="" disabled>
-              Select Gender
-            </option>
+          <Select value={gender} onChange={(e) => setGender(e.target.value)} isValid={true}>
+            <option value="" disabled>Select Gender</option>
             <option value="MALE">MALE</option>
             <option value="FEMALE">FEMALE</option>
           </Select>
         </InputWrapper>
         <InputWrapper>
-          <Input
-            type="text"
-            placeholder="intro"
-            value={intro}
-            onChange={(e) => setIntro(e.target.value)}
-            isValid={true}
-          />
+          <Input type="text" placeholder="Intro" value={intro} onChange={(e) => setIntro(e.target.value)} isValid={true} />
         </InputWrapper>
         <InputWrapper>
-          <Input
-            type="text"
-            placeholder="010-xxxx-xxxx 형식으로 입력해 주세요"
-            value={phoneNumber}
-            onChange={(e) => setphoneNumber(e.target.value)}
-            isValid={true}
-          />
+          <Input type="text" placeholder="010-xxxx-xxxx 형식으로 입력해 주세요" value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)} isValid={true} />
         </InputWrapper>
-        <Button
-          onClick={handleRegister}
-        >
-          Register
-        </Button>
+        <Button onClick={handleRegister}>Register</Button>
         <ImageWrapper2 src={require("../../assets/OR.png")} />
         <SocialButtonsContainer>
-          <SocialButton onClick={handleGoogleRegister}>
-            <img src={require("../../assets/Google__G__logo 1.png")} />
+          <SocialButton onClick={() => window.location.href = 'https://api.mo-gether.site/oauth2/authorization/google'}>
+            <img src={require("../../assets/Google__G__logo 1.png")} alt="Google Logo" />
             Google로 회원가입
           </SocialButton>
-          <KakaoButton onClick={handleKakaoRegister}><img src={require("../../assets/KakaoTalk_logo 1.png")} />Kakao로 회원가입</KakaoButton>
+          <KakaoButton onClick={() => window.location.href = 'https://api.mo-gether.site/oauth2/authorization/kakao'}>
+            <img src={require("../../assets/KakaoTalk_logo 1.png")} alt="Kakao Logo" />
+            Kakao로 회원가입
+          </KakaoButton>
         </SocialButtonsContainer>
       </RegisterBox>
       {error && <ErrorMessage>{error}</ErrorMessage>}
