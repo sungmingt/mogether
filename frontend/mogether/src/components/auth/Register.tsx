@@ -225,7 +225,7 @@ const Register: React.FC = () => {
   };
 
   const handleRegister = async () => {
-    if (emailError === null && passwordError === null && email && password) {
+    if (emailError === null && passwordError === null && email && password && gender) {
       const registerForm = { email, password, name, nickname, address, age, gender, intro, phoneNumber };
       const registerFormData = new FormData();
       registerFormData.append('dto', new Blob([JSON.stringify(registerForm)], { type: 'application/json' }));
@@ -293,7 +293,7 @@ const Register: React.FC = () => {
         </InputWrapper>
         <InputWrapper>
           <Select value={gender} onChange={(e) => setGender(e.target.value)} isValid={true}>
-            <option value="" disabled>Select Gender</option>
+            <option value="" disabled>성별</option>
             <option value="MALE">MALE</option>
             <option value="FEMALE">FEMALE</option>
           </Select>
