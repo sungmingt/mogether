@@ -1,6 +1,5 @@
 package mogether.mogether.web.auth;
 
-import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import mogether.mogether.application.auth.AuthService;
