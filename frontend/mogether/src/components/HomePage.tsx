@@ -57,8 +57,9 @@ const Section2 = styled.section`
   margin: 0;
   background-color: ${({ color }) => color || "#ffffff"};
   display: flex;
-  align-items: center;
   flex-direction: row-reverse;
+  align-items: center;
+  justify-content: space-between;
   box-sizing: border-box;
   opacity: 0;
   transform: translateY(50px);
@@ -256,7 +257,7 @@ const HomePage: React.FC = () => {
           </TypingText>
         </TextContainer>
         <ImageWrapper>
-          <Image src={require("../assets/somoim.png")} alt="Join a Group" />
+          <Image src={require("../assets/somoim_study.png")} alt="Join a Group" />
         </ImageWrapper>
       </Section2>
       <Section
