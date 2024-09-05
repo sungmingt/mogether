@@ -31,7 +31,7 @@ public class AuthController {
     }
 
     @GetMapping("/token")
-    public Token reissueToken(@RequestHeader String refreshToken) {
+    public Token reissueToken(@RequestHeader(REFRESH_TOKEN) String refreshToken) {
         return authService.reissueToken(refreshToken);
     }
 }
