@@ -5,7 +5,6 @@ import mogether.mogether.web.oauth2.OAuth2FailureHandler;
 import mogether.mogether.web.oauth2.OAuth2SuccessHandler;
 import mogether.mogether.web.auth.filter.TokenAuthenticationFilter;
 import mogether.mogether.web.auth.filter.TokenExtractFilter;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -24,6 +23,7 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import java.util.Arrays;
 
+import static mogether.mogether.domain.AllowedOrigins.*;
 import static mogether.mogether.web.auth.util.PathMatcher.*;
 
 @RequiredArgsConstructor
@@ -31,9 +31,6 @@ import static mogether.mogether.web.auth.util.PathMatcher.*;
 @EnableMethodSecurity
 @Configuration
 public class SecurityConfig {
-
-    @Value("${cors.allowed-origins}")
-    private String[] allowedOrigins;
 
     private final OAuth2UserService oAuth2UserService;
     private final OAuth2SuccessHandler oAuth2SuccessHandler;
