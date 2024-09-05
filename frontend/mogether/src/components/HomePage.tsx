@@ -201,10 +201,10 @@ const HomePage: React.FC = () => {
           <Title>❤️모게더에 오신 것을 환영합니다❤️</Title>
           <TypingText>나의 취미를 찾는 첫 시도, 모게더</TypingText>
           <ButtonGroup>
-            <SectionButton onClick={() => navigate("/postCreate")}>
+            <SectionButton onClick={() => navigate("/moim/list")}>
               소모임 참여하기
             </SectionButton>
-            <SectionButton onClick={() => navigate("/postCreate")}>
+            <SectionButton onClick={() => navigate("/bungae/list")}>
               번개모임 참여하기
             </SectionButton>
           </ButtonGroup>
@@ -218,6 +218,22 @@ const HomePage: React.FC = () => {
         color="#e6e6e6"
       >
         <TextContainer>
+          <Title>모게더를 통해 스스로를 더욱 성장시켜 보세요!</Title>
+          <TypingText>
+            모임을 통해 다양한 경험을 하고, 스스로 성장시킬 기회를 잡아보세요. <br></br>
+            <br></br>
+            모게더를 통해 한층 더 발전된 나 자신을 만나보세요💕
+          </TypingText>
+        </TextContainer>
+        <ImageWrapper>
+          <Image src={require("../assets/somoim.png")} alt="Join a Group" />
+        </ImageWrapper>
+      </Section>
+      <Section
+        className={visibleSections[2] ? "visible" : ""}
+        color="#e6e6e6"
+      >
+        <TextContainer>
           <Title>함께라서 더 즐거운 우리들의 모임</Title>
           <TypingText>
             취미도, 관심사도, 함께할 때 더 빛납니다. <br></br>
@@ -226,7 +242,7 @@ const HomePage: React.FC = () => {
           </TypingText>
         </TextContainer>
         <ImageWrapper>
-          <Image src={require("../assets/somoim.png")} alt="Join a Group" />
+          <Image src={require("../assets/togetherliving.png")} alt="Join a Group" />
         </ImageWrapper>
       </Section>
     </HomePageContainer>
