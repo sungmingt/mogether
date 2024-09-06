@@ -272,6 +272,8 @@ const Header: React.FC = () => {
         <NavLink to="/moim/list">소모임</NavLink>
         <NavLink to="/bungae/list">번개</NavLink>
         <NavLink to="/mypage">마이페이지</NavLink>
+        <NavLink to="/groupChatList">그룹 모임방</NavLink>
+        
       </Nav>
       <ButtonContainer>
         {isAuthenticated ? (
@@ -320,6 +322,9 @@ const Header: React.FC = () => {
         </NavLink>
         <NavLink to="/mypage" onClick={toggleMenu}>
           마이페이지
+        </NavLink>
+        <NavLink to="/groupChatList" onClick={toggleMenu}>
+          그룹 모임방
         </NavLink>
         <DropdownButton>
           {isAuthenticated ? (
