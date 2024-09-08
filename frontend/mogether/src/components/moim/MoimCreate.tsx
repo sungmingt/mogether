@@ -294,9 +294,21 @@ const MoimCreate = () => {
     }
 
     const fileArray = Array.from(files || []);
-    const newUrls = fileArray.map((file) => URL.createObjectURL(file));
+
+    // 파일 이름을 URL-safe 형식으로 인코딩하는 함수
+    const encodeFileName = (fileName: string) => {
+      return encodeURIComponent(fileName);
+    };
+
+    // URL-safe 파일 이름으로 새 File 객체 생성 및 URL 생성
+    const encodedFiles = fileArray.map(file => {
+      const encodedFileName = encodeFileName(file.name);
+      return new File([file], encodedFileName, { type: file.type });
+    });
+
+    const newUrls = encodedFiles.map((file) => URL.createObjectURL(file));
     setImageUrls((prev) => [...prev, ...newUrls]);
-    setImageFile((prev) => (prev ? [...prev, ...fileArray] : fileArray));
+    setImageFile((prev) => (prev ? [...prev, ...encodedFiles] : encodedFiles));
   };
 
   const handleImageRemove = (index: number) => {
