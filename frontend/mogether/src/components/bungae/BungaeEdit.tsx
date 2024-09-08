@@ -238,9 +238,8 @@ const BungaeEdit = () => {
   const [keyword, setKeyword] = useState<string>("");
   const [location, setLocation] = useState("");
   const [subLocation, setSubLocation] = useState("");
-  const [prevImageUrls, setPrevImageUrls] = useState<string[]>([]); // 기존 이미지 URL
-  const [newImageUrls, setNewImageUrls] = useState<string[]>([]); // 새로 추가된 이미지 URL
-  const [newImageFiles, setNewImageFiles] = useState<File[]>([]); // 새로 추가된 이미지 파일
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [imageFile, setImageFile] = useState<File[] | null>(null);
   const [dateRange, setDateRange] = useState<{ startDate: string | null, endDate: string | null }>({
     startDate: null,
     endDate: null,
@@ -254,7 +253,8 @@ const BungaeEdit = () => {
     ageLimit: "",
     fee: "",
   });
-  const { id } = useParams<{ id: string }>();
+  const [additionalFocusedInput, setAdditionalFocusedInput] = useState<FocusedInputShape | null>(null);
+  const {id} = useParams<{id: string}>();
   const bungaeId = id ? parseInt(id, 10) : 0;
   const accessToken = localStorage.getItem('accessToken');
 
@@ -262,7 +262,7 @@ const BungaeEdit = () => {
     if (!accessToken) {
       navigate('/Login');  
     }
-  }, [accessToken]);
+  }, [dispatch, accessToken]);
 
   const handleKeywordChange = useCallback((keyword: string) => {
     setKeyword(keyword);
@@ -283,7 +283,7 @@ const BungaeEdit = () => {
         });
         setMeetingStartTime(response.gatherAt);
         if (response.imageUrls) {
-          setPrevImageUrls(response.imageUrls); // 기존 이미지 URL 설정
+          setImageUrls(response.imageUrls);
         }
       }
     }
@@ -307,51 +307,35 @@ const BungaeEdit = () => {
 
     const fileArray = Array.from(files || []);
 
-    const sanitizedFiles = fileArray.map(file => {
-      const sanitizedFileName = file.name
+    // 파일 이름을 정규화하는 함수 (공백은 대시로, 안전하지 않은 문자는 제거)
+    const sanitizeFileName = (fileName: string) => {
+      return fileName
         .normalize('NFKD')                  // 유니코드 정규화
-        .replace(/[\s]/g, '-')             // 공백을 대시(-)로 변환
+        .replace(/[\s]/g, '-')             // replace()함수를 통해 공백을 대시(-)로 변환
         .replace(/[^a-zA-Z0-9.-]/g, '');   // 알파벳, 숫자, 점, 하이픈을 제외한 모든 문자 제거
+    };
+
+    // 정규화된 파일 이름으로 새 File 객체 생성 및 URL 생성
+    const sanitizedFiles = fileArray.map(file => {
+      const sanitizedFileName = sanitizeFileName(file.name);
       return new File([file], sanitizedFileName, { type: file.type });
     });
 
-    const newUrls = sanitizedFiles.map(file => URL.createObjectURL(file));
-    setNewImageUrls((prev) => [...prev, ...newUrls]);
-    setNewImageFiles((prev) => [...prev, ...sanitizedFiles]);
+    const newUrls = sanitizedFiles.map((file) => URL.createObjectURL(file));
+    setImageUrls((prev) => [...prev, ...newUrls]);
+    setImageFile((prev) => (prev ? [...prev, ...sanitizedFiles] : sanitizedFiles));
   };
 
-  const handlePrevImageRemove = (index: number) => {
-    setPrevImageUrls((prev) => prev.filter((_, i) => i !== index)); // 기존 이미지 삭제
-  };
-
-  const handleNewImageRemove = (index: number) => {
-    setNewImageUrls((prev) => prev.filter((_, i) => i !== index));
-    setNewImageFiles((prev) => prev.filter((_, i) => i !== index));
-  };
-
-  // URL을 File 객체로 변환하는 함수 (XMLHttpRequest 사용)
-  const urlToFile = (url: string, fileName: string): Promise<File> => {
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      xhr.open('GET', url, true);
-      xhr.responseType = 'blob'; // 바이너리 데이터로 가져오기
-      xhr.onload = () => {
-        if (xhr.status === 200) {
-          const file = new File([xhr.response], fileName, { type: xhr.response.type });
-          resolve(file);
-        } else {
-          reject(new Error(`Failed to load image from ${url}`));
-        }
-      };
-      xhr.onerror = () => reject(new Error(`Network error while fetching ${url}`));
-      xhr.send();
-    });
+  const handleImageRemove = (index: number) => {
+    setImageUrls((prev) => prev.filter((_, i) => i !== index));
+    setImageFile((prev) => prev ? prev.filter((_, i) => i !== index) : null);
   };
 
   const handleMeetingTimeChange = (date: moment.Moment | string) => {
     if (date && typeof date !== 'string') {
       setMeetingStartTime(date.format('YYYY-MM-DD HH:mm'));
-    } else {
+    }
+    else {
       setMeetingStartTime(null);
     }
   };
@@ -370,50 +354,94 @@ const BungaeEdit = () => {
       Swal.fire("Error", "필수 입력 항목을 모두 입력해주세요.", "error");
       return;
     }
+    
 
-    // 기존 이미지 URL을 File 객체로 변환
-    const prevUrlFiles = await Promise.all(
-      prevImageUrls.map((url, index) => urlToFile(url, `prev-image-${index}.jpg`))
-    );
+    if (category === "moim") {
+      const moimData = {
+        userId: userId,
+        title: title,
+        content: content,
+        keyword: keyword,
+        address: {
+          city: location,
+          gu: subLocation,
+          details: additionalInfo.placeDetails,
+        },
+        description: content,
+        createdAt: dateRange.startDate,
+        expireAt: dateRange.endDate,
+      };
 
-    // 기존 이미지 파일과 새로 첨부된 파일 병합
-    const allFiles = [...newImageFiles, ...prevUrlFiles];
+      const moimFormData = new FormData();
+      moimFormData.append('dto', new Blob([JSON.stringify(moimData)], { type: 'application/json' }));
 
-    const bungaeData = {
-      userId: userId,
-      title: title,
-      content: content,
-      keyword: keyword,
-      address: {
-        city: location,
-        gu: subLocation,
-        details: additionalInfo.placeDetails,
-      },
-      description: content,
-      createdAt: dateRange.startDate,
-      expireAt: dateRange.endDate,
-      gatherAt: meetingStartTime
-    };
-
-    const bungaeFormData = new FormData();
-    bungaeFormData.append('dto', new Blob([JSON.stringify(bungaeData)], { type: 'application/json' }));
-
-    allFiles.forEach((file) => {
-      bungaeFormData.append('images', file);
-    });
-
-    try {
-      const bungaeFormDataBungaeId = { bungaeId: bungaeId, bungaeFormData: bungaeFormData };
-      const response = await dispatch(EditBungae(bungaeFormDataBungaeId)).unwrap();
-      Swal.fire('게시글 수정 성공', '게시글이 성공적으로 수정되었습니다.', 'success');
-      navigate(`/bungae/${bungaeId}`);
-    } catch (error) {
-      Swal.fire({
-        icon: 'error',
-        title: '게시글 생성 실패',
-        text: '생성 중 오류가 발생했습니다. 다시 시도하세요.',
-      });
+      if (imageFile) {
+        imageFile.forEach((file) => {
+        moimFormData.append('images', file);
+        });
+	    }
+      else {
+        moimFormData.append('images', 'null');
+      }
+	    
+      try {
+        // const moimFormDataMoimId = {moimId: moimId, moimFormData: moimFormData};
+        const response = await dispatch(createMoim(moimFormData)).unwrap();
+        console.log(response);
+        Swal.fire('게시글 수정 성공', '게시글이 성공적으로 수정되었습니다.', 'success');
+        navigate('/moim/list')
+      }
+      catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: '게시글 생성 실패',
+          text: '생성 중 오류가 발생했습니다. 다시 시도하세요.',
+        });
+      }
     }
+    else {
+      const bungaeData = {
+        userId: userId,
+        title: title,
+        content: content,
+        keyword: keyword,
+        address: {
+          city: location,
+          gu: subLocation,
+          details: additionalInfo.placeDetails,
+        },
+        description: content,
+        createdAt: dateRange.startDate,
+        expireAt: dateRange.endDate,
+        gatherAt: meetingStartTime
+      };
+      const bungaeFormData = new FormData();
+      bungaeFormData.append('dto', new Blob([JSON.stringify(bungaeData)], { type: 'application/json' }));
+
+      if (imageFile) {
+        imageFile.forEach((file) => {
+          bungaeFormData.append('images', file);
+        });
+	    }
+      else {
+        bungaeFormData.append('images', 'null');
+      }
+      try {
+        const bungaeFormDataBungaeId = {bungaeId: bungaeId, bungaeFormData: bungaeFormData};
+        const response = await dispatch(EditBungae(bungaeFormDataBungaeId)).unwrap();
+        Swal.fire('게시글 수정 성공', '게시글이 성공적으로 수정되었습니다.', 'success');
+        navigate(`/bungae/${bungaeId}`);
+      }
+      catch (error) {
+        Swal.fire({
+          icon: 'error',
+          title: '게시글 생성 실패',
+          text: '생성 중 오류가 발생했습니다. 다시 시도하세요.',
+        });
+      }
+    }
+
+
   };
 
   useEffect(() => {
@@ -469,7 +497,7 @@ const BungaeEdit = () => {
               Meeting Start Time<RequiredIcon>*</RequiredIcon>
             </Label>
             <Datetime
-              value={meetingStartTime ? moment(meetingStartTime) : ""}  // 왼쪽값이 false인 경우 -> 오른쪽값 반환
+              value={meetingStartTime ? moment(meetingStartTime) : ""}  //왼쪽값이 false인 경우 -> 오른쪽값 반환
               onChange={handleMeetingTimeChange}
               inputProps={{ placeholder: "Select Date and Time" }}
               dateFormat="YYYY-MM-DD"
@@ -484,12 +512,12 @@ const BungaeEdit = () => {
           <ButtonGroup>
             {["TRAVEL", "DRINKING", "FOOD", "SPORTS", "ACTIVITY", "GAME", "PARTY", "CULTURE", "STUDY", "LANGUAGE", "HOBBY", "UNSELECTED"].map((key) => (
               <Button
-                key={key}
-                selected={keyword === key}
-                onClick={() => handleKeywordChange(key)}
-              >
-                {key}
-              </Button>
+              key={key}
+              selected={keyword===key}
+              onClick={() => handleKeywordChange(key)}
+            >
+              {key}
+            </Button>
             ))}
           </ButtonGroup>
         </div>
@@ -553,16 +581,10 @@ const BungaeEdit = () => {
           onChange={handleImageChange}
         />
         <ImagePreviewContainer>
-          {prevImageUrls.map((url, index) => (
-            <ImagePreview key={`prev-${index}`}>
+          {imageUrls.map((url, index) => (
+            <ImagePreview key={index}>
               <img src={url} alt={`Preview ${index}`} />
-              <button onClick={() => handlePrevImageRemove(index)}>X</button>
-            </ImagePreview>
-          ))}
-          {newImageUrls.map((url, index) => (
-            <ImagePreview key={`new-${index}`}>
-              <img src={url} alt={`Preview ${index}`} />
-              <button onClick={() => handleNewImageRemove(index)}>X</button>
+              <button onClick={() => handleImageRemove(index)}>X</button>
             </ImagePreview>
           ))}
         </ImagePreviewContainer>
