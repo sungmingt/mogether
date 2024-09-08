@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { forgotPassword } from '../store/slices/authSlice';
 import { access } from 'fs';
+import { setAuthenticated } from '../store/slices/authSlice';
+import { UseDispatch } from 'react-redux';
 
 const API_BASE_URL = "https://api.mo-gether.site"; // 백엔드 서버의 기본 URL
 
@@ -33,18 +35,6 @@ api.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     const refreshToken = localStorage.getItem('refreshToken');
-    const logout = async () => {
-      try {
-        await api.post('/logout');
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('userId');
-        window.location.href = '/';
-      }
-      catch (err) {
-        console.log(err);
-      }
-    }
 
     if (error.response.status === 401 && refreshToken) {  //refreshToken이 있을 때
       try {
@@ -65,7 +55,10 @@ api.interceptors.response.use(
         return axios(originalRequest);
       } catch (err) {
         if (error.response && error.response.status === 401) {
-          await logout();
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          localStorage.removeItem('userId');
+          window.location.reload();  //새로고침
         }
         return Promise.reject(error);
       }
@@ -104,18 +97,6 @@ api2.interceptors.response.use(
   async (error) => {
     const originalRequest = error.config;
     const refreshToken = localStorage.getItem('refreshToken');
-    const logout = async () => {
-      try {
-        await api.post('/logout');
-        localStorage.removeItem('accessToken');
-        localStorage.removeItem('refreshToken');
-        localStorage.removeItem('userId');
-        window.location.href = '/';
-      }
-      catch (err) {
-        console.log(err);
-      }
-    }
 
     if (error.response.status === 401 && refreshToken) {  //refreshToken이 있을 때
       try {
@@ -136,7 +117,10 @@ api2.interceptors.response.use(
         return axios(originalRequest);
       } catch (err) {
         if (error.response && error.response.status === 401) {
-          await logout();
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          localStorage.removeItem('userId');
+          window.location.reload();  //새로고침
         }
         return Promise.reject(error);
       }

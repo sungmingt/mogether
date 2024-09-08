@@ -250,7 +250,7 @@ const Header: React.FC = () => {
     else {
       dispatch(setAuthenticated(false));
     }
-  }, [dispatch, userId]); 
+  }, [dispatch, accessToken, userId]); 
 
   const handleLogout = async () => {
     try {
