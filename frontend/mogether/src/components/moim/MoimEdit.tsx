@@ -309,9 +309,24 @@ const MoimEdit = () => {
     }
 
     const fileArray = Array.from(files || []);
-    const newUrls = fileArray.map((file) => URL.createObjectURL(file));
+
+    // 파일 이름을 정규화하는 함수 (공백은 대시로, 안전하지 않은 문자는 제거)
+    const sanitizeFileName = (fileName: string) => {
+      return fileName
+        .normalize('NFKD')                  // 유니코드 정규화
+        .replace(/[\s]/g, '-')             // 공백을 대시(-)로 변환
+        .replace(/[^a-zA-Z0-9.-]/g, '');   // 알파벳, 숫자, 점, 하이픈을 제외한 모든 문자 제거
+    };
+
+    // 정규화된 파일 이름으로 새 File 객체 생성 및 URL 생성
+    const sanitizedFiles = fileArray.map(file => {
+      const sanitizedFileName = sanitizeFileName(file.name);
+      return new File([file], sanitizedFileName, { type: file.type });
+    });
+
+    const newUrls = sanitizedFiles.map((file) => URL.createObjectURL(file));
     setImageUrls((prev) => [...prev, ...newUrls]);
-    setImageFile((prev) => (prev ? [...prev, ...fileArray] : fileArray));
+    setImageFile((prev) => (prev ? [...prev, ...sanitizedFiles] : sanitizedFiles));
   };
 
   const handleImageRemove = (index: number) => {
@@ -375,6 +390,8 @@ const MoimEdit = () => {
       try {
         const moimFormDataMoimId = {moimId: moimId, moimFormData: moimFormData};
         const response = await dispatch(EditMoim(moimFormDataMoimId)).unwrap();
+        Swal.fire('게시글 수정 성공', '게시글이 성공적으로 수정되었습니다.', 'success');
+        navigate(`/moim/${moimId}`);
       }
       catch (error) {
         Swal.fire({
@@ -415,6 +432,8 @@ const MoimEdit = () => {
         const bungaeFormDataBungaeId = {bungaeId: bungaeId, bungaeFormData: bungaeFormData};
         const response = await dispatch(createBungae(bungaeFormData)).unwrap();
         console.log(response);
+        Swal.fire('게시글 수정 성공', '게시글이 성공적으로 수정되었습니다.', 'success');
+        navigate('/bungae/list');
       }
       catch (error) {
         Swal.fire({
@@ -628,35 +647,6 @@ const MoimEdit = () => {
               }))
             }
           />
-          {/* <div>
-            <Label>
-              <FontAwesomeIcon
-                icon={faCalendarAlt}
-                style={{ marginRight: 5 }}
-              />
-              Meeting Period<RequiredIcon>*</RequiredIcon>
-            </Label>
-            <StyledDateRangePicker
-              startDate={additionalInfo.meetingPeriodStart ? moment(additionalInfo.meetingPeriodStart) : null}
-              startDateId="meeting_period_start_id"
-              endDate={additionalInfo.meetingPeriodEnd ? moment(additionalInfo.meetingPeriodEnd) : null}
-              endDateId="meeting_period_end_id"
-              onDatesChange={({ startDate, endDate }) =>
-                setAdditionalInfo((prev) => ({
-                  ...prev,
-                  meetingPeriodStart: startDate ? startDate.format("YYYY-MM-DD") : "",
-                  meetingPeriodEnd: endDate ? endDate.format("YYYY-MM-DD") : "",
-                }))
-              }
-              focusedInput={additionalFocusedInput}
-              onFocusChange={(focusedInput) =>
-                setAdditionalFocusedInput(focusedInput)
-              }
-              displayFormat="YYYY/MM/DD"
-              numberOfMonths={1}
-              isOutsideRange={() => false}
-            />
-          </div> */}
         </NoteContainer>
       </Form>
       <StyledButton onClick={handleSubmit}>Submit</StyledButton>
