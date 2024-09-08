@@ -389,6 +389,7 @@ const MoimCreate = () => {
         const response = await dispatch(createMoim(moimFormData)).unwrap();
         console.log(response);
         console.log(keyword);
+        Swal.fire('게시글 생성 성공', '게시글이 성공적으로 생성되었습니다.', 'success');
         navigate('/moim/list')
       }
       catch (error) {
@@ -413,6 +414,7 @@ const MoimCreate = () => {
       try {
         const response = await dispatch(createBungae(bungaeFormData)).unwrap();
         console.log(response);
+        Swal.fire('게시글 생성 성공', '게시글이 성공적으로 생성되었습니다.', 'success');
         navigate('/bungae/list')
       }
       catch (error) {
