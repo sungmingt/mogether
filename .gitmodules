@@ -1,3 +1,0 @@
-[submodule "backend/mogether/src/main/resources/mogether-security"]
-	path = backend/mogether/src/main/resources/mogether-security
-	url = https://github.com/sungmingt/mogether-security.git
