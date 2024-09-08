@@ -295,20 +295,23 @@ const MoimCreate = () => {
 
     const fileArray = Array.from(files || []);
 
-    // 파일 이름을 URL-safe 형식으로 인코딩하는 함수
-    const encodeFileName = (fileName: string) => {
-      return encodeURIComponent(fileName);
+    // 파일 이름을 정규화하는 함수 (공백은 대시로, 안전하지 않은 문자는 제거)
+    const sanitizeFileName = (fileName: string) => {
+      return fileName
+        .normalize('NFKD')                  // 유니코드 정규화
+        .replace(/[\s]/g, '-')             // 공백을 대시(-)로 변환
+        .replace(/[^a-zA-Z0-9.-]/g, '');   // 알파벳, 숫자, 점, 하이픈을 제외한 모든 문자 제거
     };
 
-    // URL-safe 파일 이름으로 새 File 객체 생성 및 URL 생성
-    const encodedFiles = fileArray.map(file => {
-      const encodedFileName = encodeFileName(file.name);
-      return new File([file], encodedFileName, { type: file.type });
+    // 정규화된 파일 이름으로 새 File 객체 생성 및 URL 생성
+    const sanitizedFiles = fileArray.map(file => {
+      const sanitizedFileName = sanitizeFileName(file.name);
+      return new File([file], sanitizedFileName, { type: file.type });
     });
 
-    const newUrls = encodedFiles.map((file) => URL.createObjectURL(file));
+    const newUrls = sanitizedFiles.map((file) => URL.createObjectURL(file));
     setImageUrls((prev) => [...prev, ...newUrls]);
-    setImageFile((prev) => (prev ? [...prev, ...encodedFiles] : encodedFiles));
+    setImageFile((prev) => (prev ? [...prev, ...sanitizedFiles] : sanitizedFiles));
   };
 
   const handleImageRemove = (index: number) => {
