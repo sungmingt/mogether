@@ -357,7 +357,7 @@ const BungaeEdit = () => {
       prevImageUrls.map((url, index) => urlToFile(url, `prev-image-${index}.jpg`))
     );
 
-    // null 값 필터링 (변환 실패한 URL 제외)
+    // null 값 필터
     const validPrevUrlFiles = prevUrlFiles.filter((file): file is File => file !== null);
 
     // 기존 이미지 파일과 새로 첨부된 파일 병합
