@@ -307,22 +307,10 @@ const BungaeEdit = () => {
 
     const fileArray = Array.from(files || []);
 
-    // 파일 이름을 정규화하는 함수
-    const sanitizeFileName = (fileName: string) => {
-      return fileName
-        .normalize('NFKD')
-        .replace(/[\s]/g, '-')
-        .replace(/[^a-zA-Z0-9.-]/g, '');
-    };
-
-    const sanitizedFiles = fileArray.map(file => {
-      const sanitizedFileName = sanitizeFileName(file.name);
-      return new File([file], sanitizedFileName, { type: file.type });
-    });
-
-    const newUrls = sanitizedFiles.map((file) => URL.createObjectURL(file));
+    // 파일을 그대로 사용하여 URL 생성
+    const newUrls = fileArray.map((file) => URL.createObjectURL(file));
     setNewImageUrls((prev) => [...prev, ...newUrls]);
-    setNewImageFiles((prev) => [...prev, ...sanitizedFiles]);
+    setNewImageFiles((prev) => [...prev, ...fileArray]);
   };
 
   const handlePrevImageRemove = (index: number) => {
@@ -334,23 +322,17 @@ const BungaeEdit = () => {
     setNewImageFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // URL을 File 객체로 변환하면서 파일 이름을 정규화하는 함수
+  // URL을 File 객체로 변환하는 함수
   const urlToFile = async (url: string, fileName: string): Promise<File> => {
-    const sanitizedFileName = fileName
-      .normalize('NFKD')                  // 유니코드 정규화
-      .replace(/[\s]/g, '-')             // 공백을 대시(-)로 변환
-      .replace(/[^a-zA-Z0-9.-]/g, '');   // 알파벳, 숫자, 점, 하이픈을 제외한 모든 문자 제거
-
     const response = await fetch(url);
     const blob = await response.blob();
-    return new File([blob], sanitizedFileName, { type: blob.type });
+    return new File([blob], fileName, { type: blob.type });
   };
 
   const handleMeetingTimeChange = (date: moment.Moment | string) => {
     if (date && typeof date !== 'string') {
       setMeetingStartTime(date.format('YYYY-MM-DD HH:mm'));
-    }
-    else {
+    } else {
       setMeetingStartTime(null);
     }
   };
@@ -375,8 +357,11 @@ const BungaeEdit = () => {
       prevImageUrls.map((url, index) => urlToFile(url, `prev-image-${index}.jpg`))
     );
 
+    // null 값 필터링 (변환 실패한 URL 제외)
+    const validPrevUrlFiles = prevUrlFiles.filter((file): file is File => file !== null);
+
     // 기존 이미지 파일과 새로 첨부된 파일 병합
-    const allFiles = [...newImageFiles, ...prevUrlFiles];
+    const allFiles = [...newImageFiles, ...validPrevUrlFiles];
 
     const bungaeData = {
       userId: userId,
