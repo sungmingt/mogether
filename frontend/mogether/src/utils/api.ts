@@ -302,7 +302,7 @@ export const changeUserProfile = async (profileData: any) => {
   return response;
 }
 
-export const EditMoimApi = async (moimId: number, editData: any) => {
+export const EditMoimApi = async (moimId: number, editData: FormData) => {
   const response = await api2.patch(`/moim/${moimId}`, editData);
   return response;
 }
