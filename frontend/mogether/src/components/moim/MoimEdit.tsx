@@ -238,7 +238,7 @@ const MoimEdit = () => {
   const [keyword, setKeyword] = useState<string>("");
   const [location, setLocation] = useState("");
   const [subLocation, setSubLocation] = useState("");
-  const [prevImageUrls, setPrevImageUrls] = useState<string[]>([]); // 기존 이미지 URL
+  const [prevImageUrls, setPrevImageUrls] = useState<string[]>([]); // 기존 이미지 URL 리스트
   const [newImageUrls, setNewImageUrls] = useState<string[]>([]); // 새로 추가된 이미지 URL
   const [newImageFiles, setNewImageFiles] = useState<File[]>([]); // 새로 추가된 이미지 파일
   const [dateRange, setDateRange] = useState<{ startDate: string | null, endDate: string | null }>({
@@ -254,10 +254,8 @@ const MoimEdit = () => {
     ageLimit: "",
     fee: "",
   });
-  const [additionalFocusedInput, setAdditionalFocusedInput] = useState<FocusedInputShape | null>(null);
   const { id } = useParams<{ id: string }>();
   const moimId = id ? parseInt(id, 10) : 0;
-  const bungaeId = id ? parseInt(id, 10) : 0;
   const accessToken = localStorage.getItem('accessToken');
 
   useEffect(() => {
@@ -298,7 +296,7 @@ const MoimEdit = () => {
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (files && files.length > 4) {
+    if (files && files.length + newImageFiles.length + prevImageUrls.length > 4) {
       Swal.fire(
         "Error",
         "이미지는 최대 4개까지 업로드할 수 있습니다.",
@@ -370,76 +368,39 @@ const MoimEdit = () => {
     // 기존 이미지 파일과 새로 첨부된 파일 병합
     const allFiles = [...newImageFiles, ...prevUrlFiles];
 
-    if (category === "moim") {
-      const moimData = {
-        userId: userId,
-        title: title,
-        content: content,
-        keyword: keyword,
-        address: {
-          city: location,
-          gu: subLocation,
-          details: additionalInfo.placeDetails,
-        },
-        description: content,
-        createdAt: dateRange.startDate,
-        expireAt: dateRange.endDate,
-      };
+    const moimData = {
+      userId: userId,
+      title: title,
+      content: content,
+      keyword: keyword,
+      address: {
+        city: location,
+        gu: subLocation,
+        details: additionalInfo.placeDetails,
+      },
+      description: content,
+      createdAt: dateRange.startDate,
+      expireAt: dateRange.endDate,
+    };
 
-      const moimFormData = new FormData();
-      moimFormData.append('dto', new Blob([JSON.stringify(moimData)], { type: 'application/json' }));
+    const moimFormData = new FormData();
+    moimFormData.append('dto', new Blob([JSON.stringify(moimData)], { type: 'application/json' }));
 
-      allFiles.forEach((file) => {
-        moimFormData.append('images', file);
+    allFiles.forEach((file) => {
+      moimFormData.append('images', file);
+    });
+
+    try {
+      const moimFormDataMoimId = { moimId: moimId, moimFormData: moimFormData };
+      const response = await dispatch(EditMoim(moimFormDataMoimId)).unwrap();
+      Swal.fire('게시글 수정 성공', '게시글이 성공적으로 수정되었습니다.', 'success');
+      navigate(`/moim/${moimId}`);
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: '게시글 생성 실패',
+        text: '생성 중 오류가 발생했습니다. 다시 시도하세요.',
       });
-
-      try {
-        const moimFormDataMoimId = { moimId: moimId, moimFormData: moimFormData };
-        const response = await dispatch(EditMoim(moimFormDataMoimId)).unwrap();
-        Swal.fire('게시글 수정 성공', '게시글이 성공적으로 수정되었습니다.', 'success');
-        navigate(`/moim/${moimId}`);
-      } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: '게시글 생성 실패',
-          text: '생성 중 오류가 발생했습니다. 다시 시도하세요.',
-        });
-      }
-    } else {
-      const bungaeData = {
-        userId: userId,
-        title: title,
-        content: content,
-        keyword: keyword,
-        address: {
-          city: location,
-          gu: subLocation,
-          details: additionalInfo.placeDetails,
-        },
-        description: content,
-        createdAt: dateRange.startDate,
-        expireAt: dateRange.endDate,
-        gatherAt: meetingStartTime
-      };
-      const bungaeFormData = new FormData();
-      bungaeFormData.append('dto', new Blob([JSON.stringify(bungaeData)], { type: 'application/json' }));
-
-      allFiles.forEach((file) => {
-        bungaeFormData.append('images', file);
-      });
-
-      try {
-        const bungaeFormDataBungaeId = { bungaeId: bungaeId, bungaeFormData: bungaeFormData };
-        const response = await dispatch(createBungae(bungaeFormData)).unwrap();
-        Swal.fire('게시글 수정 성공', '게시글이 성공적으로 수정되었습니다.', 'success');
-        navigate('/bungae/list');
-      } catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: '게시글 생성 실패',
-          text: '생성 중 오류가 발생했습니다. 다시 시도하세요.',
-        });
-      }
     }
   };
 
