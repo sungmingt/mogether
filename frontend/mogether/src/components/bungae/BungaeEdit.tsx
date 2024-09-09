@@ -392,9 +392,16 @@ const BungaeEdit = () => {
     const bungaeFormData = new FormData();
     bungaeFormData.append('dto', new Blob([JSON.stringify(bungaeData)], { type: 'application/json' }));
 
-    allFiles.forEach((file) => {
-      bungaeFormData.append('images', file);
-    });
+    // allFiles.forEach((file) => {
+    //   bungaeFormData.append('images', file);
+    // });
+    if(allFiles && allFiles.length > 0) {
+      allFiles.forEach((file) => {
+        bungaeFormData.append('images', file)});
+    }
+    else {
+      bungaeFormData.append('images', "null");
+    }
 
     try {
       const bungaeFormDataBungaeId = { bungaeId: bungaeId, bungaeFormData: bungaeFormData };

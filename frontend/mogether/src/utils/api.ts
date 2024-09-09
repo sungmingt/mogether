@@ -307,7 +307,7 @@ export const EditMoimApi = async (moimId: number, editData: any) => {
   return response;
 }
 
-export const EditBungaeApi = async (bungaeId: number, editData: any) => {
+export const EditBungaeApi = async (bungaeId: number, editData: FormData) => {
   const response = await api2.patch(`/bungae/${bungaeId}`, editData);
   return response;
 }

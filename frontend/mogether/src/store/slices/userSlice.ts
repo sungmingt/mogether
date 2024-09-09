@@ -109,7 +109,7 @@ export const EditBungae = createAsyncThunk(
   'user/EditBungae',
   async (editData: any, { rejectWithValue }) => {
     try {
-      const response = await EditBungaeApi(editData.bungaeId, editData);
+      const response = await EditBungaeApi(editData.bungaeId, editData.bungaeFormData);
       if (response.status === 200 || response.status === 201) {
         return response.data;
       }
