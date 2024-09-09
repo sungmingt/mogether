@@ -329,11 +329,16 @@ const MoimEdit = () => {
     setNewImageFiles((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // URL을 File 객체로 변환하는 함수
+  // URL을 File 객체로 변환하면서 파일 이름을 정규화하는 함수
   const urlToFile = async (url: string, fileName: string): Promise<File> => {
+    const sanitizedFileName = fileName
+      .normalize('NFKD')                  // 유니코드 정규화
+      .replace(/[\s]/g, '-')             // 공백을 대시(-)로 변환
+      .replace(/[^a-zA-Z0-9.-]/g, '');   // 알파벳, 숫자, 점, 하이픈을 제외한 모든 문자 제거
+
     const response = await fetch(url);
     const blob = await response.blob();
-    return new File([blob], fileName, { type: blob.type });
+    return new File([blob], sanitizedFileName, { type: blob.type });
   };
 
   const handleMeetingTimeChange = (date: moment.Moment | string) => {
