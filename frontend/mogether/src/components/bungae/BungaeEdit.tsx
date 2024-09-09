@@ -307,10 +307,22 @@ const BungaeEdit = () => {
 
     const fileArray = Array.from(files || []);
 
-    // 파일을 그대로 사용하여 URL 생성
-    const newUrls = fileArray.map((file) => URL.createObjectURL(file));
+    // 파일 이름을 정규화하는 함수
+    const sanitizeFileName = (fileName: string) => {
+      return fileName
+        .normalize('NFKD')
+        .replace(/[\s]/g, '-')
+        .replace(/[^a-zA-Z0-9.-]/g, '');
+    };
+
+    const sanitizedFiles = fileArray.map(file => {
+      const sanitizedFileName = sanitizeFileName(file.name);
+      return new File([file], sanitizedFileName, { type: file.type });
+    });
+
+    const newUrls = sanitizedFiles.map((file) => URL.createObjectURL(file));
     setNewImageUrls((prev) => [...prev, ...newUrls]);
-    setNewImageFiles((prev) => [...prev, ...fileArray]);
+    setNewImageFiles((prev) => [...prev, ...sanitizedFiles]);
   };
 
   const handlePrevImageRemove = (index: number) => {
@@ -332,7 +344,8 @@ const BungaeEdit = () => {
   const handleMeetingTimeChange = (date: moment.Moment | string) => {
     if (date && typeof date !== 'string') {
       setMeetingStartTime(date.format('YYYY-MM-DD HH:mm'));
-    } else {
+    }
+    else {
       setMeetingStartTime(null);
     }
   };
@@ -357,11 +370,8 @@ const BungaeEdit = () => {
       prevImageUrls.map((url, index) => urlToFile(url, `prev-image-${index}.jpg`))
     );
 
-    // null 값 필터
-    const validPrevUrlFiles = prevUrlFiles.filter((file): file is File => file !== null);
-
     // 기존 이미지 파일과 새로 첨부된 파일 병합
-    const allFiles = [...newImageFiles, ...validPrevUrlFiles];
+    const allFiles = [...newImageFiles, ...prevUrlFiles];
 
     const bungaeData = {
       userId: userId,
@@ -453,7 +463,7 @@ const BungaeEdit = () => {
               Meeting Start Time<RequiredIcon>*</RequiredIcon>
             </Label>
             <Datetime
-              value={meetingStartTime ? moment(meetingStartTime) : ""}
+              value={meetingStartTime ? moment(meetingStartTime) : ""}  // 왼쪽값이 false인 경우 -> 오른쪽값 반환
               onChange={handleMeetingTimeChange}
               inputProps={{ placeholder: "Select Date and Time" }}
               dateFormat="YYYY-MM-DD"
