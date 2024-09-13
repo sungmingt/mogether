@@ -1,5 +1,6 @@
 package mogether.mogether.domain.token.redis;
 
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Repository;
@@ -18,7 +19,7 @@ public class RefreshTokenRepository {
     private final RedisTemplate<String, String> refreshTokenRedisTemplate;
     private final HashOperations<String, String, String> hashOperations;
 
-    public RefreshTokenRepository(RedisTemplate<String, String> refreshTokenRedisTemplate) {
+    public RefreshTokenRepository(@Qualifier("refreshTokenRedisTemplate") RedisTemplate<String, String> refreshTokenRedisTemplate) {
         this.refreshTokenRedisTemplate = refreshTokenRedisTemplate;
         this.hashOperations = refreshTokenRedisTemplate.opsForHash();
     }
