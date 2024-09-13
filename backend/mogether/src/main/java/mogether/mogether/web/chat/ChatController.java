@@ -24,16 +24,12 @@ public class ChatController {
 
     //Client Message 요청 -> Controller -> Service -> Pub - Redis -> MessageListener -> Sub Logic
 
-    @Operation(summary = "채팅 메시지 전송",
-            responses = {
-                    @ApiResponse(responseCode = "201", description = "채팅 메시지 전송 성공"),
-            })
     @MessageMapping("/chat/message")
     public void message(ChatMessageRequest chatMessageRequest) {
         chatService.sendMessage(chatMessageRequest);
     }
 
-    @Operation(summary = "채팅방 상세 정보(입장)", description = "특정 채팅방의 정보와 채팅 메시지 내역 요청",
+    @Operation(summary = "채팅방 상세 정보", description = "특정 채팅방의 정보와 채팅 메시지 내역 요청",
             responses = {
                     @ApiResponse(responseCode = "200", description = "채팅방 정보 응답 성공"),
             })
