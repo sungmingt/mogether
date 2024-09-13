@@ -9,9 +9,9 @@ import mogether.mogether.domain.oauth.AppUser;
 import mogether.mogether.web.user.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-
 
 @Tag(name = "user", description = "유저 API")
 @RestController
@@ -27,7 +27,7 @@ public class UserController {
             })
     @PostMapping("/join")
     public UserJoinResponse join(@RequestPart(name = "image", required = false) MultipartFile image,
-                                 @RequestPart(name = "dto") UserJoinRequest userJoinRequest) {
+                                 @RequestPart(name = "dto") @Validated UserJoinRequest userJoinRequest) {
         return userService.join(userJoinRequest, image);
     }
 
@@ -37,9 +37,10 @@ public class UserController {
             })
     @PatchMapping("/{userId}")
     public UserUpdateResponse update(@PathVariable("userId") Long userId,
+                                     @AuthenticationPrincipal AppUser appUser,
                                      @RequestPart(name = "image", required = false) MultipartFile image,
-                                     @RequestPart(name = "dto") UserUpdateRequest userUpdateRequest,
-                                     @AuthenticationPrincipal AppUser appUser) {
+                                     @RequestPart(name = "dto") @Validated UserUpdateRequest userUpdateRequest
+                                    ) {
         return userService.update(userId, appUser, userUpdateRequest, image);
     }
 
@@ -50,7 +51,7 @@ public class UserController {
     @PatchMapping("/{userId}/password")
     public HttpStatus updatePassword(@PathVariable("userId") Long userId,
                                      @AuthenticationPrincipal AppUser appUser,
-                                     @RequestBody PasswordUpdateRequest passwordUpdateRequest) {
+                                     @RequestBody @Validated PasswordUpdateRequest passwordUpdateRequest) {
         userService.updatePassword(userId, appUser, passwordUpdateRequest);
         return HttpStatus.OK;
     }
@@ -60,9 +61,8 @@ public class UserController {
                     @ApiResponse(responseCode = "200", description = "비밀번호 찾기 성공"),
             })
     @PostMapping("/password")
-    public PasswordFindResponse findPassword(@AuthenticationPrincipal AppUser appUser,
-                                            @RequestBody PasswordFindRequest passwordFindRequest) {
-        return userService.findPassword(appUser, passwordFindRequest);
+    public PasswordFindResponse findPassword(@RequestBody @Validated PasswordFindRequest passwordFindRequest) {
+        return userService.findPassword(passwordFindRequest);
     }
 
     @Operation(summary = "유저 정보 조회", description = "유저의 정보를 조회한다",
@@ -92,7 +92,7 @@ public class UserController {
     @PostMapping("/{userId}/oauth2/info")
     public UserJoinResponse addInfoAfterOAuthSignUp(@PathVariable("userId") Long userId,
                                                     @RequestPart(name = "image", required = false) MultipartFile image,
-                                                    @RequestPart(name = "dto") AfterOAuthSignUpRequest afterOAuthSignUpRequest) {
+                                                    @RequestPart(name = "dto") @Validated AfterOAuthSignUpRequest afterOAuthSignUpRequest) {
         return userService.addInfoAfterOAuthSignUp(userId, image, afterOAuthSignUpRequest);
     }
 }

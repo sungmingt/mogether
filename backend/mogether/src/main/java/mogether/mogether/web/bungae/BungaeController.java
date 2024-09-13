@@ -9,6 +9,7 @@ import mogether.mogether.domain.oauth.AppUser;
 import mogether.mogether.web.bungae.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,6 +48,17 @@ public class BungaeController {
         return HttpStatus.OK;
     }
 
+    @Operation(summary = "번개 강제 퇴장", description = "호스트가 유저를 강제퇴장시킨다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "호스트의 유저 강제퇴장 성공"),
+            })
+    @PostMapping("/kickout")
+    public HttpStatus kickOut(@AuthenticationPrincipal AppUser appUser,
+                              @RequestBody @Validated BungaeKickOutRequest kickOutRequest) {
+        bungaeService.kickOut(appUser, kickOutRequest);
+        return HttpStatus.OK;
+    }
+
     @Operation(summary = "번개 글 등록", description = "유저 id를 통해 유저가 번개 글을 등록한다.",
             responses = {
                     @ApiResponse(responseCode = "201", description = "유저의 번개 글 등록 성공"),
@@ -55,7 +67,7 @@ public class BungaeController {
     @PostMapping
     public BungaeCreateResponse create(@AuthenticationPrincipal AppUser appUser,
                                        @RequestPart(name = "images", required = false) List<MultipartFile> images,
-                                       @RequestPart(name = "dto") BungaeCreateRequest bungaeCreateRequest) {
+                                       @RequestPart(name = "dto") @Validated BungaeCreateRequest bungaeCreateRequest) {
         return bungaeService.create(appUser, images, bungaeCreateRequest);
     }
 
@@ -67,7 +79,7 @@ public class BungaeController {
     public BungaeUpdateResponse update(@PathVariable("bungaeId") Long bungaeId,
                                        @AuthenticationPrincipal AppUser appUser,
                                        @RequestPart(name = "images", required = false) List<MultipartFile> images,
-                                       @RequestPart(name = "dto") BungaeUpdateRequest bungaeUpdateRequest) {
+                                       @RequestPart(name = "dto") @Validated BungaeUpdateRequest bungaeUpdateRequest) {
         return bungaeService.update(bungaeId, appUser, bungaeUpdateRequest, images);
     }
 

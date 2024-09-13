@@ -1,7 +1,7 @@
 package mogether.mogether.web.user.dto;
 
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,13 +19,14 @@ import static mogether.mogether.application.user.UserValidator.encodePassword;
 @AllArgsConstructor
 public class UserJoinRequest {
 
-    @NotEmpty
     @Email
+    @NotBlank
     private String email;
-    @NotEmpty
+    @NotBlank
     private String password; ///대소문자, 특수문자 포함 8자리 이상
-    @NotEmpty
+    @NotBlank
     private String nickname;
+
     private Address address;
     private int age;
     private String gender;

@@ -2,6 +2,7 @@ package mogether.mogether.application.moim;
 
 import lombok.RequiredArgsConstructor;
 import mogether.mogether.application.user.UserService;
+import mogether.mogether.application.chat.ChatRoomService;
 import mogether.mogether.domain.moim.Moim;
 import mogether.mogether.domain.moim.MoimRepository;
 import mogether.mogether.domain.moim.MoimUser;
@@ -10,7 +11,6 @@ import mogether.mogether.domain.oauth.AppUser;
 import mogether.mogether.domain.user.User;
 import mogether.mogether.exception.ErrorCode;
 import mogether.mogether.exception.MogetherException;
-import mogether.mogether.web.bungae.dto.BungaeListResponse;
 import mogether.mogether.web.moim.dto.*;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +30,7 @@ public class MoimService {
     private final MoimUserRepository moimUserRepository;
     private final UserService userService;
     private final MoimImageService moimImageService;
+    private final ChatRoomService chatRoomService;
 
     //유저의 모임 참여
     public void join(Long moimId, AppUser appUser) {
@@ -47,6 +48,16 @@ public class MoimService {
         moimUserRepository.delete(moimUser);
     }
 
+    //모임 강퇴 기능
+    public void kickOut(AppUser appUser, MoimKickOutRequest request) {
+        Moim findMoim = findById(request.getMoimId());
+        validateUser(findMoim.getHost().getId(), appUser.getId());
+
+        MoimUser moimUser = moimUserRepository.findByMoimIdAndUserId(request.getMoimId(), request.getUserId())
+                .orElseThrow(() -> new MogetherException(ErrorCode.NOT_MOIM_MEMBER));
+        moimUserRepository.delete(moimUser);
+    }
+
     //모임 글 작성
     public MoimCreateResponse create(AppUser appUser, List<MultipartFile> images, MoimCreateRequest request) {
         User user = userService.findById(appUser.getId());
@@ -54,6 +65,8 @@ public class MoimService {
 
         Moim savedMoim = moimRepository.save(moim);
         moimImageService.save(savedMoim, images);
+        chatRoomService.createMoimChatRoom(savedMoim);
+
         return MoimCreateResponse.of(savedMoim);
     }
 
@@ -114,6 +127,8 @@ public class MoimService {
     public void delete(Long moimId, AppUser appUser) {
         Moim findMoim = findById(moimId);
         validateUser(findMoim.getHost().getId(), appUser.getId());
+
+        chatRoomService.deleteChatRoom(findMoim.getChatRoom().getId());
         moimRepository.deleteById(moimId);
     }
 

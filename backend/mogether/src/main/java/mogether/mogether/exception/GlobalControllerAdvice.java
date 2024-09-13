@@ -57,6 +57,7 @@ public class GlobalControllerAdvice {
 
     @ExceptionHandler
     public ResponseEntity<ErrorResponse> handleMogetherException(MogetherException e) {
+        log.error("### {}", e.getMessage());
         final ErrorResponse response = ErrorResponse.of(e.getErrorCode());
         return new ResponseEntity<>(response, valueOf(e.getErrorCode().getStatus()));
     }
@@ -64,6 +65,7 @@ public class GlobalControllerAdvice {
     @ExceptionHandler
     @ResponseStatus(INTERNAL_SERVER_ERROR)
     public ErrorResponse handleException(Exception e) {
+        log.error("### {}", e.getMessage());
         return ErrorResponse.of(INTERNAL_SERVER_ERROR, e.getMessage());
     }
 }

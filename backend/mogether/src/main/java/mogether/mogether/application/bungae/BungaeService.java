@@ -2,6 +2,7 @@ package mogether.mogether.application.bungae;
 
 import lombok.RequiredArgsConstructor;
 import mogether.mogether.application.user.UserService;
+import mogether.mogether.application.chat.ChatRoomService;
 import mogether.mogether.domain.bungae.Bungae;
 import mogether.mogether.domain.bungae.BungaeRepository;
 import mogether.mogether.domain.bungae.BungaeUser;
@@ -29,6 +30,7 @@ public class BungaeService {
     private final BungaeUserRepository bungaeUserRepository;
     private final UserService userService;
     private final BungaeImageService bungaeImageService;
+    private final ChatRoomService chatRoomService;
 
     //유저의 번개 참여
     public void join(Long bungaeId, AppUser appUser) {
@@ -46,6 +48,17 @@ public class BungaeService {
         bungaeUserRepository.delete(bungaeUser);
     }
 
+    //번개 추방 기능
+    public void kickOut(AppUser appUser, BungaeKickOutRequest request) {
+        Bungae findBungae = findById(request.getBungaeId());
+        validateUser(findBungae.getHost().getId(), appUser.getId());
+
+        //bungaeUser 삭제
+        BungaeUser bungaeUser = bungaeUserRepository.findByBungaeIdAndUserId(request.getBungaeId(), request.getUserId())
+                .orElseThrow(() -> new MogetherException(ErrorCode.NO_BUNGAEJOIN_HISTORY));
+        bungaeUserRepository.delete(bungaeUser);
+    }
+
     //번개 글 작성
     public BungaeCreateResponse create(AppUser appUser, List<MultipartFile> images, BungaeCreateRequest request) {
         User user = userService.findById(appUser.getId());
@@ -53,6 +66,8 @@ public class BungaeService {
 
         Bungae savedBungae = bungaeRepository.save(bungae);
         bungaeImageService.save(savedBungae, images);
+        chatRoomService.createBungaeChatRoom(savedBungae);
+
         return BungaeCreateResponse.of(savedBungae);
     }
 
@@ -113,6 +128,8 @@ public class BungaeService {
     public void delete(Long bungaeId, AppUser appUser) {
         Bungae findBungae = findById(bungaeId);
         validateUser(findBungae.getHost().getId(), appUser.getId());
+
+        chatRoomService.deleteChatRoom(findBungae.getChatRoom().getId());
         bungaeRepository.deleteById(bungaeId);
     }
 

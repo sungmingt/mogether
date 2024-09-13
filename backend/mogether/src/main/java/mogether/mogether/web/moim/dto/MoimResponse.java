@@ -9,9 +9,12 @@ import mogether.mogether.domain.info.Keyword;
 import mogether.mogether.domain.moim.Moim;
 import mogether.mogether.domain.moim.MoimUser;
 import mogether.mogether.domain.user.User;
+import mogether.mogether.web.Participant;
 
 import java.time.LocalDate;
 import java.util.List;
+
+import static mogether.mogether.web.Participant.toParticipant;
 
 @Getter
 @Setter
@@ -26,8 +29,9 @@ public class MoimResponse {
     private String hostName;
     private String hostProfileImageUrl;
     private String hostIntro;
-    private List<String> participantsImageUrls;//
-    private int participantsCount;//
+
+    private List<Participant> participants;
+    private int participantsCount;
 
     private boolean isJoined;
     private boolean isInterested;
@@ -35,7 +39,7 @@ public class MoimResponse {
 
     private String title;
     private String content;
-    private Keyword keyword; ////
+    private Keyword keyword;
     private Address address;
 
     private LocalDate createdAt;
@@ -44,14 +48,14 @@ public class MoimResponse {
     public static MoimResponse of(Moim findMoim, User requestUser) {
         User host = findMoim.getHost();
         List<MoimUser> moimUserList = findMoim.getMoimUserList();
-        List<String> participantsImageUrls = moimUserList.stream()
-                .map(moimUser -> moimUser.getUser().getImageUrl())
+        List<Participant> participants = moimUserList.stream()
+                .map(moimUser -> toParticipant(moimUser.getUser()))
                 .toList();
 
         return new MoimResponse(
                 findMoim.getId(), findMoim.getImageUrls(), host.getId(),
                 host.getNickname(), host.getImageUrl(), host.getIntro(),
-                participantsImageUrls, moimUserList.size(),
+                participants, participants.size(),
                 isJoined(requestUser, moimUserList), isInterested(requestUser, findMoim),
                 findMoim.getMoimInterestList().size(),
                 findMoim.getTitle(), findMoim.getContent(), findMoim.getKeyword(),
@@ -78,14 +82,14 @@ public class MoimResponse {
     public static MoimResponse ofAnonymous(Moim findMoim) {
         User host = findMoim.getHost();
         List<MoimUser> moimUserList = findMoim.getMoimUserList();
-        List<String> participantsImageUrls = moimUserList.stream()
-                .map(moimUser -> moimUser.getUser().getImageUrl())
+        List<Participant> participants = moimUserList.stream()
+                .map(moimUser -> toParticipant(moimUser.getUser()))
                 .toList();
 
         return new MoimResponse(
                 findMoim.getId(), findMoim.getImageUrls(), host.getId(),
                 host.getNickname(), host.getImageUrl(), host.getIntro(),
-                participantsImageUrls, moimUserList.size(),
+                participants, participants.size(),
                 false, false,
                 findMoim.getMoimInterestList().size(),
                 findMoim.getTitle(), findMoim.getContent(), findMoim.getKeyword(),

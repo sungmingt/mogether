@@ -10,7 +10,6 @@ import java.util.regex.Pattern;
 
 import static mogether.mogether.exception.ErrorCode.*;
 import static mogether.mogether.exception.ErrorCode.PASSWORD_NOT_VALID;
-import static mogether.mogether.exception.ErrorCode.USER_NOT_AUTHORIZED;
 
 public class UserValidator {
 
@@ -28,19 +27,13 @@ public class UserValidator {
         }
     }
 
-    public static void checkUserAuthority(Long requestUserId, Long userId) {
-        if(!Objects.equals(requestUserId, userId)) {
-            throw new MogetherException(USER_NOT_AUTHORIZED);
-        }
-    }
-
-    public static String encodePassword(String password) {  // todo : salt 적용 (salt 컬럼 추가)
+    public static String encodePassword(String password) {
         try {
             MessageDigest md = MessageDigest.getInstance(ALGORITHM);
             md.update(password.getBytes());
             return String.format("%0128x", new BigInteger(1, md.digest()));
         } catch (NoSuchAlgorithmException e) {
-            throw new RuntimeException(e.getMessage());
+            throw new MogetherException(NO_SUCH_ALGORITHM);
         }
     }
 

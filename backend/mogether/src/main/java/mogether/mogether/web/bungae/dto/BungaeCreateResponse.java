@@ -23,7 +23,7 @@ public class BungaeCreateResponse {
 
     private String title;
     private String content;
-    private Keyword keyword; ////
+    private Keyword keyword;
     private Address address;
 
     private String gatherAt;

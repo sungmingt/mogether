@@ -9,6 +9,7 @@ import mogether.mogether.domain.oauth.AppUser;
 import mogether.mogether.web.moim.dto.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -45,6 +46,18 @@ public class MoimController {
         return HttpStatus.OK;
     }
 
+    //모임 추방 기능
+    @Operation(summary = "모임 강제 퇴장", description = "호스트가 유저를 강제 퇴장시킨다.",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "호스트의 유저 강제퇴장 성공"),
+            })
+    @PostMapping("/kickout")
+    public HttpStatus kickOut(@AuthenticationPrincipal AppUser appUser,
+                              @RequestBody @Validated MoimKickOutRequest kickOutRequest) {
+        moimService.kickOut(appUser, kickOutRequest);
+        return HttpStatus.OK;
+    }
+
     @Operation(summary = "모임 글 등록", description = "유저 id를 통해 유저가 모임 글을 등록한다.",
             responses = {
                     @ApiResponse(responseCode = "201", description = "유저의 모임 글 등록 성공"),
@@ -53,7 +66,7 @@ public class MoimController {
     @PostMapping
     public MoimCreateResponse create(@AuthenticationPrincipal AppUser appUser,
                                      @RequestPart(name = "images", required = false) List<MultipartFile> images,
-                                     @RequestPart(name = "dto") MoimCreateRequest moimCreateRequest) {
+                                     @RequestPart(name = "dto") @Validated MoimCreateRequest moimCreateRequest) {
         return moimService.create(appUser, images, moimCreateRequest);
     }
 
@@ -65,7 +78,7 @@ public class MoimController {
     public MoimUpdateResponse update(@PathVariable Long moimId,
                                      @AuthenticationPrincipal AppUser appUser,
                                      @RequestPart(name = "images", required = false) List<MultipartFile>images,
-                                     @RequestPart(name = "dto") MoimUpdateRequest moimUpdateRequest) {
+                                     @RequestPart(name = "dto") @Validated MoimUpdateRequest moimUpdateRequest) {
         return moimService.update(moimId, appUser, images, moimUpdateRequest);
     }
 

@@ -29,7 +29,7 @@ public class BungaeInterestService {
     private final UserService userService;
 
     public void doInterest(Long bungaeId, AppUser appUser) {
-        if(checkInterestExists(bungaeId, appUser.getId()).isPresent()) return;
+        if(find(bungaeId, appUser.getId()).isPresent()) return;
 
         Bungae findBungae = bungaeService.findById(bungaeId);
         User findUser = userService.findById(appUser.getId());
@@ -39,7 +39,7 @@ public class BungaeInterestService {
     }
 
     public void undoInterest(Long bungaeId, AppUser appUser) {
-        checkInterestExists(bungaeId, appUser.getId())
+        find(bungaeId, appUser.getId())
                 .ifPresentOrElse(
                         bungaeInterestRepository::delete,
                         () -> {
@@ -62,7 +62,7 @@ public class BungaeInterestService {
         return BungaeListResponse.of(bungaeList, findUser);
     }
 
-    private Optional<BungaeInterest> checkInterestExists(Long bungaeId, Long userId) {
+    private Optional<BungaeInterest> find(Long bungaeId, Long userId) {
         return bungaeInterestRepository
                 .findByBungaeIdAndUserId(bungaeId, userId);
     }

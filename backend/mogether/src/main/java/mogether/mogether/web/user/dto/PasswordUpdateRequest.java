@@ -1,5 +1,6 @@
 package mogether.mogether.web.user.dto;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,6 +12,8 @@ import lombok.Setter;
 @AllArgsConstructor
 public class PasswordUpdateRequest {
 
+    @NotBlank
     private String exPassword;
+    @NotBlank
     private String newPassword;
 }

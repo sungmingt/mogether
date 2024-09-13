@@ -53,10 +53,7 @@ public class AuthService {
         validateStoredRefreshToken(refreshToken, userId);
 
         //reissue token
-        String newAccessToken = tokenProvider.createAccessToken(userId);
-        String newRefreshToken = tokenProvider.createRefreshToken(userId);
-        refreshTokenRepository.save(userId, newRefreshToken);
-        return new Token(newAccessToken, newRefreshToken, userId);
+        return issueToken(userId);
     }
 
     public Token issueToken(Long userId) {

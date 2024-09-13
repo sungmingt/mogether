@@ -74,16 +74,6 @@ public class MoimImageService {
         return new MoimImage(fileOriName, s3Url, s3FileName);
     }
 
-    @Transactional(readOnly = true)
-    public List<String> getImageUrls(Moim moim) {
-        //arraylist로 초기화 했으니 항상 null 이 아니다? -> count로 검증?
-        return Optional.ofNullable(moim.getMoimImageList())
-                .orElse(List.of(new MoimImage("mogether_default_post", defaultImageUrl, "mogether_default_post")))
-                .stream()
-                .map(MoimImage::getFileUrl)
-                .toList();
-    }
-
     public void delete(Moim findMoim, List<MoimImage> moimImageList) {
         for (MoimImage moimImage : moimImageList) {
             deleteFromS3(moimImage.getS3FileName());

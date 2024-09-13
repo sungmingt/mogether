@@ -55,11 +55,9 @@ public class UserService {
         findUser.updatePassword(encodePassword(passwordUpdateRequest.getNewPassword()));
     }
 
-    public PasswordFindResponse findPassword(AppUser appUser, PasswordFindRequest request) {
+    public PasswordFindResponse findPassword(PasswordFindRequest request) {
         User findUser = userRepository.findByEmailAndNickname(request.getEmail(), request.getNickname())
                 .orElseThrow(() -> new MogetherException(USER_NOT_FOUND));
-
-        validateUser(findUser.getId(), appUser.getId());
 
         String temporaryPassword = generateTemporaryPassword();
         findUser.updatePassword(encodePassword(temporaryPassword));
@@ -86,13 +84,6 @@ public class UserService {
 
         profileImageService.save(findUser, image);
         return UserJoinResponse.of(findUser);
-    }
-
-
-    @Transactional(readOnly = true)
-    public String getProfileImageUrl(Long userId) {
-        User user = findById(userId);
-        return profileImageService.getImageUrl(user);
     }
 
     @Transactional(readOnly = true)

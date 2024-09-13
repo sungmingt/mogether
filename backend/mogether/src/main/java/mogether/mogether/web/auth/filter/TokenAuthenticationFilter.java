@@ -40,7 +40,7 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-        log.info("===== token auth filter 진입 =====");
+        log.info("### {}", "token auth filter");
 
         if (isPermittedURI(request) || (isForAnonymousURI(request) && !hasTokenHeader(request))) {
             filterChain.doFilter(request, response);
@@ -58,10 +58,10 @@ public class TokenAuthenticationFilter extends OncePerRequestFilter {
             setAuthentication(accessToken);
             filterChain.doFilter(request, response);
         } catch (MogetherException e) {
-            log.error(e.getMessage());
+            log.error("### {}", e.getMessage());
             sendErrorResponse(response, e);
         } catch (RuntimeException e) {
-            log.error(e.getMessage());
+            log.error("### {}", e.getMessage());
             response.sendError(500, e.getMessage());
         }
     }

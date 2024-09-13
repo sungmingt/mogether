@@ -1,13 +1,11 @@
 package mogether.mogether.web.user.dto;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import mogether.mogether.domain.info.Address;
-import mogether.mogether.domain.info.Gender;
-import mogether.mogether.domain.user.User;
 
 @Getter
 @Setter
@@ -15,7 +13,7 @@ import mogether.mogether.domain.user.User;
 @AllArgsConstructor
 public class UserUpdateRequest {
 
-    @NotEmpty
+    @NotBlank
     private String nickname;
     private Address address;
     private int age;

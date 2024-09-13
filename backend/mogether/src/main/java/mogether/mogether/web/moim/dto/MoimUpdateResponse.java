@@ -23,7 +23,7 @@ public class MoimUpdateResponse {
 
     private String title;
     private String content;
-    private Keyword keyword; ////
+    private Keyword keyword;
     private Address address;
 
     private LocalDate createdAt;

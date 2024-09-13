@@ -32,7 +32,7 @@ public class OAuth2SuccessHandler implements AuthenticationSuccessHandler {
     public void onAuthenticationSuccess(HttpServletRequest request,
                                         HttpServletResponse response,
                                         Authentication authentication) throws IOException, ServletException {
-        log.info("====== OAuth2SuccessHandler 진입 ======");
+        log.info("### {}", "OAuth2SuccessHandler 진입");
 
         AppUser appUser = (AppUser) authentication.getPrincipal();
         User user = appUser.getUser();
