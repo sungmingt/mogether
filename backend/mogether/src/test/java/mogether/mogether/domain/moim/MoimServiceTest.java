@@ -1,5 +1,6 @@
 package mogether.mogether.domain.moim;
 
+import mogether.mogether.application.chat.ChatRoomService;
 import mogether.mogether.application.moim.MoimImageService;
 import mogether.mogether.application.moim.MoimService;
 import mogether.mogether.application.user.UserService;
@@ -44,6 +45,9 @@ class MoimServiceTest {
 
     @Mock
     private MoimImageService moimImageService;
+
+    @Mock
+    private ChatRoomService chatRoomService;
 
     @InjectMocks
     private MoimService moimService;
