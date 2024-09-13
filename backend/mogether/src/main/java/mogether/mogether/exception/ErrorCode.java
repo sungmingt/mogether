@@ -51,7 +51,11 @@ public enum ErrorCode {
 
     //INTEREST
     INTEREST_ALREADY_EXISTS(400, "이미 좋아요를 누른 글입니다."),
-    INTEREST_NOT_FOUND(400, "좋아요를 누른 글이 아닙니다.");
+    INTEREST_NOT_FOUND(400, "좋아요를 누른 글이 아닙니다."),
+
+    //CHAT
+    CHAT_NOT_FOUND(404, "채팅 메시지를 찾을 수 없습니다."),
+    CHATROOM_NOT_FOUND(404, "존재하지 않는 채팅방입니다.");
 
     @Getter
     private final int status;
