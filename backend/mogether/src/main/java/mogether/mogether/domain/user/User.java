@@ -2,6 +2,7 @@ package mogether.mogether.domain.user;
 
 import jakarta.persistence.*;
 import lombok.*;
+import mogether.mogether.domain.chat.ChatRoomUser;
 import mogether.mogether.domain.info.Address;
 import mogether.mogether.domain.bungae.Bungae;
 import mogether.mogether.domain.bungae.BungaeUser;
@@ -19,9 +20,10 @@ import java.util.List;
 import static jakarta.persistence.CascadeType.ALL;
 import static jakarta.persistence.CascadeType.REMOVE;
 import static jakarta.persistence.FetchType.LAZY;
+import static lombok.AccessLevel.PROTECTED;
 
 @Getter
-@NoArgsConstructor
+@NoArgsConstructor(access = PROTECTED)
 @Entity
 @Table(name = "Users")
 public class User {
@@ -52,8 +54,10 @@ public class User {
     @OneToMany(mappedBy = "user", cascade = REMOVE)
     private List<MoimInterest> moimInterestList = new ArrayList<>();
 
-    private String imageUrl;
+    @OneToMany(mappedBy = "user", cascade = REMOVE)
+    private List<ChatRoomUser> chatRoomUserList = new ArrayList<>();
 
+    private String imageUrl;
     private String nickname;
     private String email;
     private String password;
@@ -61,7 +65,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private SocialType socialType;
     private String socialId;
-//    private String providerKey; //socialType과 providerId를 결합한 고유 값
 
     @Embedded
     private Address address;
@@ -70,9 +73,10 @@ public class User {
     private Gender gender;
     private String intro;
     private String phoneNumber;
+//    private String providerKey; //socialType과 providerId를 결합한 고유 값
 
-    public void setProfileImage(ProfileImage ProfileImage) {
-        this.profileImage = ProfileImage;
+    public void setProfileImage(ProfileImage profileImage) {
+        this.profileImage = profileImage;
     }
 
     public void setImageUrl(String fileUrl) {

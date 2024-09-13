@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import mogether.mogether.domain.chat.ChatRoom;
 import mogether.mogether.domain.ImgaeUrlsConverter;
 import mogether.mogether.domain.info.Address;
 import mogether.mogether.domain.info.Keyword;
@@ -35,6 +36,10 @@ public class Moim {
     @OneToMany(mappedBy = "moim", cascade = REMOVE)
     private List<MoimInterest> moimInterestList = new ArrayList<>();
 
+    @OneToOne
+    @JoinColumn(name = "chatroom_id")
+    private ChatRoom chatRoom;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "host_id")
     private User host;
@@ -61,6 +66,10 @@ public class Moim {
     public void setHost(User user) {
         this.host = user;
         user.getMoimHostList().add(this);
+    }
+
+    public void setChatRoom(ChatRoom chatRoom) {
+        this.chatRoom = chatRoom;
     }
 
     public void update(Moim newMoim){
