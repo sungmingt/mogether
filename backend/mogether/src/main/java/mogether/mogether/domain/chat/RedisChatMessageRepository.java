@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 import java.util.Optional;
 
+import static java.time.Duration.ofMillis;
+
 @Repository
 public class RedisChatMessageRepository {
 
@@ -34,7 +36,7 @@ public class RedisChatMessageRepository {
     public void save(ChatMessage chatMessage) {
         String roomKey = getRoomKey(chatMessage.getRoomId());
         hashOperations.put(roomKey, chatMessage.getId(), chatMessage);
-//        chatMessageRedisTemplate.expire(roomKey, ofMillis(CHAT_MESSAGE_TTL));
+        chatMessageRedisTemplate.expire(roomKey, ofMillis(CHAT_MESSAGE_TTL));
     }
 
     public void deleteById(Long roomId, Long id) {
