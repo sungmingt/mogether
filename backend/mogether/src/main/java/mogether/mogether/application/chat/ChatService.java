@@ -78,7 +78,7 @@ public class ChatService {
                 .senderNickname(user.getNickname())
                 .senderImageUrl(user.getImageUrl())
                 .message(request.getMessage())
-                .createdAt(now())
+                .createdAt(request.getCreatedAt())
                 .build();
     }
 }

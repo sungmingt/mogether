@@ -26,5 +26,5 @@ public class ChatMessage implements Serializable {
     private String senderImageUrl;
     private String message;
 
-    private LocalDate createdAt;
+    private String createdAt;
 }

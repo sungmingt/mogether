@@ -46,7 +46,7 @@ class ChatMessageTest {
     @DisplayName("채팅 메시지를 전송한다")
     @Test
     void messageSendTest() {
-        ChatMessageRequest request = new ChatMessageRequest(1L, 1L, "hello");
+        ChatMessageRequest request = new ChatMessageRequest(1L, 1L, "hello", "2024-09-01 20:21");
         chatService.sendMessage(request);
 
         List<ChatMessage> chatMessages = redisChatMessageRepository.findByRoomId(1L);

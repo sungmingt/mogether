@@ -30,7 +30,7 @@ public class ChatMessageResponse {
                 chatMessage.getSenderNickname(),
                 chatMessage.getSenderImageUrl(),
                 chatMessage.getMessage(),
-                chatMessage.getCreatedAt().toString()
+                chatMessage.getCreatedAt()
         );
     }
 

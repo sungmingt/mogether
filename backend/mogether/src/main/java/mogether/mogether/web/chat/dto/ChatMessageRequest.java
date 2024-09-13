@@ -14,4 +14,5 @@ public class ChatMessageRequest {
     private Long roomId;
     private Long senderId;
     private String message;
+    private String createdAt;
 }
