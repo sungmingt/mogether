@@ -33,6 +33,7 @@ public class User {
     private Long id;
 
     @OneToOne(fetch = LAZY, cascade = ALL, orphanRemoval = true)
+    @JoinColumn(name = "image_id")
     private ProfileImage profileImage;
 
     @OneToMany(mappedBy = "host", cascade = REMOVE)
