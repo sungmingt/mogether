@@ -14,7 +14,6 @@ import static java.time.Duration.ofMillis;
 public class RedisChatMessageRepository {
 
     private static final String ROOM_KEY_PREFIX = "chatMessage:room:";
-    private static final Long CHAT_MESSAGE_TTL = 1000 * 60 * 11L; //11분 (10분 간격으로 RDB로 insert 후 초기화)
 
     private final RedisTemplate<String, ChatMessage> chatMessageRedisTemplate;
     private final HashOperations<String, String, ChatMessage> hashOperations;
@@ -36,7 +35,7 @@ public class RedisChatMessageRepository {
     public void save(ChatMessage chatMessage) {
         String roomKey = getRoomKey(chatMessage.getRoomId());
         hashOperations.put(roomKey, chatMessage.getId(), chatMessage);
-        chatMessageRedisTemplate.expire(roomKey, ofMillis(CHAT_MESSAGE_TTL));
+        chatMessageRedisTemplate.expire(roomKey, Duration.ofHours(25));
     }
 
     public void deleteById(Long roomId, Long id) {
