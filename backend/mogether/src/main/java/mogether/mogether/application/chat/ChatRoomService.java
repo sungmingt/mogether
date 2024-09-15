@@ -24,6 +24,22 @@ public class ChatRoomService {
     private final ChatRoomRepository chatRoomRepository;
     private final ChatRoomUserRepository chatRoomUserRepository;
 
+    public void joinBungaeChatRoom(User user, Bungae bungae) {
+        ChatRoom chatRoom = chatRoomRepository.findById(bungae.getChatRoom().getId())
+                .orElseThrow(() -> new MogetherException(CHATROOM_NOT_FOUND));
+
+        ChatRoomUser chatRoomUser = new ChatRoomUser(chatRoom, user);
+        chatRoomUserRepository.save(chatRoomUser);
+    }
+
+    public void joinMoimChatRoom(User user, Moim moim) {
+        ChatRoom chatRoom = chatRoomRepository.findById(moim.getChatRoom().getId())
+                .orElseThrow(() -> new MogetherException(CHATROOM_NOT_FOUND));
+
+        ChatRoomUser chatRoomUser = new ChatRoomUser(chatRoom, user);
+        chatRoomUserRepository.save(chatRoomUser);
+    }
+
     public void createBungaeChatRoom(Bungae bungae) {
         ChatRoom chatRoom = new ChatRoom("bungae", bungae.getId(), bungae.getTitle());
         ChatRoom savedChatRoom = chatRoomRepository.save(chatRoom);

@@ -38,6 +38,7 @@ public class BungaeService {
         User findUser = userService.findById(appUser.getId());
         BungaeUser bungaeUser = new BungaeUser(findBungae, findUser);
         bungaeUserRepository.save(bungaeUser);
+        chatRoomService.joinBungaeChatRoom(findUser, findBungae);
     }
 
     //번개 참여 취소

@@ -38,6 +38,7 @@ public class MoimService {
         User findUser = userService.findById(appUser.getId());
         MoimUser moimUser = new MoimUser(findMoim, findUser);
         moimUserRepository.save(moimUser);
+        chatRoomService.joinMoimChatRoom(findUser, findMoim);
     }
 
     //모임 탈퇴
