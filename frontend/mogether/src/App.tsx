@@ -27,8 +27,8 @@ import SocialRegisterUrl from './components/auth/SocialRegisterRedirection';
 import ChangePasswordPage from './pages/mypage/ChangePasswordPage';
 import FindPasswordSuccessPage from './pages/auth/FindPasswordSuccessPage';
 import UserProfilePage from './pages/mypage/UserProfilePage';
-// import GroupChatListPage from './pages/chat/GroupChatListPage';
-// import GroupChatPage from './pages/chat/GroupChatPage';
+import ChatListPage from './pages/chat/ChatListPage';
+import ChatPage from './pages/chat/ChatPage';
 
 
 
@@ -66,8 +66,8 @@ const App = () => {
         <Route path="/changePassword" element={<ChangePasswordPage />} /> 
         <Route path="/forgot-password/success" element={<FindPasswordSuccessPage />} />
         <Route path="/user/:id" element={<UserProfilePage />} />
-        {/* <Route path="/groupChatList" element={<GroupChatListPage />} />
-        <Route path="/groupChat/:id" element={<GroupChatPage />} />  */}
+        <Route path="/ChatList" element={<ChatListPage />} />
+        <Route path="/Chat/:id" element={<ChatPage />} /> 
       </Routes>
     </Router>
     </>

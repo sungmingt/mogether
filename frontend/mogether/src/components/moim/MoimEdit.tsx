@@ -461,7 +461,7 @@ const MoimEdit = () => {
                 icon={faCalendarAlt}
                 style={{ marginRight: 5 }}
               />
-              Meeting Start Time<RequiredIcon>*</RequiredIcon>
+              Gather At<RequiredIcon>*</RequiredIcon>
             </Label>
             <Datetime
               value={meetingStartTime ? moment(meetingStartTime) : ""}  // 왼쪽값이 false인 경우 -> 오른쪽값 반환

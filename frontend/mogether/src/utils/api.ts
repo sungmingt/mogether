@@ -327,6 +327,17 @@ export const BungaeKickOutApi = async (kickOut: any) => {
   return response;
 }
 
+export const ChatListApi = async (userId: number) => {
+  const response = await api.get(`/user/${userId}/chat`);
+  return response;
+}
+
+export const ChatRoomApi = async (roomId: number) => {
+  const response = await api.get(`/chat/room/${roomId}`);
+  return response;
+}
+
+
 
 
 
