@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
 import { RootState } from '../../store/store';
 import { ChatListApi, ChatRoomApi } from '../../utils/api';
 import SockJS from 'sockjs-client';
-import Stomp from 'stompjs';
+import { Client, Frame } from '@stomp/stompjs';
 
 interface ChatMessage {
   id?: string;
@@ -45,7 +45,7 @@ interface ChatState {
   messages: ChatMessage[];
   loading: boolean;
   error: string | null;
-  stompClient: Stomp.Client | null;
+  stompClient: Client | null;
 }
 
 const initialState: ChatState = {
@@ -57,27 +57,7 @@ const initialState: ChatState = {
   stompClient: null,
 };
 
-// 채팅방 리스트 가져오기
-export const fetchChatRooms = createAsyncThunk('chat/fetchChatRooms', async (userId: number, { rejectWithValue }) => {
-  try {
-    const response = await ChatListApi(userId);
-    return response.data;
-  } catch (error) {
-    return rejectWithValue('Failed to fetch chat rooms');
-  }
-});
-
-// 채팅방 상세 조회
-export const fetchChatRoomDetail = createAsyncThunk('chat/fetchChatRoomDetail', async (roomId: number, { rejectWithValue }) => {
-  try {
-    const response = await ChatRoomApi(roomId);
-    return response.data;
-  } catch (error) {
-    return rejectWithValue('Failed to fetch chat room details');
-  }
-});
-
-// 날짜와 시간을 'YYYY-MM-DD HH:mm' 형식으로 변환하는 함수
+// Function to format date to 'YYYY-MM-DD HH:mm'
 const formatDate = (date: Date) => {
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
@@ -87,13 +67,41 @@ const formatDate = (date: Date) => {
   return `${year}-${month}-${day} ${hours}:${minutes}`;
 };
 
+// Async thunk to fetch chat rooms
+export const fetchChatRooms = createAsyncThunk('chat/fetchChatRooms', async (userId: number, { rejectWithValue }) => {
+  try {
+    const response = await ChatListApi(userId);
+    if (response.status === 200 || response.status === 201) {
+      return response.data;
+    } else {
+      return rejectWithValue('Failed to fetch chat rooms');
+    }
+  } catch (error) {
+    return rejectWithValue('Failed to fetch chat rooms');
+  }
+});
+
+// Async thunk to fetch chat room details
+export const fetchChatRoomDetail = createAsyncThunk('chat/fetchChatRoomDetail', async (roomId: number, { rejectWithValue }) => {
+  try {
+    const response = await ChatRoomApi(roomId);
+    if (response.status === 200 || response.status === 201) {
+      return response.data;
+    } else {
+      return rejectWithValue('Failed to fetch chat room details');
+    }
+  } catch (error) {
+    return rejectWithValue('Failed to fetch chat room details');
+  }
+});
+
 const chatSlice = createSlice({
   name: 'chat',
   initialState,
   reducers: {
     sendMessage: (state, action: PayloadAction<{ roomId: number; senderId: number; nickname: string; message: string; senderImageUrl: string; }>) => {
       const { roomId, senderId, nickname, message, senderImageUrl } = action.payload;
-      const createdAt = formatDate(new Date()); // 시간 포맷 적용
+      const createdAt = formatDate(new Date());
       const newMessage = {
         roomId,
         senderId,
@@ -104,37 +112,45 @@ const chatSlice = createSlice({
       };
       state.messages.push(newMessage);
 
-      // 메시지 전송
+      // Send the message if connected
       if (state.stompClient && state.stompClient.connected) {
-        state.stompClient.send(
-          '/pub/chat/message',
-          {},
-          JSON.stringify({
+        state.stompClient.publish({
+          destination: '/pub/chat/message',
+          body: JSON.stringify({
             roomId: roomId,
             senderId: senderId,
             message: message,
             createdAt: createdAt,
-          })
-        );
+          }),
+        });
       }
     },
     connectWebSocket: (state, action: PayloadAction<number>) => {
       const roomId = action.payload;
-      const socket = new SockJS('ws://api.mo-gether.site/ws');
-      const stompClient = Stomp.over(socket);
-
-      stompClient.connect({}, () => {
-        stompClient.subscribe(`/sub/chat/room/${roomId}`, (message) => {
-          const receivedMessage: ChatMessage = JSON.parse(message.body);
-          state.messages.push(receivedMessage);
-        });
+      const socket = new SockJS('http://api.mo-gether.site/ws');
+      const stompClient = new Client({
+        webSocketFactory: () => socket,
+        reconnectDelay: 5000, // Reconnect every 5 seconds
+        heartbeatIncoming: 4000,
+        heartbeatOutgoing: 4000,
+        onConnect: () => {
+          stompClient.subscribe(`/sub/chat/room/${roomId}`, (message) => {
+            const receivedMessage: ChatMessage = JSON.parse(message.body);
+            state.messages.push(receivedMessage);
+          });
+        },
+        onStompError: (frame: Frame) => {
+          console.error(`Broker reported error: ${frame.headers['message']}`);
+          console.error(`Additional details: ${frame.body}`);
+        },
       });
 
+      stompClient.activate();
       state.stompClient = stompClient;
     },
     disconnectWebSocket: (state) => {
       if (state.stompClient) {
-        state.stompClient.disconnect(() => {});
+        state.stompClient.deactivate();
         state.stompClient = null;
       }
     },
