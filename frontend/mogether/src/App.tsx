@@ -67,7 +67,7 @@ const App = () => {
         <Route path="/forgot-password/success" element={<FindPasswordSuccessPage />} />
         <Route path="/user/:id" element={<UserProfilePage />} />
         <Route path="/ChatList" element={<ChatListPage />} />
-        <Route path="/Chat/:id" element={<ChatPage />} /> 
+        <Route path="/Chat/:roomId" element={<ChatPage />} /> 
       </Routes>
     </Router>
     </>
