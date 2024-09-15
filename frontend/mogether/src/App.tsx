@@ -38,8 +38,6 @@ const App = () => {
     <GlobalStyle />
     <Router>
       <Routes>
-        {/* <Route path = "/login" element = {<Login />} />
-        <Route path="/register" element={<Register />} /> */}
         <Route path="/" element={<Home />} />
         <Route path="/moim/list" element={<MoimList />} />
         <Route path="/moim/:id" element={<MoimCard />} />
