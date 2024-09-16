@@ -37,9 +37,6 @@ public class ChatService {
         //todo: user info caching
         User user = userService.findById(request.getSenderId());
 
-        //        ChatRoom chatRoom = chatRoomRepository.findById(chatMessageRequest.getRoomId())
-//                .orElseThrow(() -> new MogetherException(CHATROOM_NOT_FOUND));
-
         //채팅 생성/저장
         ChatMessage chatMessage = createChatMessage(request, user);
         redisChatMessageRepository.save(chatMessage);

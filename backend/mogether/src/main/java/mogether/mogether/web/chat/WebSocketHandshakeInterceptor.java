@@ -43,7 +43,6 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
         HttpServletResponse httpServletResponse = (HttpServletResponse) response;
 
         try {
-//            String accessToken = request.getHeaders().getFirst(ACCESS_TOKEN);
             String accessToken = getTokenfromRequest((HttpServletRequest) request);
             validateRequestToken(accessToken);
 
