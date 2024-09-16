@@ -22,7 +22,6 @@ public class ChatRoomListResponse {
     //todo: latestMessage
 
     public static List<ChatRoomListResponse> of(List<ChatRoom> chatRoomList) {
-
         return chatRoomList.stream()
                 .map(chatRoom -> new ChatRoomListResponse(
                         chatRoom.getGatherType(), chatRoom.getGatherId(),

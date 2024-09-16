@@ -51,7 +51,6 @@ public class ChatService {
     public ChatRoomResponse getChatRoom(Long roomId) {
         ChatRoom chatRoom = chatRoomService.findById(roomId);
         List<User> participants = chatRoomService.findJoinUsers(roomId);
-
         List<ChatMessage> chatMessageList = redisChatMessageRepository.findByRoomId(roomId);
         return ChatRoomResponse.of(chatRoom, chatMessageList, participants);
     }
