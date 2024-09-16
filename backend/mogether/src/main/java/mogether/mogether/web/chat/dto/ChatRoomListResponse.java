@@ -26,7 +26,7 @@ public class ChatRoomListResponse {
         return chatRoomList.stream()
                 .map(chatRoom -> new ChatRoomListResponse(
                         chatRoom.getGatherType(), chatRoom.getGatherId(),
-                        chatRoom.getId(), chatRoom.getName(), chatRoom.getUserCount()))
+                        chatRoom.getId(), chatRoom.getName(), chatRoom.getChatRoomUserList().size()))
                 .toList();
     }
 }
