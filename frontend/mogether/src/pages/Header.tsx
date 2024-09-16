@@ -323,7 +323,7 @@ const Header: React.FC = () => {
         <NavLink to="/mypage" onClick={toggleMenu}>
           마이페이지
         </NavLink>
-        <NavLink to="/groupChatList" onClick={toggleMenu}>
+        <NavLink to="/ChatList" onClick={toggleMenu}>
           그룹 모임방
         </NavLink>
         <DropdownButton>

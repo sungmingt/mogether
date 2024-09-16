@@ -103,12 +103,12 @@ const chatSlice = createSlice({
       const { roomId, senderId, nickname, message, senderImageUrl } = action.payload;
       const createdAt = formatDate(new Date());
       const newMessage = {
-        roomId,
-        senderId,
-        nickname,
-        senderImageUrl,
-        message,
-        createdAt,
+        roomId: roomId,
+        senderId: senderId,
+        nickname: nickname,
+        senderImageUrl: senderImageUrl,
+        message: message,
+        createdAt: createdAt,
       };
       state.messages.push(newMessage);
 
