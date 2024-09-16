@@ -18,9 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.UUID;
 
-import static java.time.LocalDate.*;
-
 @RequiredArgsConstructor
+@Transactional
 @Service
 public class ChatService {
 
@@ -32,7 +31,6 @@ public class ChatService {
 
     //리스너에 수신된 메시지를 messagingTemplate을 이용해 WebSocket 구독자들에게 메시지를 전달
     //Redis로부터 온 메시지를 역직렬화하여 ChatMessage DTO로 전환뒤 필요한 정보와 함께 메시지를 전달한다.
-    @Transactional
     public void sendMessage(ChatMessageRequest request) {
         //todo: user info caching
         User user = userService.findById(request.getSenderId());
@@ -49,6 +47,7 @@ public class ChatService {
     }
 
     //채팅방 정보 반환
+    @Transactional(readOnly = true)
     public ChatRoomResponse getChatRoom(Long roomId) {
         ChatRoom chatRoom = chatRoomService.findById(roomId);
         List<User> participants = chatRoomService.findJoinUsers(roomId);
@@ -58,6 +57,7 @@ public class ChatService {
     }
 
     //유저의 채팅 리스트 반환
+    @Transactional(readOnly = true)
     public List<ChatRoomListResponse> getChatRoomList(Long userId) {
         List<ChatRoom> chatRoomList = chatRoomService.findChatRoomList(userId);
         return ChatRoomListResponse.of(chatRoomList);
