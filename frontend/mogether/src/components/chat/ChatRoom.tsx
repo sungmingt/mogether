@@ -5,7 +5,7 @@ import styled from 'styled-components';
 import { AppDispatch, RootState } from '../../store/store';
 import { useNavigate, useParams } from 'react-router-dom';
 import LoadingSpinner from './LoadingSpinner';
-import { fetchProfile } from '../../store/slices/userProfileSlice';
+import { fetchProfile, selectUserProfile } from '../../store/slices/userProfileSlice';
 
 const PageContainer = styled.div`
   display: flex;
@@ -205,24 +205,26 @@ const SendButton = styled.button`
 
 const ChatRoom: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { roomDetail, messages, loading } = useSelector((state: RootState) => selectChat(state));
+  const { messages, loading } = useSelector((state: RootState) => selectChat(state));
   const [message, setMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { roomId } = useParams<{ roomId: string }>();
   const userId = Number(localStorage.getItem('userId')) || 0;
   const [profile, setProfile] = useState<any>({});
+  const [roomDetail, setRoomDetail] = useState<any>({});
 
   useEffect(() => {
     if (userId > 0) {
-      setProfile(dispatch(fetchProfile(userId)));
-      console.log(profile.image)
+      const response = dispatch(fetchProfile(userId)).unwrap();
+      setProfile(response);
     }
   }, [dispatch, userId]);
 
   useEffect(() => {
     if (roomId) {
-      dispatch(fetchChatRoomDetail(Number(roomId)));
+      const response = dispatch(fetchChatRoomDetail(Number(roomId))).unwrap();
+      setRoomDetail(response);
       dispatch(connectWebSocket(Number(roomId))); // WebSocket 연결
     }
 
@@ -259,7 +261,7 @@ const ChatRoom: React.FC = () => {
   return (
     <PageContainer>
       <ParticipantListContainer>
-        {roomDetail?.participants.map((participant) => (
+        {roomDetail?.participants.map((participant: any) => (
           <ParticipantItem key={participant.userId} onClick={() => {}}>
             <ParticipantImage src={participant.imageUrl || '../../assets/default_profile.png'} alt={`${participant.nickname}의 프로필 이미지`} />
             <ParticipantName>{participant.nickname}</ParticipantName>
