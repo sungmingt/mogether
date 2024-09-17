@@ -12,7 +12,7 @@ import { FaUser, FaCommentDots } from 'react-icons/fa';
 const RoomListContainer = styled.div`
   display: flex;
   flex-direction: column;
-  max-width: 600px;
+  max-width: 1000px;
   margin: 0 auto;
   padding: 20px;
   background-color: #f9f9f9;
@@ -20,7 +20,7 @@ const RoomListContainer = styled.div`
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 
   @media (max-width: 768px) {
-    max-width: 100%;
+    max-width: 600px;
     padding: 10px;
   }
 `;
