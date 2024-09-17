@@ -1,5 +1,3 @@
-// src/features/chat/ChatRoom.tsx
-
 import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { fetchChatRoomDetail, sendMessage, selectChat, connectWebSocket, disconnectWebSocket } from '../../store/slices/chatSlice';
@@ -8,13 +6,11 @@ import { AppDispatch, RootState } from '../../store/store';
 import { useNavigate, useParams } from 'react-router-dom';
 import LoadingSpinner from './LoadingSpinner';
 import { fetchProfile } from '../../store/slices/userProfileSlice';
-import { set } from 'react-datepicker/dist/date_utils';
 
 
-// 스타일 컴포넌트 정의
 const PageContainer = styled.div`
   display: flex;
-  justify-content: center; /* 중앙에 정렬 */
+  justify-content: center;
   max-width: 1200px;
   margin: 0 auto;
   padding: 20px;
@@ -27,21 +23,18 @@ const PageContainer = styled.div`
 `;
 
 const ParticipantListContainer = styled.div`
-  position: fixed; /* 왼쪽 끝에 고정 */
-  left: 0;
-  top: 0;
-  bottom: 0;
+  margin-right: 20px; 
   background-color: #ffffff;
   border: 1px solid #ddd;
-  border-radius: 0 10px 10px 0; /* 왼쪽을 네모나게, 오른쪽을 둥글게 */
+  border-radius: 10px;
   padding: 10px;
-  max-height: 90vh; /* 화면 비율에 맞게 */
+  max-height: 90vh;
   overflow-y: auto;
   min-width: 200px;
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 
   @media (max-width: 768px) {
-    display: none; /* 작은 화면에서 숨김 */
+    display: none; 
   }
 `;
 
@@ -75,7 +68,7 @@ const ChatContainer = styled.div`
   flex-direction: column;
   justify-content: space-between;
   height: 90vh;
-  max-width: 600px; /* 채팅방을 중앙에 배치 */
+  max-width: 600px;
   padding: 10px;
   background-color: #f5f5f5;
   border-radius: 10px;
@@ -120,7 +113,7 @@ const ChatMessages = styled.div`
   border: 1px solid #ddd;
   margin: 10px 0;
   display: flex;
-  flex-direction: column;
+  flex-direction: column-reverse; /* 역순 정렬 */
   gap: 8px;
 `;
 
@@ -210,132 +203,58 @@ const SendButton = styled.button`
   }
 `;
 
-const ModalOverlay = styled.div<{ show: boolean }>`
-  display: ${({ show }) => (show ? "block" : "none")};
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.5);
-  z-index: 1000;
-`;
-
-const ModalContent = styled.div`
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background: white;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  z-index: 1001;
-  width: 90%;
-  max-width: 400px;
-`;
-
-const ModalTitle = styled.h3`
-  margin-top: 0;
-  color: #7848f4;
-`;
-
-const ModalCloseButton = styled.button`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: transparent;
-  border: none;
-  font-size: 18px;
-  cursor: pointer;
-`;
-
-const DropdownItem = styled.div`
-  padding: 10px;
-  cursor: pointer;
-  text-align: center;
-  &:hover {
-    background-color: #f0f0f0;
-  }
-`;
-
 const ChatRoom: React.FC = () => {
-    const dispatch = useDispatch<AppDispatch>();
-    const { roomDetail, messages, loading } = useSelector((state: RootState) => selectChat(state));
-    const [message, setMessage] = useState('');
-    const [modalIsOpen, setModalIsOpen] = useState(false);
-    const [selectedParticipant, setSelectedParticipant] = useState<any>(null);
-    const messagesEndRef = useRef<HTMLDivElement>(null);
-    const navigate = useNavigate();
-    const { roomId } = useParams<{ roomId: string }>();
-    const userId = Number(localStorage.getItem('userId')) || 0;
-    const [profile, setProfile] = useState<any>(null);
+  const dispatch = useDispatch<AppDispatch>();
+  const { roomDetail, messages, loading } = useSelector((state: RootState) => selectChat(state));
+  const [message, setMessage] = useState('');
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
+  const { roomId } = useParams<{ roomId: string }>();
+  const userId = Number(localStorage.getItem('userId')) || 0;
+  const [profile, setProfile] = useState<any>({});
 
-    
-    useEffect(() => {
-      if (userId) {
-        setProfile(dispatch(fetchProfile(userId)));
-      }
-    }, [dispatch, userId]);
-    
-  
-    useEffect(() => {
-      if (roomId) {
-        dispatch(fetchChatRoomDetail(Number(roomId)));
-        dispatch(connectWebSocket(Number(roomId))); // WebSocket 연결
-      }
-  
-      return () => {
-        dispatch(disconnectWebSocket()); // WebSocket 연결 해제
-      };
-    }, [roomId, dispatch]);
-  
-    useEffect(() => {
-      messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    }, [messages]);
-  
-    const handleSendMessage = () => {
-      if (message.trim() !== '') {
-        dispatch(sendMessage({roomId: Number(roomId), senderId: userId, nickname: profile.nickname, message: message, senderImageUrl: profile.imageUrl}));
-        setMessage('');
-      }
-    };
-  
-    const handleExitRoom = () => {
-      navigate('/ChatList'); // 채팅방 목록으로 이동
-    };
-  
-    const openModal = (participant: any) => {
-      setSelectedParticipant(participant);
-      setModalIsOpen(true);
-    };
-  
-    const closeModal = () => {
-      setModalIsOpen(false);
-    };
-
-    const handleUserInfoClick = () => {
-        if (selectedParticipant) {   //eventInfo, 즉 카드 정보가 존재하면 이동
-          navigate(`/user/${selectedParticipant.userId}`);
-        }
-      };
-    
-      const handleUserPostsClick = () => {
-        if (selectedParticipant) {
-          navigate(`/usercreatedMoim/${selectedParticipant.userId}`);
-        }
-      };
-  
-    if (loading) {
-      return <LoadingSpinner />;
+  useEffect(() => {
+    if (userId > 0) {
+      setProfile(dispatch(fetchProfile(userId)));
     }
+  }, [dispatch, userId]);
+
+  useEffect(() => {
+    if (roomId) {
+      dispatch(fetchChatRoomDetail(Number(roomId)));
+      dispatch(connectWebSocket(Number(roomId))); // WebSocket 연결
+    }
+
+    return () => {
+      dispatch(disconnectWebSocket()); // WebSocket 연결 해제
+    };
+  }, [roomId, dispatch]);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
+  const handleSendMessage = () => {
+    if (message.trim() !== '') {
+      dispatch(sendMessage({ roomId: Number(roomId), senderId: userId, nickname: profile.nickname, message: message, senderImageUrl: profile.imageUrl }));
+      setMessage('');
+    }
+  };
+
+  const handleExitRoom = () => {
+    navigate('/ChatList'); 
+  };
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <PageContainer>
       <ParticipantListContainer>
         {roomDetail?.participants.map((participant) => (
-          <ParticipantItem key={participant.userId} onClick={() => openModal(participant)}>
-            <ParticipantImage src={participant.imageUrl || '/default-profile.png'} alt={`${participant.nickname}의 프로필 이미지`} />
+          <ParticipantItem key={participant.userId} onClick={() => {}}>
+            <ParticipantImage src={participant.imageUrl || '../../assets/default_profile.png'} alt={`${participant.nickname}의 프로필 이미지`} />
             <ParticipantName>{participant.nickname}</ParticipantName>
           </ParticipantItem>
         ))}
@@ -348,12 +267,12 @@ const ChatRoom: React.FC = () => {
         </ChatHeader>
         <ChatMessages>
           {messages.map((msg: any) => (
-            <MessageContainer key={msg.id} isOwnMessage={msg.senderId === 1}>
+            <MessageContainer key={msg.id} isOwnMessage={msg.senderId === userId}>
               <ProfileContainer>
                 <ProfileImage src={msg.senderImageUrl || '../../assets/default_image.png'} alt={`${msg.nickname}의 프로필 이미지`} />
                 <Nickname>{msg.nickname}</Nickname>
               </ProfileContainer>
-              <MessageBubble isOwnMessage={msg.senderId === 1}>{msg.message}</MessageBubble>
+              <MessageBubble isOwnMessage={msg.senderId === userId}>{msg.message}</MessageBubble>
             </MessageContainer>
           ))}
           <div ref={messagesEndRef} />
@@ -371,43 +290,6 @@ const ChatRoom: React.FC = () => {
           </SendButton>
         </ChatInputContainer>
       </ChatContainer>
-
-      {/* <Modal
-        isOpen={modalIsOpen}
-        onRequestClose={closeModal}
-        contentLabel="Participant Info"
-        style={{
-          content: {
-            top: '50%',
-            left: '50%',
-            right: 'auto',
-            bottom: 'auto',
-            marginRight: '-50%',
-            transform: 'translate(-50%, -50%)',
-            borderRadius: '10px',
-            padding: '20px',
-            boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)',
-          },
-        }}
-      >
-        <h2>{selectedParticipant?.nickname}의 정보</h2>
-        <ul>
-          <li>유저 정보 조회</li>
-          <li>유저 등록 글 조회</li>
-        </ul>
-        <button onClick={closeModal}>닫기</button>
-      </Modal> */}
-      <ModalOverlay show={modalIsOpen} onClick={openModal} />
-            <ModalContent>
-              <ModalCloseButton onClick={closeModal}>&times;</ModalCloseButton>
-              <ModalTitle>유저 조회</ModalTitle>
-              <DropdownItem onClick={handleUserInfoClick}>
-                유저 정보 조회
-              </DropdownItem>
-              <DropdownItem onClick={handleUserPostsClick}>
-                유저 작성 글
-              </DropdownItem>
-      </ModalContent>
     </PageContainer>
   );
 };
