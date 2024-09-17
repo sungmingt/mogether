@@ -13,8 +13,8 @@ const RoomListContainer = styled.div`
   display: flex;
   flex-direction: column;
   max-width: 600px;
-  margin: 10px;
-  padding: 20px;
+  margin: 15px;
+  padding: 18px;
   background-color: #f9f9f9;
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -28,7 +28,7 @@ const RoomListContainer = styled.div`
 const RoomCard = styled.div`
   background-color: #ffffff;
   padding: 20px;
-  margin: 10px;
+  margin: 8px;
   border-radius: 10px;
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
   display: flex;
@@ -40,7 +40,7 @@ const RoomCard = styled.div`
   }
 
   @media (max-width: 768px) {
-    padding: 15px;
+    padding: 10px;
   }
 `;
 
