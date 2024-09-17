@@ -9,6 +9,12 @@ import { AppDispatch, RootState } from '../../store/store';
 import LoadingSpinner from './LoadingSpinner';
 import { FaUser, FaCommentDots } from 'react-icons/fa';
 
+const PageContainer = styled.div`
+  display: flex;
+  justify-content: center; /* 가로 가운데 정렬 */
+  padding: 15px;
+`;
+
 const RoomListContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -131,6 +137,7 @@ const ChatRoomList: React.FC = () => {
     }
 
   return (
+    <PageContainer>
     <RoomListContainer>
       <ChatListTitle>그룹 채팅방에 오신 것을 환영합니다</ChatListTitle>
       <Divider />
@@ -155,6 +162,7 @@ const ChatRoomList: React.FC = () => {
         </Link>
       ))}
     </RoomListContainer>
+    </PageContainer>
   );
 };
 
