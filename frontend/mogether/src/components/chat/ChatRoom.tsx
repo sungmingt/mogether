@@ -7,7 +7,6 @@ import { useNavigate, useParams } from 'react-router-dom';
 import LoadingSpinner from './LoadingSpinner';
 import { fetchProfile } from '../../store/slices/userProfileSlice';
 
-
 const PageContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -113,15 +112,16 @@ const ChatMessages = styled.div`
   border: 1px solid #ddd;
   margin: 10px 0;
   display: flex;
-  flex-direction: column-reverse; /* 역순 정렬 */
+  flex-direction: column;
   gap: 8px;
 `;
 
 const MessageContainer = styled.div<{ isOwnMessage: boolean }>`
   display: flex;
-  align-items: center;
-  flex-direction: ${({ isOwnMessage }) => (isOwnMessage ? 'row-reverse' : 'row')};
+  align-items: flex-start;
+  justify-content: ${({ isOwnMessage }) => (isOwnMessage ? 'flex-end' : 'flex-start')}; /* 작성자에 따라 위치 조정 */
   margin-bottom: 10px;
+  flex-direction: ${({ isOwnMessage }) => (isOwnMessage ? 'row-reverse' : 'row')}; /* 본인 메시지는 오른쪽, 타인 메시지는 왼쪽 */
 `;
 
 const ProfileContainer = styled.div`
@@ -168,7 +168,7 @@ const MessageBubble = styled.div<{ isOwnMessage: boolean }>`
     ${({ isOwnMessage }) =>
       isOwnMessage
         ? 'right: -8px; border: 8px solid transparent; border-left-color: #7848f4;'
-        : 'left: -8px; border: 8px solid transparent; border-right-color: #ffffff;'}
+        : 'left: -8px; border: 8px solid transparent; border-right-color: #ffffff;'};
   }
 `;
 
@@ -216,6 +216,7 @@ const ChatRoom: React.FC = () => {
   useEffect(() => {
     if (userId > 0) {
       setProfile(dispatch(fetchProfile(userId)));
+      console.log(profile.imageUrl);
     }
   }, [dispatch, userId]);
 
@@ -235,8 +236,14 @@ const ChatRoom: React.FC = () => {
   }, [messages]);
 
   const handleSendMessage = () => {
-    if (message.trim() !== '') {
-      dispatch(sendMessage({ roomId: Number(roomId), senderId: userId, nickname: profile.nickname, message: message, senderImageUrl: profile.imageUrl }));
+    if (message.trim() !== '' && profile) {
+      dispatch(sendMessage({ 
+        roomId: Number(roomId), 
+        senderId: userId, 
+        nickname: profile.nickname, 
+        message: message, 
+        senderImageUrl: profile.imageUrl 
+      }));
       setMessage('');
     }
   };
