@@ -127,12 +127,16 @@ const chatSlice = createSlice({
     },
     connectWebSocket: (state, action: PayloadAction<number>) => {
       const roomId = action.payload;
-      const socket = new SockJS('http://api.mo-gether.site/ws');
+      const socket = new SockJS('https://api.mo-gether.site/ws');
+      const accessToken = localStorage.getItem('accessToken');
       const stompClient = new Client({
         webSocketFactory: () => socket,
         reconnectDelay: 5000, // Reconnect every 5 seconds
         heartbeatIncoming: 4000,
         heartbeatOutgoing: 4000,
+        connectHeaders: {
+          accessToken: `${accessToken}`, 
+        },
         onConnect: () => {
           stompClient.subscribe(`/sub/chat/room/${roomId}`, (message) => {
             const receivedMessage: ChatMessage = JSON.parse(message.body);
