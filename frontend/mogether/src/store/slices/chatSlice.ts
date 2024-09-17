@@ -81,7 +81,6 @@ export const fetchChatRooms = createAsyncThunk('chat/fetchChatRooms', async (use
   }
 });
 
-// Async thunk to fetch chat room details
 export const fetchChatRoomDetail = createAsyncThunk('chat/fetchChatRoomDetail', async (roomId: number, { rejectWithValue }) => {
   try {
     const response = await ChatRoomApi(roomId);
