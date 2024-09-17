@@ -6,7 +6,7 @@ import Footer from "./Footer";
 
 const PageContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  justify-content: center;
   min-height: 100vh;
 `;
 
