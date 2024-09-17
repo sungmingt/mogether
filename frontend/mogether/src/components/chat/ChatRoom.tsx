@@ -216,7 +216,7 @@ const ChatRoom: React.FC = () => {
   useEffect(() => {
     if (userId > 0) {
       setProfile(dispatch(fetchProfile(userId)));
-      console.log(profile.imageUrl);
+      console.log(profile.image)
     }
   }, [dispatch, userId]);
 
