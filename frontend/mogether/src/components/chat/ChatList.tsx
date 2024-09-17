@@ -12,8 +12,8 @@ import { FaUser, FaCommentDots } from 'react-icons/fa';
 const RoomListContainer = styled.div`
   display: flex;
   flex-direction: column;
-  max-width: 1000px;
-  margin: 0;
+  max-width: 600px;
+  margin: 0 10px;
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 10px;
