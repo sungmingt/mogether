@@ -97,6 +97,17 @@ const LeftItem = styled.div`
   
 `;
 
+const ChatListTitle = styled.h2`
+  margin-bottom: 20px;
+`;
+
+const Divider = styled.hr`
+  width: 100%;
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 20px 0;
+`;
+
 const ChatRoomList: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { roomList, loading, error } = useSelector((state: RootState) => selectChat(state));
@@ -118,6 +129,8 @@ const ChatRoomList: React.FC = () => {
 
   return (
     <RoomListContainer>
+      <ChatListTitle>그룹 채팅방에 오신 것을 환영합니다</ChatListTitle>
+      <Divider />
       {roomList.map((room) => (
         <Link to={`/Chat/${room.roomId}`} key={room.roomId} style={{ textDecoration: 'none' }}>
           <RoomCard>
