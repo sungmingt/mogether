@@ -13,7 +13,7 @@ const RoomListContainer = styled.div`
   display: flex;
   flex-direction: column;
   max-width: 600px;
-  margin: 0 10px;
+  margin: 10px;
   padding: 20px;
   background-color: #f9f9f9;
   border-radius: 10px;
