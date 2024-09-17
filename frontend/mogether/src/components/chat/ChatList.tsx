@@ -100,6 +100,8 @@ const LeftItem = styled.div`
 
 const ChatListTitle = styled.h2`
   margin-bottom: 20px;
+  display: flex;
+  justify-content: center;
 `;
 
 const Divider = styled.hr`
