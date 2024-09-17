@@ -25,7 +25,9 @@ public class PathMatcher {
             "/h2-console/**",
 
             "/login", "/login/**", "/user/join", "/token", "/oauth2/**", "/login/oauth2/**",
-            "/user/*/oauth2/info", "/user/password", "/sub/**", "/pub/**"
+            "/user/*/oauth2/info", "/user/password",
+
+            "/sub/**", "/pub/**", "/ws"
     };
 
     public static final String[] forAnonymousURIs = {

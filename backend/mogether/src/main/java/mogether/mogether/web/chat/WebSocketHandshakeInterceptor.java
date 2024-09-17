@@ -40,20 +40,20 @@ public class WebSocketHandshakeInterceptor implements HandshakeInterceptor {
                                    WebSocketHandler wsHandler, Map<String, Object> attributes) throws Exception {
 
         log.info("### {}", "websocket handshake 발생");
-        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
-
-        try {
-            String accessToken = getTokenfromRequest((HttpServletRequest) request);
-            validateRequestToken(accessToken);
-
-            setAuthentication(accessToken);
-        } catch (MogetherException e) {
-            log.error("### {}", e.getMessage());
-            sendErrorResponse(httpServletResponse, e);
-        } catch (RuntimeException e) {
-            log.error("### {}", e.getMessage());
-            httpServletResponse.sendError(500, e.getMessage());
-        }
+//        HttpServletResponse httpServletResponse = (HttpServletResponse) response;
+//
+//        try {
+//            String accessToken = getTokenfromRequest((HttpServletRequest) request);
+//            validateRequestToken(accessToken);
+//
+//            setAuthentication(accessToken);
+//        } catch (MogetherException e) {
+//            log.error("### {}", e.getMessage());
+//            sendErrorResponse(httpServletResponse, e);
+//        } catch (RuntimeException e) {
+//            log.error("### {}", e.getMessage());
+//            httpServletResponse.sendError(500, e.getMessage());
+//        }
 
         return true;
     }
