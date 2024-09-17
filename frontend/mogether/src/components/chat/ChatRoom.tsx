@@ -118,8 +118,10 @@ const ChatMessages = styled.div`
 
 const MessageContainer = styled.div<{ isOwnMessage: boolean }>`
   display: flex;
-  justify-content: ${({ isOwnMessage }) => (isOwnMessage ? 'flex-end' : 'flex-start')};
+  align-items: flex-start;
+  justify-content: ${({ isOwnMessage }) => (isOwnMessage ? 'flex-end' : 'flex-start')}; /* 작성자에 따라 위치 조정 */
   margin-bottom: 10px;
+  flex-direction: ${({ isOwnMessage }) => (isOwnMessage ? 'row-reverse' : 'row')}; /* 본인 메시지는 오른쪽, 타인 메시지는 왼쪽 */
 `;
 
 const ProfileContainer = styled.div`
@@ -166,7 +168,7 @@ const MessageBubble = styled.div<{ isOwnMessage: boolean }>`
     ${({ isOwnMessage }) =>
       isOwnMessage
         ? 'right: -8px; border: 8px solid transparent; border-left-color: #7848f4;'
-        : 'left: -8px; border: 8px solid transparent; border-right-color: #ffffff;'}
+        : 'left: -8px; border: 8px solid transparent; border-right-color: #ffffff;'};
   }
 `;
 
@@ -214,6 +216,7 @@ const ChatRoom: React.FC = () => {
   useEffect(() => {
     if (userId > 0) {
       setProfile(dispatch(fetchProfile(userId)));
+      console.log(profile.image)
     }
   }, [dispatch, userId]);
 
