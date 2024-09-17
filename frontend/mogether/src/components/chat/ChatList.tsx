@@ -12,7 +12,6 @@ import { FaUser, FaCommentDots } from 'react-icons/fa';
 const PageContainer = styled.div`
   display: flex;
   justify-content: center; /* 가로 가운데 정렬 */
-  padding: 15px;
 `;
 
 const RoomListContainer = styled.div`
