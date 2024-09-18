@@ -1,5 +1,6 @@
 package mogether.mogether.config;
 
+import mogether.mogether.web.chat.WebSocketHandshakeInterceptor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;
 import org.springframework.web.socket.config.annotation.EnableWebSocketMessageBroker;
@@ -17,8 +18,8 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
     public void registerStompEndpoints(StompEndpointRegistry registry){
         //ws로 도착하는 것은 stomp통신으로 인식하도록 한다 -> ex)ws://api.mo-gether.site/ws
         registry.addEndpoint("/ws")
-                .setAllowedOrigins(allowedOrigins)
-                .addInterceptors(new HttpSessionHandshakeInterceptor());
+                .setAllowedOrigins(allowedOrigins);
+//                .addInterceptors(new WebSocketHandshakeInterceptor());
     }
 
     @Override
