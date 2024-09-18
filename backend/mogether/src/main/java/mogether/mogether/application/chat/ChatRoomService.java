@@ -8,6 +8,7 @@ import mogether.mogether.domain.chat.ChatRoomUserRepository;
 import mogether.mogether.domain.bungae.Bungae;
 import mogether.mogether.domain.moim.Moim;
 import mogether.mogether.domain.user.User;
+import mogether.mogether.exception.ErrorCode;
 import mogether.mogether.exception.MogetherException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -73,5 +74,11 @@ public class ChatRoomService {
 
     public void deleteChatRoom(Long roomId) {
         chatRoomRepository.deleteById(roomId);
+    }
+
+    public void deleteJoinUser(Long chatRoomId, Long userId) {
+        ChatRoomUser chatRoomUser = chatRoomUserRepository.findByChatRoomIdAndUserId(chatRoomId, userId)
+                .orElseThrow(() -> new MogetherException(ErrorCode.CHATROOMUSER_NOT_FOUND));
+        chatRoomUserRepository.delete(chatRoomUser);
     }
 }

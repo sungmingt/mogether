@@ -43,6 +43,9 @@ public class BungaeService {
 
     //번개 참여 취소
     public void quit(Long bungaeId, AppUser appUser) {
+        Bungae findBungae = findById(bungaeId);
+        chatRoomService.deleteJoinUser(findBungae.getChatRoom().getId(), appUser.getId());
+
         //bungaeUser 삭제
         BungaeUser bungaeUser = bungaeUserRepository.findByBungaeIdAndUserId(bungaeId, appUser.getId())
                 .orElseThrow(() -> new MogetherException(ErrorCode.NO_BUNGAEJOIN_HISTORY));
@@ -53,6 +56,9 @@ public class BungaeService {
     public void kickOut(AppUser appUser, BungaeKickOutRequest request) {
         Bungae findBungae = findById(request.getBungaeId());
         validateUser(findBungae.getHost().getId(), appUser.getId());
+
+        //채팅방 퇴장
+        chatRoomService.deleteJoinUser(findBungae.getChatRoom().getId(), request.getUserId());
 
         //bungaeUser 삭제
         BungaeUser bungaeUser = bungaeUserRepository.findByBungaeIdAndUserId(request.getBungaeId(), request.getUserId())

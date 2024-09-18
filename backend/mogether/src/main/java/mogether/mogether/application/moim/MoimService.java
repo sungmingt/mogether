@@ -43,6 +43,9 @@ public class MoimService {
 
     //모임 탈퇴
     public void quit(Long moimId, AppUser appUser) {
+        Moim findMoim = findById(moimId);
+        chatRoomService.deleteJoinUser(findMoim.getChatRoom().getId(), appUser.getId());
+
         //moimUser 삭제
         MoimUser moimUser = moimUserRepository.findByMoimIdAndUserId(moimId, appUser.getId())
                 .orElseThrow(() -> new MogetherException(ErrorCode.NOT_MOIM_MEMBER));
@@ -53,6 +56,9 @@ public class MoimService {
     public void kickOut(AppUser appUser, MoimKickOutRequest request) {
         Moim findMoim = findById(request.getMoimId());
         validateUser(findMoim.getHost().getId(), appUser.getId());
+
+        //채팅방 퇴장
+        chatRoomService.deleteJoinUser(findMoim.getChatRoom().getId(), request.getUserId());
 
         MoimUser moimUser = moimUserRepository.findByMoimIdAndUserId(request.getMoimId(), request.getUserId())
                 .orElseThrow(() -> new MogetherException(ErrorCode.NOT_MOIM_MEMBER));
