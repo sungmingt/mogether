@@ -10,7 +10,7 @@ import { fetchProfile } from '../../store/slices/userProfileSlice';
 const PageContainer = styled.div`
   display: flex;
   justify-content: center;
-  max-width: 1200px;
+  max-width: 1500px;
   margin: 0 auto;
   padding: 20px;
   gap: 20px;
@@ -67,7 +67,8 @@ const ChatContainer = styled.div`
   flex-direction: column;
   justify-content: space-between;
   height: 90vh;
-  max-width: 600px;
+  max-width: 800px;
+  min-height: 500px;
   padding: 10px;
   background-color: #f5f5f5;
   border-radius: 10px;
@@ -75,6 +76,7 @@ const ChatContainer = styled.div`
 
   @media (max-width: 768px) {
     max-width: 100%;
+    max-height: 80vh;
     padding: 5px;
   }
 `;
