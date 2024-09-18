@@ -62,7 +62,7 @@ const ParticipantName = styled.span`
 `;
 
 const ChatContainer = styled.div`
-  flex: 3;
+  flex: 3.5;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -121,22 +121,22 @@ const ChatMessages = styled.div`
 const MessageContainer = styled.div<{ isOwnMessage: boolean }>`
   display: flex;
   align-items: flex-start;
-  justify-content: ${({ isOwnMessage }) => (isOwnMessage ? 'flex-end' : 'flex-start')}; /* 작성자에 따라 위치 조정 */
-  margin-bottom: 10px;
-  flex-direction: ${({ isOwnMessage }) => (isOwnMessage ? 'row-reverse' : 'row')}; /* 본인 메시지는 오른쪽, 타인 메시지는 왼쪽 */
+  justify-content: ${({ isOwnMessage }) => (isOwnMessage ? 'flex-start' : 'flex-end')}; /* 작성자에 따라 위치 조정 */
+  // margin-bottom: 10px;
+  flex-direction: ${({ isOwnMessage }) => (isOwnMessage ? 'row' : 'row-reverse')}; /* 본인 메시지는 오른쪽, 타인 메시지는 왼쪽 */
 `;
 
 const ProfileContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin: 5px;
-  min-width: 50px;
+  // margin: 5px;
+  min-width: 40px;
 `;
 
 const ProfileImage = styled.img`
-  width: 40px;
-  height: 40px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
 `;
 
@@ -177,8 +177,8 @@ const MessageBubble = styled.div<{ isOwnMessage: boolean }>`
 const ChatInputContainer = styled.div`
   display: flex;
   padding: 10px 0;
-  border-top: 1px solid #ddd;
-  background-color: #fff;
+  // border-top: 1px solid #ddd;
+  background-color: #f5f5f5;
 `;
 
 const ChatInput = styled.input`
@@ -262,7 +262,7 @@ const ChatRoom: React.FC = () => {
       <ParticipantListContainer>
         {roomDetail?.participants.map((participant) => (
           <ParticipantItem key={participant.userId} onClick={() => {}}>
-            <ParticipantImage src={participant.imageUrl || '../../assets/default_profile.png'} alt={`${participant.nickname}의 프로필 이미지`} />
+            <ParticipantImage src={participant.imageUrl || '../../assets/default_image.png'} alt={`${participant.nickname}의 프로필 이미지`} />
             <ParticipantName>{participant.nickname}</ParticipantName>
           </ParticipantItem>
         ))}
