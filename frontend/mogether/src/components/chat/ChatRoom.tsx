@@ -62,7 +62,7 @@ const ParticipantName = styled.span`
 `;
 
 const ChatContainer = styled.div`
-  flex: 3.5;
+  flex: 5;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -130,7 +130,7 @@ const ProfileContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  // margin: 5px;
+  margin: 3px;
   min-width: 40px;
 `;
 
