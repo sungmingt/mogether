@@ -122,6 +122,7 @@ const MessageContainer = styled.div<{ isOwnMessage: boolean }>`
   display: flex;
   align-items: flex-start;
   justify-content: ${({ isOwnMessage }) => (isOwnMessage ? 'flex-end' : 'flex-start')}; /* 본인 메시지는 오른쪽, 타인 메시지는 왼쪽 */
+  // margin-bottom: 10px;
   flex-direction: ${({ isOwnMessage }) => (isOwnMessage ? 'row-reverse' : 'row')}; /* 본인 메시지는 오른쪽, 타인 메시지는 왼쪽 */
 `;
 
@@ -176,6 +177,7 @@ const MessageBubble = styled.div<{ isOwnMessage: boolean }>`
 const ChatInputContainer = styled.div`
   display: flex;
   padding: 10px 0;
+  // border-top: 1px solid #ddd;
   background-color: #f5f5f5;
 `;
 
@@ -272,15 +274,12 @@ const ChatRoom: React.FC = () => {
           <ExitButton onClick={handleExitRoom}>나가기</ExitButton>
         </ChatHeader>
         <ChatMessages>
-          {messages.map((msg: any, index: number) => (
+          {messages.map((msg: any) => (
             <MessageContainer key={msg.id} isOwnMessage={msg.senderId === userId}>
-              {/* 프로필 이미지와 닉네임은 첫 메시지에만 표시 */}
-              {(index === 0 || messages[index - 1]?.senderId !== msg.senderId) && (
-                <ProfileContainer>
-                  <ProfileImage src={msg.senderImageUrl || '../../assets/default_image.png'} alt={`${msg.nickname}의 프로필 이미지`} />
-                  <Nickname>{msg.nickname}</Nickname>
-                </ProfileContainer>
-              )}
+              <ProfileContainer>
+                <ProfileImage src={msg.senderImageUrl || '../../assets/default_image.png'} alt={`${msg.nickname}의 프로필 이미지`} />
+                <Nickname>{msg.nickname}</Nickname>
+              </ProfileContainer>
               <MessageBubble isOwnMessage={msg.senderId === userId}>{msg.message}</MessageBubble>
             </MessageContainer>
           ))}
