@@ -27,7 +27,7 @@ public class PathMatcher {
             "/login", "/login/**", "/user/join", "/token", "/oauth2/**", "/login/oauth2/**",
             "/user/*/oauth2/info", "/user/password",
 
-            "/sub/**", "/pub/**", "/ws"
+            "/sub/**", "/pub/**", "/ws", "/ws/**"
     };
 
     public static final String[] forAnonymousURIs = {
