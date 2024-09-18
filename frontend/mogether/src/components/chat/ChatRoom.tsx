@@ -62,7 +62,7 @@ const ParticipantName = styled.span`
 `;
 
 const ChatContainer = styled.div`
-  flex: 5;
+  flex: 3;
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -121,9 +121,9 @@ const ChatMessages = styled.div`
 const MessageContainer = styled.div<{ isOwnMessage: boolean }>`
   display: flex;
   align-items: flex-start;
-  justify-content: ${({ isOwnMessage }) => (isOwnMessage ? 'flex-start' : 'flex-end')}; /* 작성자에 따라 위치 조정 */
+  justify-content: ${({ isOwnMessage }) => (isOwnMessage ? 'flex-end' : 'flex-start')}; /* 본인 메시지는 오른쪽, 타인 메시지는 왼쪽 */
   // margin-bottom: 10px;
-  flex-direction: ${({ isOwnMessage }) => (isOwnMessage ? 'row' : 'row-reverse')}; /* 본인 메시지는 오른쪽, 타인 메시지는 왼쪽 */
+  flex-direction: ${({ isOwnMessage }) => (isOwnMessage ? 'row-reverse' : 'row')}; /* 본인 메시지는 오른쪽, 타인 메시지는 왼쪽 */
 `;
 
 const ProfileContainer = styled.div`
