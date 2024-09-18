@@ -4,11 +4,9 @@ import styled from "styled-components";
 import { RootState, AppDispatch } from "../../store/store";
 import {MyInterestedMoim, loadMorePosts} from "../../store/slices/userSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { selectUserId } from "../../store/slices/authSlice";
 import { Post } from "../../store/slices/userSlice";  //userSlice의 Post 기준! 왜냐면 여기서 내가 작성한 글을 관리하니까!
 import { FaHeart } from "react-icons/fa";
 import { clickInterest, deleteInterest } from '../../store/slices/moimSlice';
-import { locations } from '../../utils/location';
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 
@@ -193,18 +191,16 @@ const ContentText = styled.p`
 const MyInterestMoim: React.FC = () => {
     const userId = Number(localStorage.getItem('userId')) || 0;
     const dispatch = useDispatch<AppDispatch>();
-    const [interestCategory, setInterestCategory] = useState<string>("moim");
-    const [myInterestMoim, setMyInterestMoim] = useState<Post[]>([]); 
-    const [myInterestBungae, setMyInterestBungae] = useState<Post[]>([]); 
     const navigate = useNavigate();
-    const [visiblePosts, setVisiblePosts] = useState<Post[]>([]); 
+    const { visiblePosts, allPosts} = useSelector(
+      (state: RootState) => state.user
+    );
 
     useEffect(() => {
         const myInterestMoimList = async () => {
             try {
                 const response = await dispatch(MyInterestedMoim(userId)).unwrap();
-                setMyInterestMoim(response);
-                setVisiblePosts(myInterestMoim.slice(0, 12));    
+                console.log(response)
             }
             catch (error) {
                 console.error(error);
@@ -364,7 +360,7 @@ const MyInterestMoim: React.FC = () => {
           </PostCard>
         ))}
       </PostGrid>
-      {visiblePosts.length < myInterestMoim.length && (
+      {visiblePosts.length < allPosts.length && (
         <LoadMoreButton onClick={handleLoadMore}>Load more</LoadMoreButton>
       )}
     </PostListContainer>

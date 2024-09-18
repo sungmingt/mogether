@@ -14,7 +14,7 @@ import { createMoim, createBungae, EditMoim, EditBungae } from '../../store/slic
 import { RootState, AppDispatch } from '../../store/store';
 import { selectIsAuthenticated, selectUserId } from "../../store/slices/authSlice";
 import { useNavigate, useParams } from 'react-router-dom';
-import {clickPosts} from '../../store/slices/moimSlice';
+import {clickPosts} from '../../store/slices/bungaeSlice';
 import moment from "moment";
 import { set } from "react-datepicker/dist/date_utils";
 
@@ -238,27 +238,23 @@ const BungaeEdit = () => {
   const [keyword, setKeyword] = useState<string>("");
   const [location, setLocation] = useState("");
   const [subLocation, setSubLocation] = useState("");
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
-  const [imageFile, setImageFile] = useState<File[] | null>(null);
+  const [prevImageUrls, setPrevImageUrls] = useState<string[]>([]); // 기존 이미지 URL 리스트
+  const [newImageUrls, setNewImageUrls] = useState<string[]>([]); // 새로 추가된 이미지 URL
+  const [newImageFiles, setNewImageFiles] = useState<File[]>([]); // 새로 추가된 이미지 파일
   const [dateRange, setDateRange] = useState<{ startDate: string | null, endDate: string | null }>({
     startDate: null,
     endDate: null,
   });
   const [recruitmentFocusedInput, setRecruitmentFocusedInput] = useState<FocusedInputShape | null>(null);
   const [meetingStartTime, setMeetingStartTime] = useState<string | null>(null);
-  // const [meetingFocused, setMeetingFocused] = useState(false);
   const [additionalInfo, setAdditionalInfo] = useState({
     placeDetails: "",
     minMembers: "",
     maxMembers: "",
     ageLimit: "",
     fee: "",
-    meetingPeriodStart: "",
-    meetingPeriodEnd: "",
   });
-  const [additionalFocusedInput, setAdditionalFocusedInput] = useState<FocusedInputShape | null>(null);
-  const {id} = useParams<{id: string}>();
-  const moimId = id ? parseInt(id, 10) : 0;
+  const { id } = useParams<{ id: string }>();
   const bungaeId = id ? parseInt(id, 10) : 0;
   const accessToken = localStorage.getItem('accessToken');
 
@@ -266,16 +262,16 @@ const BungaeEdit = () => {
     if (!accessToken) {
       navigate('/Login');  
     }
-  }, [dispatch, accessToken]);
+  }, [accessToken]);
 
   const handleKeywordChange = useCallback((keyword: string) => {
     setKeyword(keyword);
   }, []);
 
   useEffect(() => {
-    const fetchMoimData = async () => {
-      if (moimId) {
-        const response = await dispatch(clickPosts(moimId)).unwrap();
+    const fetchBungaeData = async () => {
+      if (bungaeId) {
+        const response = await dispatch(clickPosts(bungaeId)).unwrap();
         setTitle(response.title);
         setContent(response.content);
         setKeyword(response.keyword);
@@ -287,12 +283,12 @@ const BungaeEdit = () => {
         });
         setMeetingStartTime(response.gatherAt);
         if (response.imageUrls) {
-          setImageUrls(response.imageUrls);
+          setPrevImageUrls(response.imageUrls); // 기존 이미지 URL 설정
         }
       }
     }
-    fetchMoimData();
-  }, [dispatch, moimId]);
+    fetchBungaeData();
+  }, [dispatch, bungaeId]);
 
   const handleCategoryChange = useCallback((selectedCategory: string) => {
     setCategory(selectedCategory);
@@ -300,7 +296,7 @@ const BungaeEdit = () => {
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
-    if (files && files.length > 4) {
+    if (files && files.length + newImageFiles.length + prevImageUrls.length > 4) {
       Swal.fire(
         "Error",
         "이미지는 최대 4개까지 업로드할 수 있습니다.",
@@ -310,14 +306,39 @@ const BungaeEdit = () => {
     }
 
     const fileArray = Array.from(files || []);
-    const newUrls = fileArray.map((file) => URL.createObjectURL(file));
-    setImageUrls((prev) => [...prev, ...newUrls]);
-    setImageFile((prev) => (prev ? [...prev, ...fileArray] : fileArray));
+
+    // 파일 이름을 정규화하는 함수
+    const sanitizeFileName = (fileName: string) => {
+      return fileName
+        .normalize('NFKD')
+        .replace(/[\s]/g, '-')
+        .replace(/[^a-zA-Z0-9.-]/g, '');
+    };
+
+    const sanitizedFiles = fileArray.map(file => {
+      const sanitizedFileName = sanitizeFileName(file.name);
+      return new File([file], sanitizedFileName, { type: file.type });
+    });
+
+    const newUrls = sanitizedFiles.map((file) => URL.createObjectURL(file));
+    setNewImageUrls((prev) => [...prev, ...newUrls]);
+    setNewImageFiles((prev) => [...prev, ...sanitizedFiles]);
   };
 
-  const handleImageRemove = (index: number) => {
-    setImageUrls((prev) => prev.filter((_, i) => i !== index));
-    setImageFile((prev) => prev ? prev.filter((_, i) => i !== index) : null);
+  const handlePrevImageRemove = (index: number) => {
+    setPrevImageUrls((prev) => prev.filter((_, i) => i !== index)); // 기존 이미지 삭제
+  };
+
+  const handleNewImageRemove = (index: number) => {
+    setNewImageUrls((prev) => prev.filter((_, i) => i !== index));
+    setNewImageFiles((prev) => prev.filter((_, i) => i !== index));
+  };
+
+  // URL을 File 객체로 변환하는 함수
+  const urlToFile = async (url: string, fileName: string): Promise<File> => {
+    const response = await fetch(url);
+    const blob = await response.blob();
+    return new File([blob], fileName, { type: blob.type });
   };
 
   const handleMeetingTimeChange = (date: moment.Moment | string) => {
@@ -343,91 +364,57 @@ const BungaeEdit = () => {
       Swal.fire("Error", "필수 입력 항목을 모두 입력해주세요.", "error");
       return;
     }
-    
 
-    if (category === "moim") {
-      const moimData = {
-        userId: userId,
-        title: title,
-        content: content,
-        keyword: keyword,
-        address: {
-          city: location,
-          gu: subLocation,
-          details: additionalInfo.placeDetails,
-        },
-        description: content,
-        createdAt: dateRange.startDate,
-        expireAt: dateRange.endDate,
-      };
+    // 기존 이미지 URL을 File 객체로 변환
+    const prevUrlFiles = await Promise.all(
+      prevImageUrls.map((url, index) => urlToFile(url, `prev-image-${index}.jpg`))
+    );
 
-      const moimFormData = new FormData();
-      moimFormData.append('dto', new Blob([JSON.stringify(moimData)], { type: 'application/json' }));
+    // 기존 이미지 파일과 새로 첨부된 파일 병합
+    const allFiles = [...newImageFiles, ...prevUrlFiles];
 
-      if (imageFile) {
-        imageFile.forEach((file) => {
-        moimFormData.append('images', file);
-        });
-	    }
-      else {
-        moimFormData.append('images', 'null');
-      }
-	    
-      try {
-        const moimFormDataMoimId = {moimId: moimId, moimFormData: moimFormData};
-        const response = await dispatch(EditMoim(moimFormDataMoimId)).unwrap();
-        navigate('/moim/list')
-      }
-      catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: '게시글 생성 실패',
-          text: '생성 중 오류가 발생했습니다. 다시 시도하세요.',
-        });
-      }
+    const bungaeData = {
+      userId: userId,
+      title: title,
+      content: content,
+      keyword: keyword,
+      address: {
+        city: location,
+        gu: subLocation,
+        details: additionalInfo.placeDetails,
+      },
+      description: content,
+      createdAt: dateRange.startDate,
+      expireAt: dateRange.endDate,
+      gatherAt: meetingStartTime
+    };
+
+    const bungaeFormData = new FormData();
+    bungaeFormData.append('dto', new Blob([JSON.stringify(bungaeData)], { type: 'application/json' }));
+
+    // allFiles.forEach((file) => {
+    //   bungaeFormData.append('images', file);
+    // });
+    if(allFiles && allFiles.length > 0) {
+      allFiles.forEach((file) => {
+        bungaeFormData.append('images', file)});
     }
     else {
-      const bungaeData = {
-        userId: userId,
-        title: title,
-        content: content,
-        keyword: keyword,
-        address: {
-          city: location,
-          gu: subLocation,
-          details: additionalInfo.placeDetails,
-        },
-        description: content,
-        createdAt: dateRange.startDate,
-        expireAt: dateRange.endDate,
-        gatherAt: meetingStartTime
-      };
-      const bungaeFormData = new FormData();
-      bungaeFormData.append('dto', new Blob([JSON.stringify(bungaeData)], { type: 'application/json' }));
-
-      if (imageFile) {
-        imageFile.forEach((file) => {
-          bungaeFormData.append('images', file);
-        });
-	    }
-      else {
-        bungaeFormData.append('images', 'null');
-      }
-      try {
-        const bungaeFormDataBungaeId = {bungaeId: bungaeId, bungaeFormData: bungaeFormData};
-        const response = await dispatch(EditBungae(bungaeFormDataBungaeId)).unwrap();
-        navigate('/bungae/list')
-      }
-      catch (error) {
-        Swal.fire({
-          icon: 'error',
-          title: '게시글 생성 실패',
-          text: '생성 중 오류가 발생했습니다. 다시 시도하세요.',
-        });
-      }
+      bungaeFormData.append('images', "null");
     }
 
-
+    try {
+      const bungaeFormDataBungaeId = { bungaeId: bungaeId, bungaeFormData: bungaeFormData };
+      const response = await dispatch(EditBungae(bungaeFormDataBungaeId)).unwrap();
+      Swal.fire('게시글 수정 성공', '게시글이 성공적으로 수정되었습니다.', 'success');
+      navigate(`/bungae/${bungaeId}`);
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: '게시글 생성 실패',
+        text: '생성 중 오류가 발생했습니다. 다시 시도하세요.',
+      });
+    }
   };
 
   useEffect(() => {
@@ -480,10 +467,10 @@ const BungaeEdit = () => {
                 icon={faCalendarAlt}
                 style={{ marginRight: 5 }}
               />
-              Meeting Start Time<RequiredIcon>*</RequiredIcon>
+              Gather At<RequiredIcon>*</RequiredIcon>
             </Label>
             <Datetime
-              value={meetingStartTime ? moment(meetingStartTime) : ""}  //왼쪽값이 false인 경우 -> 오른쪽값 반환
+              value={meetingStartTime ? moment(meetingStartTime) : ""}  // 왼쪽값이 false인 경우 -> 오른쪽값 반환
               onChange={handleMeetingTimeChange}
               inputProps={{ placeholder: "Select Date and Time" }}
               dateFormat="YYYY-MM-DD"
@@ -498,12 +485,12 @@ const BungaeEdit = () => {
           <ButtonGroup>
             {["TRAVEL", "DRINKING", "FOOD", "SPORTS", "ACTIVITY", "GAME", "PARTY", "CULTURE", "STUDY", "LANGUAGE", "HOBBY", "UNSELECTED"].map((key) => (
               <Button
-              key={key}
-              selected={keyword===key}
-              onClick={() => handleKeywordChange(key)}
-            >
-              {key}
-            </Button>
+                key={key}
+                selected={keyword === key}
+                onClick={() => handleKeywordChange(key)}
+              >
+                {key}
+              </Button>
             ))}
           </ButtonGroup>
         </div>
@@ -567,10 +554,16 @@ const BungaeEdit = () => {
           onChange={handleImageChange}
         />
         <ImagePreviewContainer>
-          {imageUrls.map((url, index) => (
-            <ImagePreview key={index}>
+          {prevImageUrls.map((url, index) => (
+            <ImagePreview key={`prev-${index}`}>
               <img src={url} alt={`Preview ${index}`} />
-              <button onClick={() => handleImageRemove(index)}>X</button>
+              <button onClick={() => handlePrevImageRemove(index)}>X</button>
+            </ImagePreview>
+          ))}
+          {newImageUrls.map((url, index) => (
+            <ImagePreview key={`new-${index}`}>
+              <img src={url} alt={`Preview ${index}`} />
+              <button onClick={() => handleNewImageRemove(index)}>X</button>
             </ImagePreview>
           ))}
         </ImagePreviewContainer>
@@ -630,35 +623,6 @@ const BungaeEdit = () => {
               }))
             }
           />
-          <div>
-            <Label>
-              <FontAwesomeIcon
-                icon={faCalendarAlt}
-                style={{ marginRight: 5 }}
-              />
-              Meeting Period<RequiredIcon>*</RequiredIcon>
-            </Label>
-            <StyledDateRangePicker
-              startDate={additionalInfo.meetingPeriodStart ? moment(additionalInfo.meetingPeriodStart) : null}
-              startDateId="meeting_period_start_id"
-              endDate={additionalInfo.meetingPeriodEnd ? moment(additionalInfo.meetingPeriodEnd) : null}
-              endDateId="meeting_period_end_id"
-              onDatesChange={({ startDate, endDate }) =>
-                setAdditionalInfo((prev) => ({
-                  ...prev,
-                  meetingPeriodStart: startDate ? startDate.format("YYYY-MM-DD") : "",
-                  meetingPeriodEnd: endDate ? endDate.format("YYYY-MM-DD") : "",
-                }))
-              }
-              focusedInput={additionalFocusedInput}
-              onFocusChange={(focusedInput) =>
-                setAdditionalFocusedInput(focusedInput)
-              }
-              displayFormat="YYYY/MM/DD"
-              numberOfMonths={1}
-              isOutsideRange={() => false}
-            />
-          </div>
         </NoteContainer>
       </Form>
       <StyledButton onClick={handleSubmit}>Submit</StyledButton>

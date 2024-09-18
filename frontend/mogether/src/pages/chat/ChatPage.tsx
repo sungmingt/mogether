@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import UserIdProfile from "../../components/profile/UserIdProfile";
+import ChatRoom from "../../components/chat/ChatRoom"; // MoimList 경로를 맞게 설정하세요
 import Header from "../Header";
 import Footer from "../Footer";
 
@@ -10,15 +10,14 @@ const PageContainer = styled.div`
   min-height: 100vh;
 `;
 
-
-const UserProfilePage: React.FC = () => {
+const ChatPage: React.FC = () => {
   return (
     <PageContainer>
       <Header />
-      <UserIdProfile />
+      <ChatRoom />
       <Footer />
     </PageContainer>
   );
 };
 
-export default UserProfilePage;
+export default ChatPage;

@@ -25,6 +25,10 @@ import GoogleRedirectUrlPage from './components/auth/GoogleRedirectUrlPage';
 import PrivacyLaw from './pages/auth/PrivacyLaw';
 import SocialRegisterUrl from './components/auth/SocialRegisterRedirection';
 import ChangePasswordPage from './pages/mypage/ChangePasswordPage';
+import FindPasswordSuccessPage from './pages/auth/FindPasswordSuccessPage';
+import UserProfilePage from './pages/mypage/UserProfilePage';
+import ChatListPage from './pages/chat/ChatListPage';
+import ChatPage from './pages/chat/ChatPage';
 
 
 
@@ -34,8 +38,6 @@ const App = () => {
     <GlobalStyle />
     <Router>
       <Routes>
-        {/* <Route path = "/login" element = {<Login />} />
-        <Route path="/register" element={<Register />} /> */}
         <Route path="/" element={<Home />} />
         <Route path="/moim/list" element={<MoimList />} />
         <Route path="/moim/:id" element={<MoimCard />} />
@@ -60,6 +62,10 @@ const App = () => {
         <Route path="/law/privacy" element={<PrivacyLaw />} />
         <Route path="/social/register" element={<SocialRegisterUrl />} />
         <Route path="/changePassword" element={<ChangePasswordPage />} /> 
+        <Route path="/forgot-password/success" element={<FindPasswordSuccessPage />} />
+        <Route path="/user/:id" element={<UserProfilePage />} />
+        <Route path="/ChatList" element={<ChatListPage />} />
+        <Route path="/Chat/:roomId" element={<ChatPage />} /> 
       </Routes>
     </Router>
     </>

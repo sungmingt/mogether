@@ -28,6 +28,7 @@ interface AuthState {
     error: string | null;
     loading: boolean;
     userId: number;
+    new_password?: string;  //있어도 그만 없어도 그만
 }
 
 const initialState: AuthState = {
@@ -36,6 +37,7 @@ const initialState: AuthState = {
     loading: false,
     error: null,
     userId: Number(localStorage.getItem('userId')) || 0,
+    new_password: "",
 };
 
 export const login = createAsyncThunk(
@@ -214,6 +216,8 @@ const authSlice = createSlice({
                 console.log('response success' + action.payload);
                 state.loading = false;
                 state.error = null;
+                state.new_password = action.payload.password;
+                console.log(state.new_password);
             })
             .addCase(forgotPassword.rejected, (state, action) => {
                 state.loading = false;

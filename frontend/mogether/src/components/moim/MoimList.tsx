@@ -254,7 +254,7 @@ const KeywordButton = styled.button<{ selected: boolean }>`
   }
 `;
 const KeyowrdContainer = styled.button`
-  display: flex;
+  display:inline-block;
   align-items: center;
   justify-content: center;
   border-radius: 20px;

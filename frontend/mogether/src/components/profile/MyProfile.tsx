@@ -1,11 +1,11 @@
 import React, { useState, useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import styled from "styled-components";
-import { fetchProfile, selectUserProfile, PatchUserProfile, DeleteUser } from "../../store/slices/userProfileSlice";
-import { RootState, AppDispatch } from "../../store/store";
+import { fetchProfile, PatchUserProfile, DeleteUser } from "../../store/slices/userProfileSlice";
+import { AppDispatch } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
-import { selectUserId, selectIsAuthenticated } from "../../store/slices/authSlice";
+import { locations } from "../../utils/location";
 
 const ProfileContainer = styled.div`
   display: flex;
@@ -34,36 +34,39 @@ const ProfileImage = styled.img`
 
 const ProfileItem = styled.div`
   display: flex;
-  align-items: center;
-  margin-bottom: 10px;
+  flex-direction: column;
+  align-items: flex-start;
+  margin-bottom: 15px;
   width: 100%;
   max-width: 600px;
 `;
 
 const Label = styled.label`
   font-weight: bold;
-  margin-right: 10px;
-  width: 120px;
+  margin-bottom: 5px;
 `;
 
 const Value = styled.div`
-  flex: 1;
+  width: 100%;
+  padding: 10px;
+  background-color: #eee;
+  border-radius: 5px;
 `;
 
 const Input = styled.input`
-  flex: 1;
+  width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
+  margin-bottom: 10px;
 `;
 
 const Select = styled.select`
-  flex: 1;
+  width: 100%;
   padding: 10px;
   border: 1px solid #ccc;
   border-radius: 5px;
-  width: 100%;
-  box-sizing: border-box;
+  margin-bottom: 10px;
 `;
 
 const Button = styled.button`
@@ -81,8 +84,55 @@ const Button = styled.button`
   }
 `;
 
-const FileInput = styled.input`
+const DeleteButton = styled.button`
+  padding: 10px 20px;
+  background-color: #FF0000;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+
+  &:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+  }
+`;
+
+const FileInputContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
   margin-top: 10px;
+`;
+
+const FileLabel = styled.label`
+  padding: 10px 20px;
+  background-color: #7848f4;
+  color: #ffffff;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-bottom: 10px;
+  &:hover {
+    background-color: #5c3bbf;
+  }
+`;
+
+const FileInput = styled.input`
+  display: none;
+`;
+
+const Divider = styled.hr`
+  width: 100%;
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 20px 0;
+`;
+
+const AddressContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 `;
 
 const MyProfile: React.FC = () => {
@@ -91,6 +141,9 @@ const MyProfile: React.FC = () => {
   const [editMode, setEditMode] = useState(false);
   const [formData, setFormData] = useState<any>({});
   const [profileImage, setProfileImage] = useState<File | null>(null);
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  const [selectedCity, setSelectedCity] = useState<string>('');
+  const [selectedDistrict, setSelectedDistrict] = useState<string>('');
   const navigate = useNavigate();
   const accessToken = localStorage.getItem("accessToken");
 
@@ -99,11 +152,13 @@ const MyProfile: React.FC = () => {
         try {
             const response = await dispatch(fetchProfile(userId)).unwrap(); 
             setFormData(response);
-            console.log(response);
+            if (response.imageUrl) setPreviewImage(response.imageUrl);
+            setSelectedCity(response.address?.city || '');
+            setSelectedDistrict(response.address?.gu || '');
         }
         catch (error) {
             console.error(error);
-            Swal.fire('error', error as string, 'error');
+            Swal.fire('error', 'Failed to fetch profile data', 'error');
         }
     }
     fetchProfileData();
@@ -125,18 +180,57 @@ const MyProfile: React.FC = () => {
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setProfileImage(e.target.files[0]);
+      const file = e.target.files[0];
+      setProfileImage(file);
+      setPreviewImage(URL.createObjectURL(file));
     }
+  };
+
+  const handleCityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const city = e.target.value;
+    setSelectedCity(city);
+    setSelectedDistrict(''); // Reset district when city changes
+    setFormData({
+      ...formData,
+      address: {
+        ...formData.address,
+        city,
+        gu: '',
+      },
+    });
+  };
+
+  const handleDistrictChange = (e: React.ChangeEvent<HTMLSelectElement>): void => {
+    const district = e.target.value;
+    setSelectedDistrict(district);
+    setFormData({
+      ...formData,
+      address: {
+        ...formData.address,
+        gu: district,
+      },
+    });
+  };
+
+  const handleDetailsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const details = e.target.value;
+    setFormData({
+      ...formData,
+      address: {
+        ...formData.address,
+        details,
+      },
+    });
   };
 
   const handleUserDelete = async () => {
     try {
-      const response = await dispatch(DeleteUser(userId));
+      await dispatch(DeleteUser(userId)).unwrap();
       Swal.fire("Success", "성공적으로 탈퇴되었습니다.", "success");
       navigate("/");
     } catch (error) {
       console.error(error);
-      Swal.fire("Error", error as string, 'error');
+      Swal.fire("Error", 'Failed to delete user', 'error');
     }
   }
 
@@ -170,11 +264,12 @@ const MyProfile: React.FC = () => {
         )
       );
       try {
-        const response = await dispatch(PatchUserProfile(patchData)).unwrap();
+        const profileData = { patchData, userId };
+        await dispatch(PatchUserProfile(profileData)).unwrap();
         Swal.fire('Success', '프로필이 수정되었습니다.', 'success'); 
       } catch (error) {
         console.error(error);
-        Swal.fire('error', error as string, 'error');
+        Swal.fire('error', 'Failed to update profile', 'error');
       }
     }
     setEditMode(!editMode);
@@ -183,9 +278,12 @@ const MyProfile: React.FC = () => {
   return (
     <ProfileContainer>
       <ProfileTitle>My Profile</ProfileTitle>
-      <ProfileImage src={formData.imageUrl || "../../assets/user_default.png"} alt="Profile" />
+      <ProfileImage src={previewImage || "../../assets/user_default.png"} alt="Profile" />
       {editMode && (
-        <FileInput type="file" accept="image/*" onChange={handleImageChange} />
+        <FileInputContainer>
+          <FileLabel htmlFor="fileInput">이미지 선택</FileLabel>
+          <FileInput id="fileInput" type="file" accept="image/*" onChange={handleImageChange} />
+        </FileInputContainer>
       )}
       <ProfileItem>
         <Label>Nickname:</Label>
@@ -200,32 +298,42 @@ const MyProfile: React.FC = () => {
           <Value>{formData.nickname}</Value>
         )}
       </ProfileItem>
+      <Divider />
       <ProfileItem>
         <Label>Address:</Label>
         {editMode ? (
-          <>
-            <Input
-              type="text"
-              name="city"
-              value={formData.address?.city}
-              onChange={handleInputChange}
-              placeholder="City"
-            />
-            <Input
-              type="text"
-              name="gu"
-              value={formData.address?.gu}
-              onChange={handleInputChange}
-              placeholder="GU"
-            />
+          <AddressContainer>
+            <Select
+              value={selectedCity}
+              onChange={handleCityChange}
+            >
+              <option value="">행정시를 선택하세요</option>
+              {locations.map((loc) => (
+                <option key={loc.name} value={loc.name}>
+                  {loc.name}
+                </option>
+              ))}
+            </Select>
+            <Select
+              value={selectedDistrict}
+              onChange={handleDistrictChange}
+              disabled={!selectedCity}
+            >
+              <option value="">행정구를 선택하세요</option>
+              {locations.find((loc) => loc.name === selectedCity)?.subArea.map((district) => (
+                <option key={district} value={district}>
+                  {district}
+                </option>
+              ))}
+            </Select>
             <Input
               type="text"
               name="details"
               value={formData.address?.details}
-              onChange={handleInputChange}
+              onChange={handleDetailsChange}
               placeholder="Details"
             />
-          </>
+          </AddressContainer>
         ) : (
           <Value>
             {formData.address?.city} {formData.address?.gu}{" "}
@@ -233,6 +341,7 @@ const MyProfile: React.FC = () => {
           </Value>
         )}
       </ProfileItem>
+      <Divider />
       <ProfileItem>
         <Label>Age:</Label>
         {editMode ? (
@@ -246,6 +355,7 @@ const MyProfile: React.FC = () => {
           <Value>{formData.age}</Value>
         )}
       </ProfileItem>
+      <Divider />
       <ProfileItem>
         <Label>Gender:</Label>
         {editMode ? (
@@ -261,6 +371,7 @@ const MyProfile: React.FC = () => {
           <Value>{formData.gender}</Value>
         )}
       </ProfileItem>
+      <Divider />
       <ProfileItem>
         <Label>Intro:</Label>
         {editMode ? (
@@ -274,6 +385,7 @@ const MyProfile: React.FC = () => {
           <Value>{formData.intro}</Value>
         )}
       </ProfileItem>
+      <Divider />
       <ProfileItem>
         <Label>Phone Number:</Label>
         {editMode ? (
@@ -287,10 +399,11 @@ const MyProfile: React.FC = () => {
           <Value>{formData.phoneNumber}</Value>
         )}
       </ProfileItem>
+      <Divider />
       <Button onClick={handleToggleEdit}>
         {editMode ? "Save Changes" : "Edit Profile"}
       </Button>
-      <Button onClick={handleUserDelete}>탈퇴하기</Button>
+      <DeleteButton onClick={handleUserDelete}>탈퇴하기</DeleteButton>
     </ProfileContainer>
   );
 };

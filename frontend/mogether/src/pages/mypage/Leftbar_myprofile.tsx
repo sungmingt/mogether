@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import styled, { keyframes } from "styled-components";
 import { FaBars, FaTimes } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
+import leftbarIcon from "../../assets/somoim_icon.png"
 
 const slideIn = keyframes`
   from {
@@ -43,7 +44,7 @@ const LeftBarContainer = styled.div<{ isOpen: boolean }>`
 
 const MenuIcon = styled.div`
   cursor: pointer;
-  font-size: 24px;
+  font-size: 25px;
   position: fixed;
   top: 30%;
   left: 0px;
@@ -53,6 +54,7 @@ const MenuIcon = styled.div`
 
 const MenuContainer = styled.div`
   margin-bottom: 20px;
+  padding: 10px;
 `;
 
 const MenuItem = styled.li`
@@ -91,7 +93,7 @@ const LeftBar: React.FC = () => {
   return (
     <>
       <MenuIcon onClick={handleMenuToggle}>
-        {menuOpen ? <FaTimes /> : <FaBars />}
+        {menuOpen ? <FaTimes /> : <img src={leftbarIcon} alt="Leftbar Icon" />}
       </MenuIcon>
       <LeftBarContainer isOpen={menuOpen}>
         <MenuContainer>

@@ -194,18 +194,16 @@ const ContentText = styled.p`
 const MyInterestBungae: React.FC = () => {
     const userId = Number(localStorage.getItem("userId")) || 0;
     const dispatch = useDispatch<AppDispatch>();
-    const [interestCategory, setInterestCategory] = useState<string>("bungae");
-    const [myInterestBungae, setMyInterestBungae] = useState<Bungae[]>([]); 
     const navigate = useNavigate();
-    const [visiblePosts, setVisiblePosts] = useState<Bungae[]>([]); 
+    const { visiblePosts, allPosts} = useSelector(
+      (state: RootState) => state.user
+    );
 
     useEffect(() => {
         const myInterestBungaeList = async () => {
             try {
                 const response = await dispatch(MyInterestedBungae(userId)).unwrap();
-                setMyInterestBungae(response);
                 console.log(response);
-                setVisiblePosts(myInterestBungae.slice(0, 12));    
             }
             catch (error) {
                 console.error(error);
@@ -218,13 +216,7 @@ const MyInterestBungae: React.FC = () => {
 
     
     
-    // useEffect(() => {
-    //     if (sortOrder === 'latest') {
-    //       dispatch(sortPostsByLatest());
-    //     } else {
-    //       dispatch(sortPostsByLikes());
-    //     }
-    //   }, [sortOrder, dispatch]);
+
     
       const handleLoadMore = () => {
         dispatch(loadMorePosts());
@@ -379,7 +371,7 @@ const MyInterestBungae: React.FC = () => {
           </PostCard>
         ))}
       </PostGrid>
-      {visiblePosts.length < myInterestBungae.length && (
+      {visiblePosts.length < allPosts.length && (
         <LoadMoreButton onClick={handleLoadMore}>Load more</LoadMoreButton>
       )}
     </PostListContainer>

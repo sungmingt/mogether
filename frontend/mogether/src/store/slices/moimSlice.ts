@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk, PayloadAction, AsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { fetchMoimApi, MoimCardApi, interestMoimApi, searchMoimApi, joinMoimApi, interestMoimDeleteApi, joinQuitMoimApi } from '../../utils/api';
+import { fetchMoimApi, MoimCardApi, interestMoimApi, searchMoimApi, joinMoimApi, interestMoimDeleteApi, joinQuitMoimApi, MoimUserKickOutApi } from '../../utils/api';
 // 카테고리가 moim인 모든 게시글들을 저장하는 slice
+//post 인터페이스는 moim, bungae 인터페이스는 bungae
 export interface Post {  //여기서의 post는....moim의 형식을 의미한다....
   id: number;   // 서버에서 id를 줄 때 -> id 이렇게 준다...
   title: string;
@@ -167,6 +168,20 @@ export const searchPosts = createAsyncThunk(
   }
 );
 
+export const moimUserKickOut = createAsyncThunk(
+  'posts/kickOut',
+  async (kickOut: any, thunkAPI) => {
+    try {
+      const response = await MoimUserKickOutApi(kickOut);
+      if (response.status === 200 || response.status === 201) {
+        return response.data;
+      }
+    } catch (error) {
+      return thunkAPI.rejectWithValue('Failed to kick out user');
+    }
+  }
+)
+
 
 const postSlice = createSlice({   // 게시글 리스트의 상태와 액션을 관리하는 리듀서
   name: 'posts',
@@ -279,6 +294,13 @@ const postSlice = createSlice({   // 게시글 리스트의 상태와 액션을 
       .addCase(quitJoin.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
+      })
+      .addCase(moimUserKickOut.fulfilled, (state, action) => {
+        state.loading = false;
+        console.log(action.payload);
+      })
+      .addCase(moimUserKickOut.rejected, (state, action) => {
+        state.error = action.payload as string; 
       });
       
   },

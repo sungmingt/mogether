@@ -71,7 +71,14 @@ const Button = styled.button`
   }
 `;
 
-const userProfile: React.FC = () => {
+const Divider = styled.hr`
+  width: 100%;
+  border: none;
+  border-top: 1px solid #eee;
+  margin: 20px 0;
+`;
+
+const UserIdProfile: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const { id } = useParams<{ id: string }>(); // URL에서 moimId를 가져옴 -> 여기서 url은 내가 설정한 url
   const userId = id ? parseInt(id, 10) : 0;
@@ -106,16 +113,18 @@ const userProfile: React.FC = () => {
 // 여기서 이미지는 오로지 url로만
   return (
     <ProfileContainer>
-      <ProfileTitle>My Profile</ProfileTitle> 
+      <ProfileTitle>User Profile</ProfileTitle> 
       <ProfileImage src={formData.imageUrl || "../../assets/user_default.png"} alt="Profile" />
       <ProfileItem>
         <Label>Nickname:</Label>
         <Value>{formData.nickname}</Value>
       </ProfileItem>
+      <Divider />
       <ProfileItem>
         <Label>Name:</Label>
         <Value>{formData.name}</Value>
       </ProfileItem>
+      <Divider />
       <ProfileItem>
         <Label>Address:</Label>
         <Value>
@@ -123,26 +132,31 @@ const userProfile: React.FC = () => {
             {formData.address?.details}
           </Value>
       </ProfileItem>
+      <Divider />
       <ProfileItem>
         <Label>Age:</Label>
         <Value>{formData.age}</Value>
       </ProfileItem>
+      <Divider />
       <ProfileItem>
         <Label>Gender:</Label>
         <Value>{formData.gender}</Value>
       </ProfileItem>
+      <Divider />
       <ProfileItem>
         <Label>Intro:</Label>
         <Value>{formData.intro}</Value>
       </ProfileItem>
+      <Divider />
       <ProfileItem>
         <Label>Phone Number:</Label>
         <Value>{formData.phoneNumber}</Value>
       </ProfileItem>
+      <Divider />
     </ProfileContainer>
   );
 };
 
-export default userProfile;
+export default UserIdProfile;
 
 

@@ -3,12 +3,12 @@ import { createGlobalStyle } from 'styled-components';
 const GlobalStyle = createGlobalStyle`
   @font-face {
     font-family: 'Maplestory Light';
-    src: url('./assets/fonts/maplestory_light-webfont.woff2') format('woff2');
+    src: url('./assets/fonts/maplestory_light-webfont.woff2') format('font-woff2');
   }
 
   @font-face {
     font-family: 'Maplestory Bold';
-    src: url('./assets/fonts/maplestory_bold-webfont.woff2') format('woffw');
+    src: url('./assets/fonts/maplestory_bold-webfont.woff2') format('font-woff2');
   }
 
   body {

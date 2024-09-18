@@ -9,6 +9,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
     "@fortawesome/react-fontawesome": "^0.2.2",
     "@reduxjs/toolkit": "^2.2.7",
+    "@stomp/stompjs": "^7.0.0",
     "@testing-library/jest-dom": "^6.4.8",
     "@testing-library/react": "^16.0.0",
     "@testing-library/user-event": "^14.5.2",
@@ -17,6 +18,7 @@
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
     "@types/react-slick": "^0.23.13",
+    "@types/slick-carousel": "^1.6.40",
     "@typescript-eslint/eslint-plugin": "^8.1.0",
     "@typescript-eslint/parser": "^8.1.0",
     "ajv": "^8.17.1",
@@ -44,6 +46,9 @@
     "redux-thunk": "^3.1.0",
     "schema-utils": "^4.2.0",
     "slick-carousel": "^1.8.1",
+    "sockjs": "^0.3.24",
+    "sockjs-client": "^1.6.1",
+    "stompjs": "^2.3.3",
     "styled-components": "^6.1.12",
     "sweetalert2": "^11.12.4",
     "typescript": "^5.5.4",
@@ -77,6 +82,8 @@
     "@types/react-datepicker": "^7.0.0",
     "@types/react-dates": "^21.8.6",
     "@types/react-image-gallery": "^1.2.4",
-    "@types/react-toggle": "^4.0.5"
+    "@types/react-toggle": "^4.0.5",
+    "@types/sockjs-client": "^1.5.4",
+    "@types/stompjs": "^2.3.9"
   }
 }

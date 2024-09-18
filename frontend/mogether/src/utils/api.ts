@@ -1,6 +1,8 @@
 import axios from 'axios';
 import { forgotPassword } from '../store/slices/authSlice';
 import { access } from 'fs';
+import { setAuthenticated } from '../store/slices/authSlice';
+import { UseDispatch } from 'react-redux';
 
 const API_BASE_URL = "https://api.mo-gether.site"; // 백엔드 서버의 기본 URL
 
@@ -52,7 +54,13 @@ api.interceptors.response.use(
 
         return axios(originalRequest);
       } catch (err) {
-        return Promise.reject(err);
+        if (error.response && error.response.status === 401) {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          localStorage.removeItem('userId');
+          window.location.reload();  //새로고침
+        }
+        return Promise.reject(error);
       }
     }
 
@@ -108,7 +116,13 @@ api2.interceptors.response.use(
 
         return axios(originalRequest);
       } catch (err) {
-        return Promise.reject(err);
+        if (error.response && error.response.status === 401) {
+          localStorage.removeItem('accessToken');
+          localStorage.removeItem('refreshToken');
+          localStorage.removeItem('userId');
+          window.location.reload();  //새로고침
+        }
+        return Promise.reject(error);
       }
     }
 
@@ -227,8 +241,13 @@ export const searchMoimApi = async (searchData: any) => {
   return response;
 }
 
+export const searchBungaeApi = async (searchData: any) => {  // any 형식은 대부분 객체 형식이라고 봐도 무방...
+  const response = await api.get(`/bungae/search?name=${searchData.name}&city=${searchData.city}&gu=${searchData.gu}`);
+  return response;
+}
+
 export const changePasswordApi = async (passwordData: {userId: number, oldPassword: string, newPassword: string}) => {
-  const response = await api.post(`/user/${passwordData.userId}/password`, { exPassword: passwordData.oldPassword, newPassword: passwordData.newPassword });
+  const response = await api.patch(`/user/${passwordData.userId}/password`, { exPassword: passwordData.oldPassword, newPassword: passwordData.newPassword });
   return response;
 };
 
@@ -279,16 +298,16 @@ export const joinQuitBungaeApi = async (join: any) => {
 }
 
 export const changeUserProfile = async (profileData: any) => {
-  const response = await api.patch(`/user/${profileData.userId}`, profileData.data);
+  const response = await api2.patch(`/user/${profileData.userId}`, profileData.patchData);
   return response;
 }
 
-export const EditMoimApi = async (moimId: number, editData: any) => {
+export const EditMoimApi = async (moimId: number, editData: FormData) => {
   const response = await api2.patch(`/moim/${moimId}`, editData);
   return response;
 }
 
-export const EditBungaeApi = async (bungaeId: number, editData: any) => {
+export const EditBungaeApi = async (bungaeId: number, editData: FormData) => {
   const response = await api2.patch(`/bungae/${bungaeId}`, editData);
   return response;
 }
@@ -297,6 +316,27 @@ export const DeleteUserApi = async (userId: number) => {
   const response = await api.delete(`/user/${userId}`);
   return response;
 }
+
+export const MoimUserKickOutApi = async (kickOut: any) => {
+  const response = await api.post('/moim/kickout', {userId: kickOut.userId, moimId: kickOut.moimId});
+  return response;
+}
+
+export const BungaeKickOutApi = async (kickOut: any) => {
+  const response = await api.post('/bungae/kickout', {userId: kickOut.userId, bungaeId: kickOut.bungaeId});
+  return response;
+}
+
+export const ChatListApi = async (userId: number) => {
+  const response = await api.get(`/user/${userId}/chat`);
+  return response;
+}
+
+export const ChatRoomApi = async (roomId: number) => {
+  const response = await api.get(`/chat/room/${roomId}`);
+  return response;
+}
+
 
 
 

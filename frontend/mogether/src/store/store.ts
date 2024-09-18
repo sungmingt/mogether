@@ -4,6 +4,7 @@ import userReducer from './slices/userSlice';
 import moimReducer from './slices/moimSlice';
 import bungaeReducer from './slices/bungaeSlice';
 import userProfileReducer from './slices/userProfileSlice';
+import chatReducer from './slices/chatSlice';
 
 import App from '../App';
 
@@ -14,6 +15,7 @@ const store = configureStore({
         moim: moimReducer,
         bungae: bungaeReducer,
         userProfile: userProfileReducer,
+        chat: chatReducer,
     },
 })
 

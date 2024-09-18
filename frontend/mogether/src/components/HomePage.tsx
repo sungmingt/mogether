@@ -50,6 +50,40 @@ const Section = styled.section`
   }
 `;
 
+const Section2 = styled.section`
+  width: 100%;
+  height: 80vh;
+  padding: 60px 20px;
+  margin: 0;
+  background-color: ${({ color }) => color || "#ffffff"};
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  opacity: 0;
+  transform: translateY(50px);
+  transition: opacity 1s ease-in-out, transform 1s ease-in-out;
+  box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+
+  &.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.15);
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    text-align: center;
+    height: auto;
+  }
+`;
+
 const TextContainer = styled.div`
   flex: 2;
   margin: 10px;
@@ -187,9 +221,6 @@ const HomePage: React.FC = () => {
     }
   }, [userId])
 
-  const handleImageClick = () => {
-    navigate("/postCreate");
-  };
 
   return (
     <HomePageContainer>
@@ -201,10 +232,10 @@ const HomePage: React.FC = () => {
           <Title>❤️모게더에 오신 것을 환영합니다❤️</Title>
           <TypingText>나의 취미를 찾는 첫 시도, 모게더</TypingText>
           <ButtonGroup>
-            <SectionButton onClick={() => navigate("/postCreate")}>
+            <SectionButton onClick={() => navigate("/moim/list")}>
               소모임 참여하기
             </SectionButton>
-            <SectionButton onClick={() => navigate("/postCreate")}>
+            <SectionButton onClick={() => navigate("/bungae/list")}>
               번개모임 참여하기
             </SectionButton>
           </ButtonGroup>
@@ -213,9 +244,25 @@ const HomePage: React.FC = () => {
           <Image src={require("../assets/home2.png")} alt="Community" />
         </ImageWrapper>
       </Section>
-      <Section
+      <Section2
         className={visibleSections[1] ? "visible" : ""}
         color="#e6e6e6"
+      >
+        <TextContainer>
+          <Title>모게더를 통해 스스로를 더욱 성장시켜 보세요!</Title>
+          <TypingText>
+            모임을 통해 다양한 경험을 하고, 스스로 성장시킬 기회를 잡아보세요. <br></br>
+            <br></br>
+            모게더를 통해 한층 더 발전된 나 자신을 만나보세요💕
+          </TypingText>
+        </TextContainer>
+        <ImageWrapper>
+          <Image src={require("../assets/somoim_study.png")} alt="Join a Group" />
+        </ImageWrapper>
+      </Section2>
+      <Section
+        className={visibleSections[2] ? "visible" : ""}
+        color="#ffffff"
       >
         <TextContainer>
           <Title>함께라서 더 즐거운 우리들의 모임</Title>
@@ -226,7 +273,7 @@ const HomePage: React.FC = () => {
           </TypingText>
         </TextContainer>
         <ImageWrapper>
-          <Image src={require("../assets/somoim.png")} alt="Join a Group" />
+          <Image src={require("../assets/togetherliving.png")} alt="Join a Group" />
         </ImageWrapper>
       </Section>
     </HomePageContainer>
