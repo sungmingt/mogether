@@ -121,8 +121,9 @@ const ChatRoomList: React.FC = () => {
     const { roomList, loading, error } = useSelector((state: RootState) => selectChat(state));
     const userId = Number(localStorage.getItem('userId'));
 
-    const getUniqueUserCount = (room: any) => {  //set 함수는 중복을 자동적으로 없애주는 자료구조, 그리고 any는 그냥 객체를 모두 any로 퉁쳤음...
-      const uniqueUsers = new Set(room.participants.map((participant: any) => participant.userId));
+    const getUniqueUserCount = (room: any) => {
+      // participants가 존재하는지 확인하고, 존재할 경우에만 Set을 사용하여 중복된 사용자를 제거
+      const uniqueUsers = room.participants ? new Set(room.participants.map((participant: any) => participant.userId)) : new Set();
       return uniqueUsers.size;
     };
   
