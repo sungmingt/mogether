@@ -156,7 +156,7 @@ const ChatRoomList: React.FC = () => {
             <RoomInfoContainer>
               <RoomInfo>
                 <FaUser />
-                {getUniqueUserCount(room)}명
+                {room.userCount}명
               </RoomInfo>
               <RoomInfo>
                 <FaCommentDots />
