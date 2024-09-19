@@ -6,6 +6,7 @@ import { AppDispatch } from "../../store/store";
 import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { locations } from "../../utils/location";
+import { fetchChatRooms } from "../../store/slices/chatSlice";
 
 const ProfileContainer = styled.div`
   display: flex;
@@ -135,6 +136,58 @@ const AddressContainer = styled.div`
   gap: 10px;
 `;
 
+const MemoContainer = styled.div`
+  width: 100%;
+  max-width: 600px;
+  background-color: #fff9c4;
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
+  border: 1px solid #f1e06f;
+`;
+
+const MemoTitle = styled.h3`
+  margin-bottom: 10px;
+  color: #7848f4;
+  font-size: 1.5rem;
+`;
+
+const MemoList = styled.ul`
+  list-style-type: none;
+  padding: 0;
+`;
+
+const MemoListItem = styled.li`
+  background-color: #ffffff;
+  padding: 10px 15px;
+  margin-bottom: 10px;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &:hover {
+    background-color: #f1e06f;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+`;
+
+const MemoRoomName = styled.span`
+  font-weight: bold;
+`;
+
+const MemoUserCount = styled.span`
+  color: #666;
+  font-size: 0.9rem;
+`;
+
 const MyProfile: React.FC = () => {
   const dispatch: AppDispatch = useDispatch();
   const userId = Number(localStorage.getItem('userId')) || 0;
@@ -144,6 +197,7 @@ const MyProfile: React.FC = () => {
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const [selectedCity, setSelectedCity] = useState<string>('');
   const [selectedDistrict, setSelectedDistrict] = useState<string>('');
+  const [chatRooms, setChatRooms] = useState<any[]>([]);
   const navigate = useNavigate();
   const accessToken = localStorage.getItem("accessToken");
 
@@ -169,6 +223,23 @@ const MyProfile: React.FC = () => {
       navigate("/login");
     }
   }, [accessToken, navigate]);
+
+  useEffect(() => {
+    const fetchChatRoomsData = async () => {
+      try {
+        const chatRoomsData = await dispatch(fetchChatRooms(userId)).unwrap();
+        setChatRooms(chatRoomsData);  //참여한 모임 리스트 저장
+      } catch (error) {
+        console.error("Failed to fetch chat rooms", error);
+      }
+    };
+
+    fetchChatRoomsData();
+  }, [dispatch, userId]);
+
+  const handleRoomClick = (gatherType: string, roomId: number) => {
+    navigate(`/${gatherType}/${roomId}`);
+  };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -404,6 +475,21 @@ const MyProfile: React.FC = () => {
         {editMode ? "Save Changes" : "Edit Profile"}
       </Button>
       <DeleteButton onClick={handleUserDelete}>탈퇴하기</DeleteButton>
+      <MemoContainer>
+        <MemoTitle>참여한 모임 리스트</MemoTitle>
+        <MemoList>
+          {chatRooms.length > 0 ? (
+            chatRooms.map((room) => (
+              <MemoListItem key={room.roomId} onClick={() => handleRoomClick(room.gatherType, room.roomId)}>
+                <MemoRoomName>{room.roomName}</MemoRoomName>
+                <MemoUserCount>{room.userCount}명 참여 중</MemoUserCount>
+              </MemoListItem>
+            ))
+          ) : (
+            <p>참여한 모임이 없습니다.</p>
+          )}
+        </MemoList>
+      </MemoContainer>
     </ProfileContainer>
   );
 };
