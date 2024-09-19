@@ -140,6 +140,7 @@ const chatSlice = createSlice({
           stompClient.subscribe(`/sub/chat/room/${roomId}`, (message) => {
             const receivedMessage: ChatMessage = JSON.parse(message.body);
             state.messages.push(receivedMessage);
+            state.messages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
           });
         },
         onStompError: (frame: Frame) => {
@@ -179,6 +180,7 @@ const chatSlice = createSlice({
       .addCase(fetchChatRoomDetail.fulfilled, (state, action: PayloadAction<ChatRoomDetail>) => {
         state.roomDetail = action.payload;
         state.messages = action.payload.chatMessageList;
+        state.messages = action.payload.chatMessageList.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
         state.loading = false;
       })
       .addCase(fetchChatRoomDetail.rejected, (state, action) => {
