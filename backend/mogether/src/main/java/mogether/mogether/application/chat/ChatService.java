@@ -11,7 +11,6 @@ import mogether.mogether.web.chat.dto.ChatMessageRequest;
 import mogether.mogether.web.chat.dto.ChatMessageResponse;
 import mogether.mogether.web.chat.dto.ChatRoomListResponse;
 import mogether.mogether.web.chat.dto.ChatRoomResponse;
-import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -27,10 +26,7 @@ public class ChatService {
     private final RedisChatMessageRepository redisChatMessageRepository;
     private final UserService userService;
     private final RedisPublisher redisPublisher;
-    private final RedisMessageListenerContainer listenerContainer;
 
-    //리스너에 수신된 메시지를 messagingTemplate을 이용해 WebSocket 구독자들에게 메시지를 전달
-    //Redis로부터 온 메시지를 역직렬화하여 ChatMessage DTO로 전환뒤 필요한 정보와 함께 메시지를 전달한다.
     public void sendMessage(ChatMessageRequest request) {
         //todo: user info caching
         User user = userService.findById(request.getSenderId());
@@ -46,7 +42,6 @@ public class ChatService {
         redisPublisher.publish(topic, chatMessageResponse);
     }
 
-    //채팅방 정보 반환
     @Transactional(readOnly = true)
     public ChatRoomResponse getChatRoom(Long roomId) {
         ChatRoom chatRoom = chatRoomService.findById(roomId);

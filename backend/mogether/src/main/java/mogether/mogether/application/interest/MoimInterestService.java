@@ -28,7 +28,6 @@ public class MoimInterestService {
     private final MoimService moimService;
     private final UserService userService;
 
-
     public void doInterest(Long moimId, AppUser appUser) {
         if(find(moimId, appUser.getId()).isPresent()) return;
 
