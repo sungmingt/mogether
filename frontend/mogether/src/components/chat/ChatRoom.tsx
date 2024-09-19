@@ -207,14 +207,14 @@ const SendButton = styled.button`
 
 const ChatRoom: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
-  const { messages, loading } = useSelector((state: RootState) => state.chat);
+  const { roomDetail, messages, loading } = useSelector((state: RootState) => state.chat);
   const [message, setMessage] = useState('');
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const navigate = useNavigate();
   const { roomId } = useParams<{ roomId: string }>();
   const userId = Number(localStorage.getItem('userId')) || 0;
   const [profile, setProfile] = useState<any>({});
-  const [roomDetail, setRoomDetail] = useState<any>({});
+  // const [roomDetail, setRoomDetail] = useState<any>({});
 
   useEffect(() => {
     if (userId > 0) {
@@ -224,8 +224,7 @@ const ChatRoom: React.FC = () => {
 
   useEffect(() => {
     if (roomId) {
-      const response = dispatch(fetchChatRoomDetail(Number(roomId))).unwrap();
-      setRoomDetail(response);
+      dispatch(fetchChatRoomDetail(Number(roomId)));
       dispatch(connectWebSocket(Number(roomId))); // WebSocket 연결
     }
 
@@ -262,7 +261,7 @@ const ChatRoom: React.FC = () => {
   return (
     <PageContainer>
       <ParticipantListContainer>
-        {roomDetail?.participants.map((participant: any) => (
+        {roomDetail?.participants.map((participant) => (
           <ParticipantItem key={participant.userId} onClick={() => {}}>
             <ParticipantImage src={participant.imageUrl || '../../assets/default_image.png'} alt={`${participant.nickname}의 프로필 이미지`} />
             <ParticipantName>{participant.nickname}</ParticipantName>
