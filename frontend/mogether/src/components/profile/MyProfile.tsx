@@ -480,7 +480,7 @@ const MyProfile: React.FC = () => {
         <MemoList>
           {chatRooms.length > 0 ? (
             chatRooms.map((room) => (
-              <MemoListItem key={room.roomId} onClick={() => handleRoomClick(room.gatherType, room.roomId)}>
+              <MemoListItem key={room.roomId} onClick={() => handleRoomClick(room.gatherType, room.gatherId)}>
                 <MemoRoomName>{room.roomName}</MemoRoomName>
                 <MemoUserCount>{room.userCount}명 참여 중</MemoUserCount>
               </MemoListItem>
