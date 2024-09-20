@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import Swal from "sweetalert2";
 import { locations } from "../../utils/location";
 import { fetchChatRooms } from "../../store/slices/chatSlice";
+import { FaUser } from "react-icons/fa";
 
 const ProfileContainer = styled.div`
   display: flex;
@@ -481,6 +482,7 @@ const MyProfile: React.FC = () => {
           {chatRooms.length > 0 ? (
             chatRooms.map((room) => (
               <MemoListItem key={room.roomId} onClick={() => handleRoomClick(room.gatherType, room.gatherId)}>
+                <FaUser />
                 <MemoRoomName>{room.roomName}</MemoRoomName>
                 <MemoUserCount>{room.userCount}명 참여 중</MemoUserCount>
               </MemoListItem>
