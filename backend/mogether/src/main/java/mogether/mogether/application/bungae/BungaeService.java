@@ -19,6 +19,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 import static mogether.mogether.application.user.UserValidator.*;
+import static mogether.mogether.exception.ErrorCode.*;
 import static mogether.mogether.exception.ErrorCode.BUNGAE_NOT_FOUND;
 
 @Transactional
@@ -35,8 +36,15 @@ public class BungaeService {
     public void join(Long bungaeId, AppUser appUser) {
         Bungae findBungae = findById(bungaeId);
         User findUser = userService.findById(appUser.getId());
-        BungaeUser bungaeUser = new BungaeUser(findBungae, findUser);
-        bungaeUserRepository.save(bungaeUser);
+        bungaeUserRepository.findByBungaeIdAndUserId(findBungae.getId(), findUser.getId())
+                .ifPresentOrElse(
+                        b -> {
+                            throw new MogetherException(ALREADY_JOINED_BUNGAE);
+                            },
+                        () -> {
+                            BungaeUser bungaeUser = new BungaeUser(findBungae, findUser);
+                            bungaeUserRepository.save(bungaeUser);
+                        });
         chatRoomService.joinBungaeChatRoom(findUser, findBungae);
     }
 
@@ -46,7 +54,7 @@ public class BungaeService {
 
         //bungaeUser 삭제
         BungaeUser bungaeUser = bungaeUserRepository.findByBungaeIdAndUserId(bungaeId, appUser.getId())
-                .orElseThrow(() -> new MogetherException(ErrorCode.NO_BUNGAEJOIN_HISTORY));
+                .orElseThrow(() -> new MogetherException(NO_BUNGAEJOIN_HISTORY));
         bungaeUserRepository.delete(bungaeUser);
     }
 
@@ -59,7 +67,7 @@ public class BungaeService {
 
         //bungaeUser 삭제
         BungaeUser bungaeUser = bungaeUserRepository.findByBungaeIdAndUserId(request.getBungaeId(), request.getUserId())
-                .orElseThrow(() -> new MogetherException(ErrorCode.NO_BUNGAEJOIN_HISTORY));
+                .orElseThrow(() -> new MogetherException(NO_BUNGAEJOIN_HISTORY));
         bungaeUserRepository.delete(bungaeUser);
     }
 

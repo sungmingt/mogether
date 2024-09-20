@@ -9,7 +9,6 @@ import mogether.mogether.domain.moim.MoimUser;
 import mogether.mogether.domain.moim.MoimUserRepository;
 import mogether.mogether.domain.oauth.AppUser;
 import mogether.mogether.domain.user.User;
-import mogether.mogether.exception.ErrorCode;
 import mogether.mogether.exception.MogetherException;
 import mogether.mogether.web.moim.dto.*;
 import org.springframework.stereotype.Service;
@@ -19,6 +18,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 import static mogether.mogether.application.user.UserValidator.*;
+import static mogether.mogether.exception.ErrorCode.*;
 import static mogether.mogether.exception.ErrorCode.MOIM_NOT_FOUND;
 
 @Transactional
@@ -35,8 +35,15 @@ public class MoimService {
     public void join(Long moimId, AppUser appUser) {
         Moim findMoim = findById(moimId);
         User findUser = userService.findById(appUser.getId());
-        MoimUser moimUser = new MoimUser(findMoim, findUser);
-        moimUserRepository.save(moimUser);
+        moimUserRepository.findByMoimIdAndUserId(findMoim.getId(), findUser.getId())
+                .ifPresentOrElse(
+                        m -> {
+                            throw new MogetherException(ALREADY_JOINED_MOIM);
+                        },
+                        () -> {
+                            MoimUser moimUser = new MoimUser(findMoim, findUser);
+                            moimUserRepository.save(moimUser);
+                        });
         chatRoomService.joinMoimChatRoom(findUser, findMoim);
     }
 
@@ -46,7 +53,7 @@ public class MoimService {
 
         //moimUser 삭제
         MoimUser moimUser = moimUserRepository.findByMoimIdAndUserId(moimId, appUser.getId())
-                .orElseThrow(() -> new MogetherException(ErrorCode.NOT_MOIM_MEMBER));
+                .orElseThrow(() -> new MogetherException(NOT_MOIM_MEMBER));
         moimUserRepository.delete(moimUser);
     }
 
@@ -58,7 +65,7 @@ public class MoimService {
         chatRoomService.deleteJoinUser(findMoim.getChatRoom().getId(), request.getUserId());
 
         MoimUser moimUser = moimUserRepository.findByMoimIdAndUserId(request.getMoimId(), request.getUserId())
-                .orElseThrow(() -> new MogetherException(ErrorCode.NOT_MOIM_MEMBER));
+                .orElseThrow(() -> new MogetherException(NOT_MOIM_MEMBER));
         moimUserRepository.delete(moimUser);
     }
 
