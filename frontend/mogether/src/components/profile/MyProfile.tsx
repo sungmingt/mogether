@@ -180,8 +180,14 @@ const MemoListItem = styled.li`
   }
 `;
 
+const MemoNicknameContainer = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
 const MemoRoomName = styled.span`
   font-weight: bold;
+  margin-left: 6px;
 `;
 
 const MemoUserCount = styled.span`
@@ -482,7 +488,7 @@ const MyProfile: React.FC = () => {
           {chatRooms.length > 0 ? (
             chatRooms.map((room) => (
               <MemoListItem key={room.roomId} onClick={() => handleRoomClick(room.gatherType, room.gatherId)}>
-                <MemoRoomName><FaUser />{room.roomName}</MemoRoomName>
+                <MemoNicknameContainer><FaUser /><MemoRoomName>{room.roomName}</MemoRoomName></MemoNicknameContainer>
                 <MemoUserCount>{room.userCount}명 참여 중</MemoUserCount>
               </MemoListItem>
             ))
