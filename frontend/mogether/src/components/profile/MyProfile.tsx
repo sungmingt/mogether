@@ -482,8 +482,7 @@ const MyProfile: React.FC = () => {
           {chatRooms.length > 0 ? (
             chatRooms.map((room) => (
               <MemoListItem key={room.roomId} onClick={() => handleRoomClick(room.gatherType, room.gatherId)}>
-                <FaUser />
-                <MemoRoomName>{room.roomName}</MemoRoomName>
+                <MemoRoomName><FaUser />{room.roomName}</MemoRoomName>
                 <MemoUserCount>{room.userCount}명 참여 중</MemoUserCount>
               </MemoListItem>
             ))
