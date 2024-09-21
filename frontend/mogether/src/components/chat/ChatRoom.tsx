@@ -260,15 +260,13 @@ const ChatRoom: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const userId = Number(localStorage.getItem('userId')) || 0;
   const [profile, setProfile] = useState<any>({});
-  const [imageLoaded, setImageLoaded] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
   const [selectedParticipant, setSelectedParticipant] = useState<any>({});
-  const [profileImage, setProfileImage] = useState<string>('');
 
   useEffect(() => {
     if (userId > 0) {
-      setProfile(dispatch(fetchProfile(userId)));
-      setProfileImage(profile.imageUrl);
+      dispatch(fetchProfile(userId))
+        .then((response) => setProfile(response.payload));
     }
   }, [dispatch, userId]);
 
@@ -288,14 +286,14 @@ const ChatRoom: React.FC = () => {
   }, [messages]);
 
   const handleSendMessage = () => {
-    if (message.trim() !== '' && profile && imageLoaded) {
+    if (message.trim() !== '' && profile.imageUrl) {
       dispatch(
         sendMessage({
           roomId: Number(roomId),
           senderId: userId,
           nickname: profile.nickname,
           message: message,
-          senderImageUrl: profile.imageUrl || '',
+          senderImageUrl: profile.imageUrl,
         })
       );
       setMessage('');
@@ -305,14 +303,6 @@ const ChatRoom: React.FC = () => {
   const handleExitRoom = () => {
     navigate('/ChatList');
   };
-
-  const handleImageLoad = () => {
-    setImageLoaded(true); // 이미지가 로드되면 상태를 true로 변경
-  };
-
-  if (loading) {
-    return <LoadingSpinner />;
-  }
 
   const openModal = (participant: any) => {
     setSelectedParticipant(participant);
@@ -324,16 +314,20 @@ const ChatRoom: React.FC = () => {
   };
 
   const handleUserInfoClick = () => {
-    if (selectedParticipant) {   //eventInfo, 즉 카드 정보가 존재하면 이동
+    if (selectedParticipant) {   // eventInfo, 즉 카드 정보가 존재하면 이동
       navigate(`/user/${selectedParticipant.userId}`);
     }
   };
-  
+
   const handleUserPostsClick = () => {
     if (selectedParticipant) {
       navigate(`/usercreatedMoim/${selectedParticipant.userId}`);
     }
   };
+
+  if (loading) {
+    return <LoadingSpinner />;
+  }
 
   return (
     <PageContainer>
@@ -343,7 +337,6 @@ const ChatRoom: React.FC = () => {
             <ParticipantImage
               src={participant.imageUrl}
               alt={`${participant.nickname}의 프로필 이미지`}
-              onLoad={handleImageLoad} // 이미지 로드 확인
             />
             <ParticipantName>{participant.nickname}</ParticipantName>
           </ParticipantItem>
@@ -360,13 +353,12 @@ const ChatRoom: React.FC = () => {
             <MessageContainer key={msg.id} isOwnMessage={msg.senderId === userId}>
               <ProfileContainer>
                 <ProfileImage
-                  src={profile.imageUrl}
+                  src={msg.senderImageUrl || '../../assets/default_image.png'}
                   alt={`${msg.nickname}의 프로필 이미지`}
-                  onLoad={handleImageLoad}
                 />
                 <Nickname>{msg.nickname}</Nickname>
               </ProfileContainer>
-              {imageLoaded && <MessageBubble isOwnMessage={msg.senderId === userId}>{msg.message}</MessageBubble>}
+              <MessageBubble isOwnMessage={msg.senderId === userId}>{msg.message}</MessageBubble>
             </MessageContainer>
           ))}
           <div ref={messagesEndRef} />
@@ -379,22 +371,24 @@ const ChatRoom: React.FC = () => {
             onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
             placeholder="메시지를 입력하세요..."
           />
-          <SendButton onClick={handleSendMessage} disabled={!message.trim() || !imageLoaded}>
+          <SendButton onClick={handleSendMessage} disabled={!message.trim()}>
             전송
           </SendButton>
         </ChatInputContainer>
       </ChatContainer>
-      <ModalOverlay show={modalIsOpen} />
-            <ModalContent>
-              <ModalCloseButton onClick={closeModal}>&times;</ModalCloseButton>
-              <ModalTitle>유저 조회</ModalTitle>
-              <DropdownItem onClick={handleUserInfoClick}>
-                유저 정보 조회
-              </DropdownItem>
-              <DropdownItem onClick={handleUserPostsClick}>
-                유저 작성 글
-              </DropdownItem>
-      </ModalContent>
+
+      <ModalOverlay show={modalIsOpen}>
+        <ModalContent>
+          <ModalCloseButton onClick={closeModal}>&times;</ModalCloseButton>
+          <ModalTitle>유저 조회</ModalTitle>
+          <DropdownItem onClick={handleUserInfoClick}>
+            유저 정보 조회
+          </DropdownItem>
+          <DropdownItem onClick={handleUserPostsClick}>
+            유저 작성 글
+          </DropdownItem>
+        </ModalContent>
+      </ModalOverlay>
     </PageContainer>
   );
 };
