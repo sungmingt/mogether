@@ -1,11 +1,12 @@
-package mogether.mogether.domain.moim;
+package mogether.mogether.application.moim;
 
 import mogether.mogether.application.chat.ChatRoomService;
-import mogether.mogether.application.moim.MoimImageService;
-import mogether.mogether.application.moim.MoimService;
 import mogether.mogether.application.user.UserService;
 import mogether.mogether.domain.info.Address;
 import mogether.mogether.domain.info.Keyword;
+import mogether.mogether.domain.moim.Moim;
+import mogether.mogether.domain.moim.MoimRepository;
+import mogether.mogether.domain.moim.MoimUserRepository;
 import mogether.mogether.domain.oauth.AppUser;
 import mogether.mogether.domain.user.User;
 import mogether.mogether.web.moim.dto.MoimCreateRequest;

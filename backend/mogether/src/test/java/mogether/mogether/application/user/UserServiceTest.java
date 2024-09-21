@@ -1,10 +1,10 @@
-package mogether.mogether.domain.user;
+package mogether.mogether.application.user;
 
-import mogether.mogether.application.user.ProfileImageService;
-import mogether.mogether.application.user.UserService;
 import mogether.mogether.domain.info.Address;
 import mogether.mogether.domain.info.Gender;
 import mogether.mogether.domain.oauth.AppUser;
+import mogether.mogether.domain.user.User;
+import mogether.mogether.domain.user.UserRepository;
 import mogether.mogether.exception.ErrorCode;
 import mogether.mogether.exception.MogetherException;
 import mogether.mogether.web.user.dto.AfterOAuthSignUpRequest;
