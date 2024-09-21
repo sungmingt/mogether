@@ -120,6 +120,12 @@ const ChatRoomList: React.FC = () => {
     const dispatch = useDispatch<AppDispatch>();
     const { roomList, loading, error } = useSelector((state: RootState) => selectChat(state));
     const userId = Number(localStorage.getItem('userId'));
+
+    const getUniqueUserCount = (room: any) => {
+      // participants가 존재하는지 확인하고, 존재할 경우에만 Set을 사용하여 중복된 사용자를 제거
+      const uniqueUsers = room.participants ? new Set(room.participants.map((participant: any) => participant.userId)) : new Set();
+      return uniqueUsers.size;
+    };
   
     useEffect(() => {
       if (userId) {

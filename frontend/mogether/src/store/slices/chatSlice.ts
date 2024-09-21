@@ -140,6 +140,7 @@ const chatSlice = createSlice({
           stompClient.subscribe(`/sub/chat/room/${roomId}`, (message) => {
             const receivedMessage: ChatMessage = JSON.parse(message.body);
             state.messages.push(receivedMessage);
+            state.messages.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
           });
         },
         onStompError: (frame: Frame) => {
@@ -178,7 +179,13 @@ const chatSlice = createSlice({
       })
       .addCase(fetchChatRoomDetail.fulfilled, (state, action: PayloadAction<ChatRoomDetail>) => {
         state.roomDetail = action.payload;
+        const uniqueParticipants = Array.from(new Set(action.payload.participants.map(p => p.userId)))
+          .map(id => action.payload.participants.find(p => p.userId === id))
+          .filter((participant): participant is Participant => participant !== undefined);
+        
+        state.roomDetail.participants = uniqueParticipants;
         state.messages = action.payload.chatMessageList;
+        state.messages = action.payload.chatMessageList.sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
         state.loading = false;
       })
       .addCase(fetchChatRoomDetail.rejected, (state, action) => {

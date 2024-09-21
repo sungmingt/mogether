@@ -22,7 +22,7 @@ const PageContainer = styled.div`
 `;
 
 const ParticipantListContainer = styled.div`
-  margin-right: 20px; 
+  margin-right: 20px;
   background-color: #ffffff;
   border: 1px solid #ddd;
   border-radius: 10px;
@@ -33,7 +33,7 @@ const ParticipantListContainer = styled.div`
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 
   @media (max-width: 768px) {
-    display: none; 
+    display: none;
   }
 `;
 
@@ -121,9 +121,7 @@ const ChatMessages = styled.div`
 const MessageContainer = styled.div<{ isOwnMessage: boolean }>`
   display: flex;
   align-items: flex-start;
-  justify-content: ${({ isOwnMessage }) => (isOwnMessage ? 'flex-end' : 'flex-start')}; /* 본인 메시지는 오른쪽, 타인 메시지는 왼쪽 */
-  // margin-bottom: 10px;
-  // flex-direction: ${({ isOwnMessage }) => (isOwnMessage ? 'row-reverse' : 'row')}; /* 본인 메시지는 오른쪽, 타인 메시지는 왼쪽 */
+  justify-content: ${({ isOwnMessage }) => (isOwnMessage ? 'flex-end' : 'flex-start')};
 `;
 
 const ProfileContainer = styled.div`
@@ -164,7 +162,7 @@ const MessageBubble = styled.div<{ isOwnMessage: boolean }>`
   margin-right: ${({ isOwnMessage }) => (isOwnMessage ? '10px' : '0')};
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: 10px;
     ${({ isOwnMessage }) =>
@@ -177,7 +175,6 @@ const MessageBubble = styled.div<{ isOwnMessage: boolean }>`
 const ChatInputContainer = styled.div`
   display: flex;
   padding: 10px 0;
-  // border-top: 1px solid #ddd;
   background-color: #f5f5f5;
 `;
 
@@ -205,6 +202,55 @@ const SendButton = styled.button`
   }
 `;
 
+const ModalOverlay = styled.div<{ show: boolean }>`
+  display: ${({ show }) => (show ? "block" : "none")};
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+`;
+
+const ModalContent = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1001;
+  width: 90%;
+  max-width: 400px;
+`;
+
+const ModalTitle = styled.h3`
+  margin-top: 0;
+  color: #7848f4;
+`;
+
+const ModalCloseButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+`;
+
+const DropdownItem = styled.div`
+  padding: 10px;
+  cursor: pointer;
+  text-align: center;
+  &:hover {
+    background-color: #f0f0f0;
+  }
+`;
+
 const ChatRoom: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { roomDetail, messages, loading } = useSelector((state: RootState) => state.chat);
@@ -214,10 +260,13 @@ const ChatRoom: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const userId = Number(localStorage.getItem('userId')) || 0;
   const [profile, setProfile] = useState<any>({});
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+  const [selectedParticipant, setSelectedParticipant] = useState<any>({});
 
   useEffect(() => {
     if (userId > 0) {
-      setProfile(dispatch(fetchProfile(userId)));
+      dispatch(fetchProfile(userId))
+        .then((response) => setProfile(response.payload));
     }
   }, [dispatch, userId]);
 
@@ -237,20 +286,43 @@ const ChatRoom: React.FC = () => {
   }, [messages]);
 
   const handleSendMessage = () => {
-    if (message.trim() !== '' && profile) {
-      dispatch(sendMessage({ 
-        roomId: Number(roomId), 
-        senderId: userId, 
-        nickname: profile.nickname, 
-        message: message, 
-        senderImageUrl: profile.imageUrl 
-      }));
+    if (message.trim() !== '' && profile.imageUrl) {
+      dispatch(
+        sendMessage({
+          roomId: Number(roomId),
+          senderId: userId,
+          nickname: profile.nickname,
+          message: message,
+          senderImageUrl: profile.imageUrl,
+        })
+      );
       setMessage('');
     }
   };
 
   const handleExitRoom = () => {
-    navigate('/ChatList'); 
+    navigate('/ChatList');
+  };
+
+  const openModal = (participant: any) => {
+    setSelectedParticipant(participant);
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
+
+  const handleUserInfoClick = () => {
+    if (selectedParticipant) {   // eventInfo, 즉 카드 정보가 존재하면 이동
+      navigate(`/user/${selectedParticipant.userId}`);
+    }
+  };
+
+  const handleUserPostsClick = () => {
+    if (selectedParticipant) {
+      navigate(`/usercreatedMoim/${selectedParticipant.userId}`);
+    }
   };
 
   if (loading) {
@@ -261,8 +333,11 @@ const ChatRoom: React.FC = () => {
     <PageContainer>
       <ParticipantListContainer>
         {roomDetail?.participants.map((participant) => (
-          <ParticipantItem key={participant.userId} onClick={() => {}}>
-            <ParticipantImage src={participant.imageUrl || '../../assets/default_image.png'} alt={`${participant.nickname}의 프로필 이미지`} />
+          <ParticipantItem key={participant.userId} onClick={() => openModal(participant)}>
+            <ParticipantImage
+              src={participant.imageUrl}
+              alt={`${participant.nickname}의 프로필 이미지`}
+            />
             <ParticipantName>{participant.nickname}</ParticipantName>
           </ParticipantItem>
         ))}
@@ -277,7 +352,10 @@ const ChatRoom: React.FC = () => {
           {messages.map((msg: any) => (
             <MessageContainer key={msg.id} isOwnMessage={msg.senderId === userId}>
               <ProfileContainer>
-                <ProfileImage src={msg.senderImageUrl || '../../assets/default_image.png'} alt={`${msg.nickname}의 프로필 이미지`} />
+                <ProfileImage
+                  src={msg.senderImageUrl || '../../assets/default_image.png'}
+                  alt={`${msg.nickname}의 프로필 이미지`}
+                />
                 <Nickname>{msg.nickname}</Nickname>
               </ProfileContainer>
               <MessageBubble isOwnMessage={msg.senderId === userId}>{msg.message}</MessageBubble>
@@ -298,6 +376,19 @@ const ChatRoom: React.FC = () => {
           </SendButton>
         </ChatInputContainer>
       </ChatContainer>
+
+      <ModalOverlay show={modalIsOpen}>
+        <ModalContent>
+          <ModalCloseButton onClick={closeModal}>&times;</ModalCloseButton>
+          <ModalTitle>유저 조회</ModalTitle>
+          <DropdownItem onClick={handleUserInfoClick}>
+            유저 정보 조회
+          </DropdownItem>
+          <DropdownItem onClick={handleUserPostsClick}>
+            유저 작성 글
+          </DropdownItem>
+        </ModalContent>
+      </ModalOverlay>
     </PageContainer>
   );
 };

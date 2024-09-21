@@ -202,7 +202,7 @@ const Header: React.FC = () => {
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
   const [isNotificationMenuOpen, setIsNotificationMenuOpen] = useState(false);
   const navigate = useNavigate();
-  const isAuthenticated = useSelector((state: RootState) => selectIsAuthenticated(state));
+  const isAuthenticated = useSelector((state: RootState) => selectIsAuthenticated(state));  // store에서 state 값을 가져옴
   const dispatch = useDispatch<AppDispatch>();
   const accessToken = localStorage.getItem("accessToken");
   const userId = Number(localStorage.getItem("userId")) || 0;  
@@ -278,9 +278,9 @@ const Header: React.FC = () => {
       <ButtonContainer>
         {isAuthenticated ? (
           <>
-            <Button onClick={() => handleNavigation("/createPost")}>Create Post</Button>
+            <Button onClick={() => handleNavigation("/createPost")}>Create</Button>
             <Button onClick={handleLogout}>Logout</Button>
-            <IconWrapper onClick={toggleNotificationMenu}>
+            {/* <IconWrapper onClick={toggleNotificationMenu}>
               <FaBell size={24} />
               <DropdownMenu isOpen={isNotificationMenuOpen}>
                 <NavLink to="/notifications" onClick={toggleNotificationMenu}>
@@ -290,7 +290,7 @@ const Header: React.FC = () => {
                   알림2
                 </NavLink>
               </DropdownMenu>
-            </IconWrapper>
+            </IconWrapper> */}
             <IconWrapper onClick={toggleProfileMenu}>
               <FaUserCircle size={24} />
               <DropdownMenu isOpen={isProfileMenuOpen}>
