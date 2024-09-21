@@ -77,7 +77,7 @@ public class BungaeService {
         Bungae savedBungae = bungaeRepository.save(bungae);
         bungaeImageService.save(savedBungae, images);
         chatRoomService.createBungaeChatRoom(savedBungae);
-
+        join(bungae.getId(), new AppUser(user.getId()));
         return BungaeCreateResponse.of(savedBungae);
     }
 

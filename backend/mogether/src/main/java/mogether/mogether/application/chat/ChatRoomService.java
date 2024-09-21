@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 
 import static mogether.mogether.exception.ErrorCode.CHATROOM_NOT_FOUND;
 
@@ -35,10 +34,6 @@ public class ChatRoomService {
     }
 
     public void joinMoimChatRoom(User user, Moim moim) {
-
-        System.out.println("### " + moim.getId());
-        System.out.println("### " + Objects.isNull(moim.getChatRoom()));
-
         ChatRoom chatRoom = chatRoomRepository.findById(moim.getChatRoom().getId())
                 .orElseThrow(() -> new MogetherException(CHATROOM_NOT_FOUND));
 
