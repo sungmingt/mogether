@@ -50,7 +50,6 @@ public class ChatService {
         return ChatRoomResponse.of(chatRoom, chatMessageList, participants);
     }
 
-    //유저의 채팅 리스트 반환
     @Transactional(readOnly = true)
     public List<ChatRoomListResponse> getChatRoomList(Long userId) {
         List<ChatRoom> chatRoomList = chatRoomService.findChatRoomList(userId);

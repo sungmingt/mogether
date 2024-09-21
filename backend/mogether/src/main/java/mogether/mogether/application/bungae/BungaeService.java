@@ -9,7 +9,6 @@ import mogether.mogether.domain.bungae.BungaeUser;
 import mogether.mogether.domain.bungae.BungaeUserRepository;
 import mogether.mogether.domain.oauth.AppUser;
 import mogether.mogether.domain.user.User;
-import mogether.mogether.exception.ErrorCode;
 import mogether.mogether.exception.MogetherException;
 import mogether.mogether.web.bungae.dto.*;
 import org.springframework.stereotype.Service;
