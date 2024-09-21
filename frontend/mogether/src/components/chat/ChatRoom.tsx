@@ -202,6 +202,55 @@ const SendButton = styled.button`
   }
 `;
 
+const ModalOverlay = styled.div<{ show: boolean }>`
+  display: ${({ show }) => (show ? "block" : "none")};
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1000;
+`;
+
+const ModalContent = styled.div`
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  z-index: 1001;
+  width: 90%;
+  max-width: 400px;
+`;
+
+const ModalTitle = styled.h3`
+  margin-top: 0;
+  color: #7848f4;
+`;
+
+const ModalCloseButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: transparent;
+  border: none;
+  font-size: 18px;
+  cursor: pointer;
+`;
+
+const DropdownItem = styled.div`
+  padding: 10px;
+  cursor: pointer;
+  text-align: center;
+  &:hover {
+    background-color: #f0f0f0;
+  }
+`;
+
 const ChatRoom: React.FC = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { roomDetail, messages, loading } = useSelector((state: RootState) => state.chat);
@@ -212,6 +261,8 @@ const ChatRoom: React.FC = () => {
   const userId = Number(localStorage.getItem('userId')) || 0;
   const [profile, setProfile] = useState<any>({});
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
+    const [selectedParticipant, setSelectedParticipant] = useState<any>({});
 
   useEffect(() => {
     if (userId > 0) {
@@ -261,13 +312,34 @@ const ChatRoom: React.FC = () => {
     return <LoadingSpinner />;
   }
 
+  const openModal = (participant: any) => {
+    setSelectedParticipant(participant);
+    setModalIsOpen(true);
+  };
+
+  const closeModal = () => {
+    setModalIsOpen(false);
+  };
+
+  const handleUserInfoClick = () => {
+    if (selectedParticipant) {   //eventInfo, 즉 카드 정보가 존재하면 이동
+      navigate(`/user/${selectedParticipant.userId}`);
+    }
+  };
+  
+  const handleUserPostsClick = () => {
+    if (selectedParticipant) {
+      navigate(`/usercreatedMoim/${selectedParticipant.userId}`);
+    }
+  };
+
   return (
     <PageContainer>
       <ParticipantListContainer>
         {roomDetail?.participants.map((participant) => (
-          <ParticipantItem key={participant.userId} onClick={() => {}}>
+          <ParticipantItem key={participant.userId} onClick={() => openModal(participant)}>
             <ParticipantImage
-              src={participant.imageUrl || '../../assets/default_image.png'}
+              src={participant.imageUrl}
               alt={`${participant.nickname}의 프로필 이미지`}
               onLoad={handleImageLoad} // 이미지 로드 확인
             />
@@ -310,6 +382,17 @@ const ChatRoom: React.FC = () => {
           </SendButton>
         </ChatInputContainer>
       </ChatContainer>
+      <ModalOverlay show={modalIsOpen} />
+            <ModalContent>
+              <ModalCloseButton onClick={closeModal}>&times;</ModalCloseButton>
+              <ModalTitle>유저 조회</ModalTitle>
+              <DropdownItem onClick={handleUserInfoClick}>
+                유저 정보 조회
+              </DropdownItem>
+              <DropdownItem onClick={handleUserPostsClick}>
+                유저 작성 글
+              </DropdownItem>
+      </ModalContent>
     </PageContainer>
   );
 };
