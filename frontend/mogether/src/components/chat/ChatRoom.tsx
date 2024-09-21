@@ -22,7 +22,7 @@ const PageContainer = styled.div`
 `;
 
 const ParticipantListContainer = styled.div`
-  margin-right: 20px; 
+  margin-right: 20px;
   background-color: #ffffff;
   border: 1px solid #ddd;
   border-radius: 10px;
@@ -33,7 +33,7 @@ const ParticipantListContainer = styled.div`
   box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 
   @media (max-width: 768px) {
-    display: none; 
+    display: none;
   }
 `;
 
@@ -121,9 +121,7 @@ const ChatMessages = styled.div`
 const MessageContainer = styled.div<{ isOwnMessage: boolean }>`
   display: flex;
   align-items: flex-start;
-  justify-content: ${({ isOwnMessage }) => (isOwnMessage ? 'flex-end' : 'flex-start')}; /* 본인 메시지는 오른쪽, 타인 메시지는 왼쪽 */
-  // margin-bottom: 10px;
-  // flex-direction: ${({ isOwnMessage }) => (isOwnMessage ? 'row-reverse' : 'row')}; /* 본인 메시지는 오른쪽, 타인 메시지는 왼쪽 */
+  justify-content: ${({ isOwnMessage }) => (isOwnMessage ? 'flex-end' : 'flex-start')};
 `;
 
 const ProfileContainer = styled.div`
@@ -164,7 +162,7 @@ const MessageBubble = styled.div<{ isOwnMessage: boolean }>`
   margin-right: ${({ isOwnMessage }) => (isOwnMessage ? '10px' : '0')};
 
   &::before {
-    content: "";
+    content: '';
     position: absolute;
     top: 10px;
     ${({ isOwnMessage }) =>
@@ -177,7 +175,6 @@ const MessageBubble = styled.div<{ isOwnMessage: boolean }>`
 const ChatInputContainer = styled.div`
   display: flex;
   padding: 10px 0;
-  // border-top: 1px solid #ddd;
   background-color: #f5f5f5;
 `;
 
@@ -214,7 +211,7 @@ const ChatRoom: React.FC = () => {
   const { roomId } = useParams<{ roomId: string }>();
   const userId = Number(localStorage.getItem('userId')) || 0;
   const [profile, setProfile] = useState<any>({});
-  // const [roomDetail, setRoomDetail] = useState<any>({});
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
     if (userId > 0) {
@@ -238,20 +235,26 @@ const ChatRoom: React.FC = () => {
   }, [messages]);
 
   const handleSendMessage = () => {
-    if (message.trim() !== '' && profile) {
-      dispatch(sendMessage({ 
-        roomId: Number(roomId), 
-        senderId: userId, 
-        nickname: profile.nickname, 
-        message: message, 
-        senderImageUrl: profile.imageUrl 
-      }));
+    if (message.trim() !== '' && profile && imageLoaded) {
+      dispatch(
+        sendMessage({
+          roomId: Number(roomId),
+          senderId: userId,
+          nickname: profile.nickname,
+          message: message,
+          senderImageUrl: profile.imageUrl || '',
+        })
+      );
       setMessage('');
     }
   };
 
   const handleExitRoom = () => {
-    navigate('/ChatList'); 
+    navigate('/ChatList');
+  };
+
+  const handleImageLoad = () => {
+    setImageLoaded(true); // 이미지가 로드되면 상태를 true로 변경
   };
 
   if (loading) {
@@ -263,7 +266,11 @@ const ChatRoom: React.FC = () => {
       <ParticipantListContainer>
         {roomDetail?.participants.map((participant) => (
           <ParticipantItem key={participant.userId} onClick={() => {}}>
-            <ParticipantImage src={participant.imageUrl || '../../assets/default_image.png'} alt={`${participant.nickname}의 프로필 이미지`} />
+            <ParticipantImage
+              src={participant.imageUrl || '../../assets/default_image.png'}
+              alt={`${participant.nickname}의 프로필 이미지`}
+              onLoad={handleImageLoad} // 이미지 로드 확인
+            />
             <ParticipantName>{participant.nickname}</ParticipantName>
           </ParticipantItem>
         ))}
@@ -278,10 +285,14 @@ const ChatRoom: React.FC = () => {
           {messages.map((msg: any) => (
             <MessageContainer key={msg.id} isOwnMessage={msg.senderId === userId}>
               <ProfileContainer>
-                <ProfileImage src={msg.senderImageUrl || '../../assets/default_image.png'} alt={`${msg.nickname}의 프로필 이미지`} />
+                <ProfileImage
+                  src={msg.senderImageUrl || '../../assets/default_image.png'}
+                  alt={`${msg.nickname}의 프로필 이미지`}
+                  onLoad={handleImageLoad}
+                />
                 <Nickname>{msg.nickname}</Nickname>
               </ProfileContainer>
-              <MessageBubble isOwnMessage={msg.senderId === userId}>{msg.message}</MessageBubble>
+              {imageLoaded && <MessageBubble isOwnMessage={msg.senderId === userId}>{msg.message}</MessageBubble>}
             </MessageContainer>
           ))}
           <div ref={messagesEndRef} />
@@ -294,7 +305,7 @@ const ChatRoom: React.FC = () => {
             onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
             placeholder="메시지를 입력하세요..."
           />
-          <SendButton onClick={handleSendMessage} disabled={!message.trim()}>
+          <SendButton onClick={handleSendMessage} disabled={!message.trim() || !imageLoaded}>
             전송
           </SendButton>
         </ChatInputContainer>
