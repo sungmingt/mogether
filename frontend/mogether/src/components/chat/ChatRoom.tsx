@@ -286,7 +286,7 @@ const ChatRoom: React.FC = () => {
             <MessageContainer key={msg.id} isOwnMessage={msg.senderId === userId}>
               <ProfileContainer>
                 <ProfileImage
-                  src={msg.senderImageUrl || '../../assets/default_image.png'}
+                  src={msg.senderImageUrl}
                   alt={`${msg.nickname}의 프로필 이미지`}
                   onLoad={handleImageLoad}
                 />
