@@ -76,7 +76,8 @@ public class MoimService {
         Moim savedMoim = moimRepository.save(moim);
         moimImageService.save(savedMoim, images);
         chatRoomService.createMoimChatRoom(savedMoim);
-        join(moim.getId(), new AppUser(user.getId()));
+
+        join(savedMoim.getId(), new AppUser(user.getId()));
         return MoimCreateResponse.of(savedMoim);
     }
 

@@ -6,6 +6,7 @@ import mogether.mogether.domain.info.Address;
 import mogether.mogether.domain.info.Keyword;
 import mogether.mogether.domain.moim.Moim;
 import mogether.mogether.domain.moim.MoimRepository;
+import mogether.mogether.domain.moim.MoimUser;
 import mogether.mogether.domain.moim.MoimUserRepository;
 import mogether.mogether.domain.oauth.AppUser;
 import mogether.mogether.domain.user.User;
@@ -26,8 +27,7 @@ import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.BDDMockito.then;
 import static org.mockito.Mockito.times;
@@ -54,7 +54,7 @@ class MoimServiceTest {
     private MoimService moimService;
 
     private final User user = new User(1L, "minjae123@gmail.com", "Passw123@", "kim");
-    private final AppUser appUser = new AppUser(user, Map.of(), "");
+    private final AppUser appUser = new AppUser(user.getId());
     private final Moim moim = new Moim(user, "title", "content", List.of("imageUrl"), new Address("seoul", "gangnam", "details"));
     List<MultipartFile> images = List.of(new MockMultipartFile("png", new byte[]{12}));
 
@@ -83,8 +83,11 @@ class MoimServiceTest {
         //given
         MoimCreateRequest request = new MoimCreateRequest(user.getId(), "title", "content",
                 "PARTY", new Address(), LocalDate.of(2024, 1, 1), LocalDate.of(2024, 1, 2));
+        Moim createdMoim = request.toMoim(user);
         given(userService.findById(user.getId())).willReturn(user);
-        given(moimRepository.save(any())).willReturn(request.toMoim(user));
+        given(moimRepository.save(any())).willReturn(createdMoim);
+        given(moimRepository.findById(any())).willReturn(Optional.of(createdMoim));
+        given(moimUserRepository.findByMoimIdAndUserId(any(), any())).willReturn(Optional.empty());
 
         //when
         MoimCreateResponse response = moimService.create(appUser, images, request);
