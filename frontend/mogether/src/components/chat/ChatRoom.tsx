@@ -262,11 +262,13 @@ const ChatRoom: React.FC = () => {
   const [profile, setProfile] = useState<any>({});
   const [imageLoaded, setImageLoaded] = useState(false);
   const [modalIsOpen, setModalIsOpen] = useState(false);
-    const [selectedParticipant, setSelectedParticipant] = useState<any>({});
+  const [selectedParticipant, setSelectedParticipant] = useState<any>({});
+  const [profileImage, setProfileImage] = useState<string>('');
 
   useEffect(() => {
     if (userId > 0) {
       setProfile(dispatch(fetchProfile(userId)));
+      setProfileImage(profile.imageUrl);
     }
   }, [dispatch, userId]);
 
@@ -358,7 +360,7 @@ const ChatRoom: React.FC = () => {
             <MessageContainer key={msg.id} isOwnMessage={msg.senderId === userId}>
               <ProfileContainer>
                 <ProfileImage
-                  src={msg.senderImageUrl}
+                  src={profile.imageUrl}
                   alt={`${msg.nickname}의 프로필 이미지`}
                   onLoad={handleImageLoad}
                 />
