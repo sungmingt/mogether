@@ -23,7 +23,7 @@ public class MoimInterestController {
                     @ApiResponse(responseCode = "201", description = "모임 관심 등록 성공"),
             })
     @PostMapping("/{moimId}")
-    public HttpStatus doInterest(@PathVariable Long moimId,
+    public HttpStatus doInterest(@PathVariable("moimId") Long moimId,
                                  @AuthenticationPrincipal AppUser appUser) {
         moimInterestService.doInterest(moimId, appUser);
         return HttpStatus.CREATED;
