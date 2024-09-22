@@ -14,3 +14,10 @@
 - 관심이 있는 모임에 관심(좋아요) 등록을 하고, 마이페이지에서 해당 목록을 확인할 수 있습니다.
 - 모임 생성 시 해당 모임의 그룹 채팅방이 자동으로 생성되며, 모임 참여/탈퇴 시 채팅방 입장/퇴장도 함께 이루어집니다.
 - 모임을 생성한 호스트는 참여자를 퇴출시킬 수 있는 권한을 가지고 있습니다. 
+
+
+<h2><a href="https://www.figma.com/design/MmmRYYwWchb3oZYJkQZ2Qb/somoim?node-id=0-1&t=4MEjRCOzUKCHpV8H-1">Figma</a></h2>
+
+<h2><a href="https://api.mo-gether.site/swagger-ui/index.html">API Docs</a></h2>
+
+<h2><a href="https://dbdiagram.io/d/moim-669612d48b4bb5230e70aa2f">ERD</a></h2>
