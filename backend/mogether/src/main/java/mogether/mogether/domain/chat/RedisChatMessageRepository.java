@@ -49,14 +49,14 @@ public class RedisChatMessageRepository {
     public void save(ChatMessage chatMessage) {
         String roomKey = getRoomKey(chatMessage.getRoomId());
         hashOperations.put(roomKey, chatMessage.getId(), chatMessage);
-//        chatMessageRedisTemplate.expire(roomKey, Duration.ofHours(25));
+        chatMessageRedisTemplate.expire(roomKey, Duration.ofHours(25));
     }
 
     public void saveAllToRedis(List<ChatMessage> messages) {
         for (ChatMessage message : messages) {
             String roomKey = getRoomKey(message.getRoomId());
             hashOperations.put(roomKey, message.getId(), message);
-//            chatMessageRedisTemplate.expire(roomKey, Duration.ofHours(25));
+            chatMessageRedisTemplate.expire(roomKey, Duration.ofHours(25));
         }
     }
 
