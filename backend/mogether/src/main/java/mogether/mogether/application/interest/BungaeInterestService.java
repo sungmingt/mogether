@@ -48,7 +48,7 @@ public class BungaeInterestService {
     }
 
     @Transactional(readOnly = true)
-    public List<BungaeListResponse> readAll(Long userId, AppUser appUser) {
+    public List<BungaeListResponse> getInterestList(Long userId, AppUser appUser) {
         //requestUser 검증 (마이페이지는 본인만 볼 수 있기 때문)
         validateUser(userId, appUser.getId());
 

@@ -53,4 +53,11 @@ public class BungaeUpdateRequest {
                 this.ageLimit,
                 this.fee);
     }
+
+    public BungaeUpdateRequest(Long userId, String title, String content, String keyword) {
+        this.userId = userId;
+        this.title = title;
+        this.content = content;
+        this.keyword = keyword;
+    }
 }

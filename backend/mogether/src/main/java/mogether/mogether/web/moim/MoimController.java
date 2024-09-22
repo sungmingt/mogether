@@ -31,7 +31,7 @@ public class MoimController {
                     @ApiResponse(responseCode = "200", description = "유저의 모임 가입 성공"),
             })
     @PostMapping("/{moimId}/join")
-    public HttpStatus join(@PathVariable Long moimId, @AuthenticationPrincipal AppUser appUser) {
+    public HttpStatus join(@PathVariable("moimId") Long moimId, @AuthenticationPrincipal AppUser appUser) {
         moimService.join(moimId, appUser);
         return HttpStatus.OK;
     }
@@ -41,7 +41,7 @@ public class MoimController {
                     @ApiResponse(responseCode = "200", description = "유저의 모임 탈퇴 성공"),
             })
     @DeleteMapping("/{moimId}/quit")
-    public HttpStatus quit(@PathVariable Long moimId, @AuthenticationPrincipal AppUser appUser) {
+    public HttpStatus quit(@PathVariable("moimId") Long moimId, @AuthenticationPrincipal AppUser appUser) {
         moimService.quit(moimId, appUser);
         return HttpStatus.OK;
     }
@@ -75,7 +75,7 @@ public class MoimController {
                     @ApiResponse(responseCode = "200", description = "유저의 모임 글 수정 성공"),
             })
     @PatchMapping("/{moimId}")
-    public MoimUpdateResponse update(@PathVariable Long moimId,
+    public MoimUpdateResponse update(@PathVariable("moimId") Long moimId,
                                      @AuthenticationPrincipal AppUser appUser,
                                      @RequestPart(name = "images", required = false) List<MultipartFile>images,
                                      @RequestPart(name = "dto") @Validated MoimUpdateRequest moimUpdateRequest) {
@@ -87,7 +87,7 @@ public class MoimController {
                     @ApiResponse(responseCode = "200", description = "모임 글 상세 페이지 조회 성공"),
             })
     @GetMapping("/{moimId}")
-    public MoimResponse read(@PathVariable Long moimId, @AuthenticationPrincipal AppUser appUser) {
+    public MoimResponse read(@PathVariable("moimId") Long moimId, @AuthenticationPrincipal AppUser appUser) {
         return moimService.read(moimId, appUser);
     }
 

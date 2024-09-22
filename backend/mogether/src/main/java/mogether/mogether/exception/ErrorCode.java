@@ -55,7 +55,10 @@ public enum ErrorCode {
 
     //CHAT
     CHAT_NOT_FOUND(404, "채팅 메시지를 찾을 수 없습니다."),
-    CHATROOM_NOT_FOUND(404, "존재하지 않는 채팅방입니다.");
+    CHATROOM_NOT_FOUND(404, "존재하지 않는 채팅방입니다."),
+    CHATROOMUSER_NOT_FOUND(404, "해당 채팅방에 참여한 회원이 아닙니다."),
+    ALREADY_JOINED_BUNGAE(400, "이미 번개에 참여한 유저입니다."),
+    ALREADY_JOINED_MOIM(400, "이미 모임에 참여한 유저입니다.");
 
     @Getter
     private final int status;

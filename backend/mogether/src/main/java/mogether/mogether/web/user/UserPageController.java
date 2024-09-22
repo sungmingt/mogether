@@ -38,7 +38,7 @@ public class UserPageController {
     @GetMapping("/{userId}/interest/bungae")
     public List<BungaeListResponse> getBungaeInterestList(@PathVariable("userId") Long userId,
                                                           @AuthenticationPrincipal AppUser appUser) {
-        return bungaeInterestService.readAll(userId, appUser);
+        return bungaeInterestService.getInterestList(userId, appUser);
     }
 
     //관심 모임 목록
@@ -49,7 +49,7 @@ public class UserPageController {
     @GetMapping("/{userId}/interest/moim")
     public List<MoimListResponse> getMoimInterestList(@PathVariable("userId") Long userId,
                                                       @AuthenticationPrincipal AppUser appUser) {
-        return moimInterestService.readAll(userId, appUser);
+        return moimInterestService.getInterestList(userId, appUser);
     }
 
     @Operation(summary = "유저가 등록한 번개 리스트 조회", description = "유저가 등록한 번개 리스트를 조회한다",

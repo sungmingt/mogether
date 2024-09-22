@@ -28,7 +28,6 @@ public class MoimInterestService {
     private final MoimService moimService;
     private final UserService userService;
 
-
     public void doInterest(Long moimId, AppUser appUser) {
         if(find(moimId, appUser.getId()).isPresent()) return;
 
@@ -49,7 +48,7 @@ public class MoimInterestService {
     }
 
     @Transactional(readOnly = true)
-    public List<MoimListResponse> readAll(Long userId, AppUser appUser) {
+    public List<MoimListResponse> getInterestList(Long userId, AppUser appUser) {
         validateUser(userId, appUser.getId());
 
         User findUser = userService.findById(userId);
@@ -65,5 +64,4 @@ public class MoimInterestService {
         return moimInterestRepository
                 .findByMoimIdAndUserId(moimId, userId);
     }
-
 }
