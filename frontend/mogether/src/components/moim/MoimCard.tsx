@@ -12,6 +12,7 @@ import "slick-carousel/slick/slick-theme.css";
 import { FaHeart, FaUser } from "react-icons/fa";
 import { deleteMoimCardApi } from '../../utils/api';
 
+
 // Styled components
 const Card = styled.div`
   border: 1px solid #ccc;

@@ -16,6 +16,7 @@ import { selectUserProfile } from '../../store/slices/userProfileSlice';
 import { selectIsAuthenticated } from "../../store/slices/authSlice";
 import { useNavigate } from 'react-router-dom';
 import moment from "moment";
+import imageCompression from 'browser-image-compression';
 
 const PostCreateContainer = styled.div`
   display: flex;
@@ -282,8 +283,10 @@ const MoimCreate = () => {
     setCategory(selectedCategory);
   }, []);
 
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
+    
+    // 최대 4개의 이미지만 업로드 허용
     if (files && files.length > 4) {
       Swal.fire(
         "Error",
@@ -295,23 +298,44 @@ const MoimCreate = () => {
 
     const fileArray = Array.from(files || []);
 
-    // 파일 이름을 정규화하는 함수 (공백은 대시로, 안전하지 않은 문자는 제거)
-    const sanitizeFileName = (fileName: string) => {
-      return fileName
-        .normalize('NFKD')                  // 유니코드 정규화
-        .replace(/[\s]/g, '-')             // 공백을 대시(-)로 변환
-        .replace(/[^a-zA-Z0-9.-]/g, '');   // 알파벳, 숫자, 점, 하이픈을 제외한 모든 문자 제거
+    const options = {
+      maxSizeMB: 1, // 최대 파일 크기를 1MB로 제한
+      maxWidthOrHeight: 1024, // 이미지의 최대 너비 또는 높이
+      useWebWorker: true, // 웹 워커 사용 (백그라운드에서 처리)
     };
 
-    // 정규화된 파일 이름으로 새 File 객체 생성 및 URL 생성
-    const sanitizedFiles = fileArray.map(file => {
-      const sanitizedFileName = sanitizeFileName(file.name);
-      return new File([file], sanitizedFileName, { type: file.type });
-    });
+    // 이미지 압축 및 파일 이름 정규화
+    const compressedAndSanitizedFiles = await Promise.all(
+      fileArray.map(async (file) => {
+        try {
+          // 1. 이미지 압축
+          const compressedFile = await imageCompression(file, options);
+          
+          // 2. 파일 이름 정규화
+          const sanitizeFileName = (fileName: string) => {
+            return fileName
+              .normalize('NFKD')                  // 유니코드 정규화
+              .replace(/[\s]/g, '-')             // 공백을 대시(-)로 변환
+              .replace(/[^a-zA-Z0-9.-]/g, '');   // 알파벳, 숫자, 점, 하이픈을 제외한 모든 문자 제거
+          };
 
-    const newUrls = sanitizedFiles.map((file) => URL.createObjectURL(file));
+          const sanitizedFileName = sanitizeFileName(compressedFile.name);
+          
+          // 3. 새 File 객체로 생성 (압축된 파일에 정규화된 이름 적용)
+          const sanitizedFile = new File([compressedFile], sanitizedFileName, { type: compressedFile.type });
+          
+          return sanitizedFile;
+        } catch (error) {
+          console.error('Error compressing the image:', error);
+          return file; // 압축 실패 시 원본 파일 사용
+        }
+      })
+    );
+
+    // URL.createObjectURL로 미리보기 이미지 생성
+    const newUrls = compressedAndSanitizedFiles.map((file) => URL.createObjectURL(file));
     setImageUrls((prev) => [...prev, ...newUrls]);
-    setImageFile((prev) => (prev ? [...prev, ...sanitizedFiles] : sanitizedFiles));
+    setImageFile((prev) => (prev ? [...prev, ...compressedAndSanitizedFiles] : compressedAndSanitizedFiles));
   };
 
   const handleImageRemove = (index: number) => {
