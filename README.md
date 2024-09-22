@@ -21,3 +21,6 @@
 <h2><a href="https://api.mo-gether.site/swagger-ui/index.html">API Docs</a></h2>
 
 <h2><a href="https://dbdiagram.io/d/moim-669612d48b4bb5230e70aa2f">ERD</a></h2>
+
+<h2>🛠 BE infra</h2>
+<img width="1047" alt="스크린샷 2024-09-22 오후 8 36 29" src="https://github.com/user-attachments/assets/fea67390-bf99-48f0-83ec-53551917ec8a">
