@@ -25,6 +25,7 @@
     "ajv-keywords": "^5.1.0",
     "antd": "^5.20.1",
     "axios": "^1.7.4",
+    "browser-image-compression": "^2.0.2",
     "emailjs-com": "^3.2.0",
     "eslint": "^9.9.0",
     "framer-motion": "^11.3.31",
