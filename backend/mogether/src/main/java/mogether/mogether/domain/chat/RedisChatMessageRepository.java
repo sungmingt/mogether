@@ -41,7 +41,7 @@ public class RedisChatMessageRepository {
         hashOperations.put(roomKey, chatMessage.getId(), chatMessage);
     }
 
-    public List<ChatMessage> findMessagesAfter(LocalDateTime lastSyncTime) {
+    public List<ChatMessage> findMessagesBetween(LocalDateTime lastSyncTime, LocalDateTime now) {
         Set<String> roomKeys = chatMessageRedisTemplate.keys(ROOM_KEY_PREFIX + "*");
 
         if (roomKeys == null || roomKeys.isEmpty()) {
@@ -50,7 +50,7 @@ public class RedisChatMessageRepository {
 
         return roomKeys.stream()
                 .flatMap(roomKey -> hashOperations.values(roomKey).stream())
-                .filter(message -> toLocalDateTime(message.getCreatedAt()).isAfter(lastSyncTime) || toLocalDateTime(message.getCreatedAt()).isEqual(lastSyncTime))
+                .filter(message -> toLocalDateTime(message.getCreatedAt()).isAfter(lastSyncTime) && toLocalDateTime(message.getCreatedAt()).isBefore(now))
                 .toList();
     }
 
