@@ -7,9 +7,16 @@
 
 <h2><a href="https://mo-gether.site"><img width="50" height="50" alt="스크린샷 2024-09-15 오후 3 30 41" src="https://github.com/user-attachments/assets/678c7a8f-e811-45e4-b338-26cdac47b880"> mo-gether 바로가기</a></h2>
 
-<h2>Intro</h2>
-요즘에는 비슷한 취미나 관심사를 가진 사람을 찾기 쉽지 않습니다.<br>
+<h2>소개</h2>
 모게더(mo-gether)는 비슷한 취미나 관심사를 가진 사람들과 어울릴수 있는 공간을 제공하는 서비스입니다.
+
+<h2>사용 기술(BE)</h2>
+
+- **언어/프레임워크**: Java/Spring Boot
+- **데이터베이스(DB)**: MySQL(RDS), Redis(채팅 및 캐싱)
+- **인프라**: AWS, Github Actions
+- **API 문서화 도구**: Swagger API
+
 
 <h2>주요 기능</h2>
 
@@ -38,6 +45,7 @@
 - Google/Kakao 소셜 로그인과 id/password 기반 일반 로그인 방식을 모두 제공합니다.
 
 <br>
+
 
 <h2><a href="https://www.figma.com/design/MmmRYYwWchb3oZYJkQZ2Qb/somoim?node-id=0-1&t=4MEjRCOzUKCHpV8H-1">Figma</a></h2>
 
