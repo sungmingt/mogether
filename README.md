@@ -1,4 +1,4 @@
-<h1>관심사 기반 모임 앱 서비스</h1>
+<h1>관심사 기반 모임 서비스</h1>
 
 <img width="530" alt="스크린샷 2024-09-15 오후 3 12 04" src="https://github.com/user-attachments/assets/eefd3cc3-2538-4fac-a838-46d76ce6fa84">
 
