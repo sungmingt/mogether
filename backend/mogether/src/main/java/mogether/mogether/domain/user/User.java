@@ -10,6 +10,7 @@ import mogether.mogether.domain.interest.bungae.BungaeInterest;
 import mogether.mogether.domain.interest.moim.MoimInterest;
 import mogether.mogether.domain.moim.Moim;
 import mogether.mogether.domain.moim.MoimUser;
+import mogether.mogether.domain.oauth.AppEvent;
 import mogether.mogether.domain.user.image.ProfileImage;
 import mogether.mogether.domain.info.Gender;
 import mogether.mogether.domain.info.SocialType;
@@ -56,6 +57,9 @@ public class User {
 
     @OneToMany(mappedBy = "user", cascade = REMOVE)
     private List<ChatRoomUser> chatRoomUserList = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = REMOVE)
+    private List<AppEvent> appEventList = new ArrayList<>();
 
     private String imageUrl;
     private String nickname;
