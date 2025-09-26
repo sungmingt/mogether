@@ -58,7 +58,12 @@ public enum ErrorCode {
     CHATROOM_NOT_FOUND(404, "존재하지 않는 채팅방입니다."),
     CHATROOMUSER_NOT_FOUND(404, "해당 채팅방에 참여한 회원이 아닙니다."),
     ALREADY_JOINED_BUNGAE(400, "이미 번개에 참여한 유저입니다."),
-    ALREADY_JOINED_MOIM(400, "이미 모임에 참여한 유저입니다.");
+    ALREADY_JOINED_MOIM(400, "이미 모임에 참여한 유저입니다."),
+
+    INVALID_GATHER_TYPE(400, "올바르지 않은 활동 유형입니다."),
+    NOTIFICATION_NOT_FOUND(404, "존재하지 않는 알림입니다."),
+    OAUTH2TOKEN_NOT_FOUND(404, "해당 회원의 OAuth2 토큰이 존재하지 않습니다."),
+    CALENDAR_INSERT_FAILED(503, "캘린더에 일정 등록을 성공적으로 처리하지 못했습니다.");
 
     @Getter
     private final int status;
