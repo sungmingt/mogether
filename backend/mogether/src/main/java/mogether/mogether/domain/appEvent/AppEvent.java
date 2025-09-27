@@ -1,4 +1,4 @@
-package mogether.mogether.domain.oauth;
+package mogether.mogether.domain.appEvent;
 
 import jakarta.persistence.*;
 import lombok.*;

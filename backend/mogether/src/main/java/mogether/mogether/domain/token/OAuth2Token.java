@@ -1,4 +1,4 @@
-package mogether.mogether.domain.oauth;
+package mogether.mogether.domain.token;
 
 import mogether.mogether.domain.info.SocialType;
 
