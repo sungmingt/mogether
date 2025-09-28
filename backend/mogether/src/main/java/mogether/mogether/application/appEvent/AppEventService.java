@@ -20,8 +20,8 @@ import mogether.mogether.domain.appEvent.AppEventRepository;
 import mogether.mogether.domain.oauth.UpcomingEventsResponse;
 import mogether.mogether.domain.token.OAuth2Token;
 import mogether.mogether.exception.MogetherException;
-import mogether.mogether.web.appEvent.EventCreateRequest;
-import mogether.mogether.web.appEvent.EventCreateResponse;
+import mogether.mogether.web.appEvent.AppEventCreateRequest;
+import mogether.mogether.web.appEvent.AppEventCreateResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -85,7 +85,7 @@ public class AppEventService {
     }
 
     //google calendar에 일정 추가
-    public EventCreateResponse createEvent(Long userId, EventCreateRequest dto) {
+    public AppEventCreateResponse createEvent(Long userId, AppEventCreateRequest dto) {
         //모게더 DB에 일정 저장
         AppEvent appEvent = AppEvent.builder()
                 .summary(dto.getSummary())
@@ -114,7 +114,7 @@ public class AppEventService {
             appEvent.setGoogleEventId(createdEvent.getId());
             appEventRepository.save(appEvent);
 
-            return EventCreateResponse.of(appEvent.getId(), createdEvent);
+            return AppEventCreateResponse.of(appEvent.getId(), createdEvent);
 
         } catch (IOException | GeneralSecurityException ex) {
             // 구글 API 실패 → rollback
