@@ -64,6 +64,17 @@ dependencies {
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.2'
 	//web socket
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
+	// Google Calendar API (Calendar.Builder를 제공)
+	implementation 'com.google.apis:google-api-services-calendar:v3-rev20250404-2.0.0'
+	// Google API 클라이언트 (기본 HTTP, JSON 지원)
+	implementation 'com.google.api-client:google-api-client:2.7.2'
+	// OAuth 2.0 인증 지원
+	implementation 'com.google.oauth-client:google-oauth-client-jetty:1.46.0'
+	// JSON 처리 (Jackson)
+	implementation 'com.google.http-client:google-http-client-jackson2:1.46.0'
+	implementation 'com.google.http-client:google-http-client-gson:1.46.0'
+
 }
 
 tasks.named('test') {

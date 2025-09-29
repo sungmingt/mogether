@@ -3,6 +3,7 @@ package mogether.mogether.config;
 import mogether.mogether.domain.chat.ChatMessage;
 import mogether.mogether.web.chat.RedisSubscriber;
 import mogether.mogether.web.chat.dto.ChatMessageResponse;
+import mogether.mogether.web.user.dto.UserCache;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -38,8 +39,8 @@ public class ChatRedisConfig {
         return redisTemplate;
     }
 
-
     @Bean
+    @Qualifier("chatRedisConnectionFactory")
     public RedisConnectionFactory chatRedisConnectionFactory() {
         RedisStandaloneConfiguration redisStandaloneConfiguration = new RedisStandaloneConfiguration();
         redisStandaloneConfiguration.setHostName(host);
@@ -63,7 +64,30 @@ public class ChatRedisConfig {
         RedisTemplate<String, ChatMessage> chatMessageRedisTemplate = new RedisTemplate<>();
         chatMessageRedisTemplate.setConnectionFactory(chatRedisConnectionFactory());
         chatMessageRedisTemplate.setKeySerializer(new StringRedisSerializer());
-        chatMessageRedisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(ChatMessage.class));
+
+        Jackson2JsonRedisSerializer<ChatMessage> serializer = new Jackson2JsonRedisSerializer<>(ChatMessage.class);
+        chatMessageRedisTemplate.setHashValueSerializer(serializer);
+        chatMessageRedisTemplate.setValueSerializer(serializer);
+        return chatMessageRedisTemplate;
+    }
+
+    @Bean
+    @Qualifier("timeRedisTemplate")
+    public RedisTemplate<String, String> timeRedisTemplate() {
+        RedisTemplate<String, String> timeRedisTemplate = new RedisTemplate<>();
+        timeRedisTemplate.setConnectionFactory(chatRedisConnectionFactory());
+        timeRedisTemplate.setKeySerializer(new StringRedisSerializer());
+        timeRedisTemplate.setValueSerializer(new StringRedisSerializer());
+        return timeRedisTemplate;
+    }
+
+    @Bean
+    @Qualifier("userRedisTemplate")
+    public RedisTemplate<String, UserCache> userRedisTemplate() {
+        RedisTemplate<String, UserCache> chatMessageRedisTemplate = new RedisTemplate<>();
+        chatMessageRedisTemplate.setConnectionFactory(chatRedisConnectionFactory());
+        chatMessageRedisTemplate.setKeySerializer(new StringRedisSerializer());
+        chatMessageRedisTemplate.setValueSerializer(new Jackson2JsonRedisSerializer<>(UserCache.class));
         return chatMessageRedisTemplate;
     }
 
