@@ -1,5 +1,6 @@
 package mogether.mogether.config;
 
+import mogether.mogether.domain.token.OAuth2Token;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -9,6 +10,8 @@ import org.springframework.data.redis.connection.RedisStandaloneConfiguration;
 import org.springframework.data.redis.connection.lettuce.LettuceConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.serializer.GenericJackson2JsonRedisSerializer;
+import org.springframework.data.redis.serializer.StringRedisSerializer;
 
 @Configuration
 public class TokenRedisConfig {
@@ -26,6 +29,16 @@ public class TokenRedisConfig {
         redisStandaloneConfiguration.setHostName(host);
         redisStandaloneConfiguration.setPort(port);
         return new LettuceConnectionFactory(redisStandaloneConfiguration);
+    }
+
+    @Bean
+    @Qualifier("oAuth2TokenRedisTemplate")
+    public RedisTemplate<String, OAuth2Token> oAuth2TokenRedisTemplate() {
+        RedisTemplate<String, OAuth2Token> oAuth2TokenRedisTemplate = new RedisTemplate<>();
+        oAuth2TokenRedisTemplate.setConnectionFactory(tokenRedisConnectionFactory());
+        oAuth2TokenRedisTemplate.setKeySerializer(new StringRedisSerializer());
+        oAuth2TokenRedisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        return oAuth2TokenRedisTemplate;
     }
 
     @Bean
