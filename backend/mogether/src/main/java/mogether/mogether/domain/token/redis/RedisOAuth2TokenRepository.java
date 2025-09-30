@@ -1,4 +1,4 @@
-package mogether.mogether.application.auth.oauth;
+package mogether.mogether.domain.token.redis;
 
 import mogether.mogether.domain.token.OAuth2Token;
 import mogether.mogether.exception.ErrorCode;
