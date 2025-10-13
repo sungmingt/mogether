@@ -12,18 +12,18 @@ import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.oauth2.UserCredentials;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import mogether.mogether.application.auth.oauth.RedisOAuth2TokenRepository;
 import mogether.mogether.domain.appEvent.AppEvent;
 import mogether.mogether.domain.appEvent.AppEventRepository;
 import mogether.mogether.domain.oauth.UpcomingEventsResponse;
 import mogether.mogether.domain.token.OAuth2Token;
+import mogether.mogether.domain.token.redis.RedisOAuth2TokenRepository;
 import mogether.mogether.exception.MogetherException;
 import mogether.mogether.web.appEvent.AppEventCreateRequest;
 import mogether.mogether.web.appEvent.AppEventCreateResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -36,6 +36,7 @@ import static mogether.mogether.exception.ErrorCode.CALENDAR_INSERT_FAILED;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AppEventService {
 
     private final RedisOAuth2TokenRepository redisOAuth2TokenRepository;
@@ -46,17 +47,11 @@ public class AppEventService {
     @Value("${spring.security.oauth2.client.registration.google.client-secret}")
     private String clientSecret;
 
-    @PostConstruct
-    void test(){
-        System.out.println("### client-id : " + clientId);
-    }
-
     public Calendar getCalendarService(Long userId) throws GeneralSecurityException, IOException {
-        // 1. Redis에서 사용자 OAuth2 토큰 조회
+        //Redis에서 사용자 OAuth2 토큰 조회
         OAuth2Token token = redisOAuth2TokenRepository.findByUserId(userId);
 
-        // 2. UserCredentials 생성
-        // 2. Credential 구성
+        //UserCredentials 생성, Credential 구성
         GoogleCredentials credentials;
         if (token.getRefreshToken() != null) {
             // refresh token 존재 -> UserCredentials 사용
@@ -67,14 +62,14 @@ public class AppEventService {
                     .setRefreshToken(token.getRefreshToken())
                     .build();
         } else {
-            // refresh token 없음 -> 단발성 AccessToken
+            //refresh token 없음 -> 단발성 AccessToken
             credentials = GoogleCredentials.create(new AccessToken(token.getAccessToken(), null));
         }
 
-        // 3. HttpRequestInitializer 로 감싸기
+        //HttpRequestInitializer 생성
         HttpRequestInitializer requestInitializer = new HttpCredentialsAdapter(credentials);
 
-        // 4. Calendar 클라이언트 생성
+        //Calendar 클라이언트 생성
         return new Calendar.Builder(
                 GoogleNetHttpTransport.newTrustedTransport(),
                 JacksonFactory.getDefaultInstance(),
@@ -86,7 +81,7 @@ public class AppEventService {
 
     //google calendar에 일정 추가
     public AppEventCreateResponse createEvent(Long userId, AppEventCreateRequest dto) {
-        //모게더 DB에 일정 저장
+        //RDB save
         AppEvent appEvent = AppEvent.builder()
                 .summary(dto.getSummary())
                 .description(dto.getDescription())
@@ -110,14 +105,14 @@ public class AppEventService {
             //primary : 기본 캘린더. (이외에 회사 캘린더 등이 있음)
             Event createdEvent = service.events().insert("primary", googleEvent).execute();
 
-            //googleEventId insert
+            //insert googleEventId
             appEvent.setGoogleEventId(createdEvent.getId());
             appEventRepository.save(appEvent);
 
             return AppEventCreateResponse.of(appEvent.getId(), createdEvent);
 
         } catch (IOException | GeneralSecurityException ex) {
-            // 구글 API 실패 → rollback
+            //구글 API 호출 실패 → rollback
             throw new MogetherException(CALENDAR_INSERT_FAILED);
         }
     }
@@ -135,12 +130,12 @@ public class AppEventService {
         LocalDateTime start = LocalDateTime.now();
         LocalDateTime end = start.plusMonths(3);
 
-        // Google DateTime expects milliseconds since epoch (UTC), so convert with ZoneId
+        //Google DateTime expects milliseconds since epoch (UTC), so convert with ZoneId
         DateTime timeMin = new DateTime(ZonedDateTime.of(start, ZoneId.systemDefault()).toInstant().toEpochMilli());
         DateTime timeMax = new DateTime(ZonedDateTime.of(end, ZoneId.systemDefault()).toInstant().toEpochMilli());
 
         Events.List request = service.events().list("primary")
-                .setSingleEvents(true) // 반복 이벤트를 인스턴스 단위로 펼침
+                .setSingleEvents(true) //반복 이벤트를 인스턴스 단위로 구성
                 .setOrderBy("startTime") // 시작 시간 순 정렬
                 .setTimeMin(timeMin)
                 .setTimeMax(timeMax);
