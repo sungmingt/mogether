@@ -12,7 +12,6 @@ import com.google.auth.http.HttpCredentialsAdapter;
 import com.google.auth.oauth2.AccessToken;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.auth.oauth2.UserCredentials;
-import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import mogether.mogether.domain.appEvent.AppEvent;
 import mogether.mogether.domain.appEvent.AppEventRepository;
@@ -24,6 +23,7 @@ import mogether.mogether.web.appEvent.AppEventCreateRequest;
 import mogether.mogether.web.appEvent.AppEventCreateResponse;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -36,6 +36,7 @@ import static mogether.mogether.exception.ErrorCode.CALENDAR_INSERT_FAILED;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class AppEventService {
 
     private final RedisOAuth2TokenRepository redisOAuth2TokenRepository;
