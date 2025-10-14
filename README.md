@@ -1,4 +1,4 @@
-<h1>모임 웹 서비스</h1>
+<h1>모임 서비스</h1>
 
 <img width="530" alt="스크린샷 2024-09-15 오후 3 12 04" src="https://github.com/user-attachments/assets/eefd3cc3-2538-4fac-a838-46d76ce6fa84">
 
@@ -30,6 +30,11 @@
 
 - 모임 생성 시 해당 모임의 그룹 채팅방이 자동으로 생성됩니다.
 - 모임 참여/탈퇴 시 채팅방 입장/퇴장도 함께 이루어집니다.
+
+<h4>Google Calendar 연동</h4>
+
+- 정모 일정에 참여할 경우, Google Calendar에 해당 일정을 기록합니다.
+- Google Calendar API를 통해 통합된 일정을 한눈에 볼 수 있습니다.
 
 <h4>OAuth2 소셜 및 일반 로그인</h4>
 
