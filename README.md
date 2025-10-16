@@ -3,7 +3,7 @@
 <img width="530" alt="스크린샷 2024-09-15 오후 3 12 04" src="https://github.com/user-attachments/assets/eefd3cc3-2538-4fac-a838-46d76ce6fa84">
 
 
-### ❌ 과금으로 인해 현재 서버를 중지한 상태입니다.
+### ❌ 과금으로 인해 현재 서버를 중지하였습니다.
 
 <h2><a href="https://mo-gether.site"><img width="50" height="50" alt="스크린샷 2024-09-15 오후 3 30 41" src="https://github.com/user-attachments/assets/678c7a8f-e811-45e4-b338-26cdac47b880"> mo-gether 바로가기</a></h2>
 
